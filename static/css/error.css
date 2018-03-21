@@ -1,0 +1,80 @@
+body,html{
+  padding:0;
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow: hidden;
+}
+*{box-sizing: border-box}
+a{outline: none;text-decoration: none}
+.version-not-available{
+  position:absolute;
+  display: table;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #efefef;
+  text-align: center;
+  z-index: 999;
+}
+
+.version-not-available .version-not-tip{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width: 384px;
+  height: 188px;
+  margin-top: -150px;
+  margin-left: -192px;
+  background: #f5adaa;
+}
+
+.version-not-available .version-not-tip .close{
+  position: absolute;
+  top:0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  background:#fff;
+  color: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.version-not-available .version-not-tip .close img{
+  height: 100%;
+  width: 100%;
+}
+.version-not-tip .version-tip-content{
+  font-size:16px!important;
+  padding: 18px 22px;
+  overflow: hidden;
+  background: #fff url("../../static/img/version-not-bg@1_01.png") no-repeat 5px center;
+  height:100%;
+}
+.version-not-tip .version-tip-content .content-text{
+  float: right;
+  width: 230px;
+}
+.version-tip-content .content-text p{
+  font-size: 16px;
+  text-align: left;
+  line-height: 2em;
+  margin: 20px 0;
+}
+.version-tip-content .content-text>a.last{
+  margin-right: 0;
+}
+.version-tip-content .content-text>a{
+  display: inline-block;
+  width: 84px;
+  height: 30px;
+  line-height: 30px;
+  background: #ff8164;
+  margin-right: 36px;
+  color:#fff
+}
+.version-tip-content .content-text>a:hover{
+  color: #fff!important;
+}

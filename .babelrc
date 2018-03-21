@@ -1,0 +1,26 @@
+{
+  "presets": [
+    "es2015",
+    ["env", { "modules": false }],
+    "stage-2"
+  ],
+  "plugins": [
+    "transform-runtime",
+    "syntax-dynamic-import",
+    ["component", [
+      {
+        "libraryName": "element-ui",
+        "styleLibraryName": "theme-chalk"
+      },
+      {
+        "libraryName": "vue-area-linkage"
+      }
+    ]]
+  ],
+  "env": {
+    "test": {
+      "presets": ["env", "stage-2"],
+      "plugins": [ "istanbul" ]
+    }
+  }
+}

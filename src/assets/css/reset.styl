@@ -1,0 +1,404 @@
+/*! minireset.css v0.0.3 | MIT License | github.com/jgthms/minireset.css */
+html,body,p,ol,ul,li,dl,dt,dd,blockquote,figure,fieldset,legend,textarea,pre,iframe,hr,h1,h2,h3,h4,h5,h6,button,input
+  margin 0
+  padding 0
+  -webkit-tap-highlight-color: transparent;
+ul,li,ol
+  list-style-type:none
+button,input
+  background none
+  outline none
+  border 0
+button
+  cursor: pointer
+button,input[type="text"],select,textarea
+  margin:0;
+  outline: none;
+  -webkit-appearance:none;
+  -moz-appearance: none;
+  appearance:none;
+  resize none
+.textarea-wrap
+.textarea-box
+  border 1px solid #979797
+  border-radius 7px
+  textarea
+    border-radius 7px
+textarea
+  padding 10px
+  border none
+html
+  box-sizing:border-box
+input
+  margin:0;
+  outline: none;
+
+*,*:before,*:after
+  box-sizing:inherit
+img,embed,iframe,object,audio,video
+  height:auto;
+  max-width:100%
+img
+  display: block
+  border:none
+iframe
+  border:0
+table
+  border-collapse collapse
+  border-spacing 0
+td,th
+  padding 0
+/* HTML5 display-role reset for older browsers */
+body ,html
+  font-size: 12px;
+  font-family: "Microsoft YaHei",Arial,sans-serif,"Helvetica Neue", Helvetica , "Hiragino Sans GB";
+  color: #333;
+  line-height: 1.5;
+  min-height 100%;
+a
+  text-decoration: none;
+  color: rgb(5,5,5);
+  outline none
+  -webkit-tap-highlight-color: transparent;
+input[type=number]
+  -moz-appearance:textfield;
+  &::-webkit-inner-spin-button
+  &::-webkit-outer-spin-button
+    -webkit-appearance: none;
+    margin: 0;
+ul
+  list-style-type: none;
+  padding: 0;
+
+.el-select-dropdown li
+.el-dropdown-menu li
+  display: list-item;
+
+.el-dropdown
+  color:#333!important;
+
+.el-dropdown-link
+  cursor: pointer;
+
+/*滚动条样式*/
+.scrollBar
+  -ms-scrollbar-base-color: #ddd;
+  -ms-scrollbar-3dlight-color: #1C86EE;
+  -ms-scrollbar-highlight-color: #1C86EE;
+  -ms-scrollbar-track-color: #fff;
+  -ms-scrollbar-arrow-color: #fff;
+  -ms-scrollbar-shadow-color:#ddd;
+  -ms-scrollbar-dark-shadow-color: #1C86EE;
+  overflow-y:scroll;
+  &::-webkit-scrollbar
+    width: 7px;
+  &::-webkit-scrollbar-track
+    border-radius: 7px;
+  &::-webkit-scrollbar-thumb
+    border-radius: 7px;
+    background-color: #ddd;
+
+blockquote,q
+  quotes: none;
+
+blockquote:before, blockquote:after,
+q:before,q:after
+  content: '';
+
+/*文本禁止选中*/
+.noSelect
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+.fl
+  float: left;
+  height: 100%;
+
+.fr
+  float:right!important;
+  height: 100%;
+
+.main-color
+  color:#ff8383;
+
+.ml0
+  margin-left:0!important;
+
+.tc
+  text-align: center;
+
+.tr
+  text-align: right!important;
+
+.tl
+  text-align left!important;
+
+.bsw
+  box-shadow: 0 1px 15px #EAD4DF;
+
+.br5
+  border-radius:5px;
+  overflow hidden;
+
+.br7
+  border-radius 7px;
+  overflow hidden;
+
+.clr3
+  color:#333
+
+.clr6
+  color:#666
+
+.clr9
+  color:#999!important
+
+.color6
+  color:#666;
+
+.clear:after
+  content ""
+  height 0
+  visibility hidden
+  display block
+  clear both
+
+.bl
+  display: block;
+
+.il
+  display: inline;
+
+.ib
+  display: inline-block;
+
+.tb
+  display: table;
+
+.lh
+  line-height: 0;
+
+.font0
+  font-size 0
+.font12
+  font-size: 12px!important;
+
+.font14
+  font-size: 14px!important;
+
+.font15
+  font-size: 15px!important;
+
+.font16
+  font-size:16px!important;
+
+.font18
+  font-size:18px!important;
+
+.ml0
+  margin-left: 0!important;
+
+.ml5
+  margin-left:5px!important;
+
+.mr0
+  margin-right 0!important
+
+.mr5
+  margin-right:5px;
+
+.mb5
+  margin-bottom:5px;
+
+.mt5
+  margin-top: 5px;
+
+
+.ml10
+  margin-left:10px;
+
+.mr10
+  margin-right:10px;
+.mb10
+  margin-bottom:10px;
+
+.mt10
+  margin-top: 10px;
+.ml20
+  margin-left:20px;
+.mr20
+  margin-right:20px;
+.mb20
+  margin-bottom:20px;
+.mt20
+  margin-top: 20px;
+.pl10
+  padding-left:10px;
+.pr10
+  padding-right:10px;
+.pb10
+  padding-bottom:10px;
+.pt10
+  padding-top: 10px;
+
+.pl15
+  padding-left 15px
+.pt15
+  padding-top 15px
+
+.pl20
+  padding-left:20px;
+.pr20
+  padding-right:20px;
+.pb20
+  padding-bottom:20px;
+.pt20
+  padding-top: 20px;
+.b-btn
+  cursor: pointer;
+  //background
+.img-center
+  display:inline-block;
+  text-align:center;
+  vertical-align:middle;
+
+.txt-top
+  display: table-cell;
+  text-align: center;
+  vertical-align: top;
+.txt-bottom
+  display: table-cell;
+  text-align: center;
+  vertical-align:bottom;
+
+.middle
+  vertical-align: middle;
+.noborder
+  border:none;
+
+/*公共样式 common.css*/
+
+header, nav, .nav .dHeader-wrap,.top,.content,footer
+  width:100%;
+  min-width: 1024px;
+  margin: 0 auto;
+
+.header-inner, .nav-inner,header .ht-inner,.dHeader,.content-inner,.banner-wrap,.container,.trends,.hot-book,.new-book,.nominate,.rank-content,.latest-book,.footer-inner
+  width:1024px;
+  margin-left:auto;
+  margin-right:auto;
+
+/*区域标题样式开始*/
+.heading
+  position: relative;
+  height:56px;
+  width:100%;
+  line-height: 56px;
+  overflow: hidden;
+  font-size:20px;
+  color: #000;
+  &.latestIcon-bg
+    img
+      margin-top 14px
+  >img
+    width:32px;
+    height:32px;
+    float: left;
+    margin-top: 11px;
+  >div
+    display: table;
+    bottom:10px;
+  .reading
+    float: right;
+    font-size: 14px;
+    font-weight: normal;
+
+.h-title
+  font-size:16px;
+  font-weight:normal;
+  a
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    vertical-align: middle;
+    margin-left: 20px;
+    &:first-child
+      margin-left:32px
+
+/*区域标题样式结束*/
+.active
+  display: inline-block;
+  box-shadow: 0px -2px 0px 0px rgb(251, 94, 111) inset;
+  color:rgb(251, 94, 111);
+  &.el-time-spinner__item
+    box-shadow none
+a:hover
+  color:rgb(251, 94, 111)!important;
+
+.main-left
+  width:750px;
+  float: left;
+
+.main-right
+  float right;
+  height: auto;
+  width 274px;
+
+.min-title
+  font-size:14px;
+
+.cover img
+  height: 100%;
+  width: 100%;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+
+.center
+  text-align: center;
+
+.normal
+  font-weight: 500;
+
+.txt-overflow
+  overflow: hidden; /*自动隐藏文字*/
+  text-overflow: ellipsis;/*文字隐藏后添加省略号*/
+  white-space: nowrap;/*强制不换行*/
+  vertical-align middle
+
+  /*width: 20em;!*不允许出现半汉字截断*!*/
+
+.overLine2
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp:2;
+  overflow: hidden;
+  height 3em
+
+.overLine3
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp:3;
+  overflow: hidden;
+  height 4.5em
+
+.overLine4
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp:4;
+  overflow: hidden;
+
+.overLine5
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp:5;
+  overflow: hidden;
+
+.el-form-item.is-required .el-form-item__label:before
+  content:''!important;
+
+//浏览器不兼容时，优化提示界面
+

@@ -1,0 +1,333 @@
+.el-dialog.avatar-upload-wrapper
+  position relative
+  width 460px
+  height 470px
+  transform translate(-50%,-50%)
+  user-select none
+  .mso-even-footer
+    position absolute
+    bottom 0
+    width:calc(100% - 60px)
+    height 38px
+    margin:24px 0
+    text-align center
+    >button
+      display:inline-block
+      width 120px
+      border-radius :18px
+      height 38px
+      border :1px solid #ddd
+      color #fff
+      font-size 16px
+      letter-spacing 2px
+      line-height 38px
+      &.default
+        background :#ffa2ac
+        margin-right 104px
+      &.cancel
+        background :#c1c1c1
+  .el-dialog__body
+    padding 20px 28px!important
+    border-bottom 1px solid #efefef
+  .avatar-uploader
+    .tip
+      /*font-size: 12px*/
+      color:#999
+      line-height 1em
+      height 36px
+  .el-upload
+    display block!important
+    float:left
+    text-align left
+    .primary-avatar-wrap
+      >span
+        line-height 2em
+        color #ff8383
+    .primary-avatar
+      width 256px
+      height:256px
+      border: 1px dashed #d9d9d9;
+      border-radius: 6px;
+      cursor: pointer;
+      overflow: hidden;
+  .avatar-preview
+    overflow hidden
+    height 290px
+    text-align center
+    padding-left 38px
+  .primary-avatar:hover
+    border-color: #20a0ff;
+  .avatar
+    float right
+    display inline-block
+    width: 110px;
+    height: 110px;
+    border-radius 50%
+    border 1px solid #ddd
+    margin-top:20px
+
+
+.container-wrapper
+  &.userCenter
+    background #fcfafb
+
+.mw-fl-content
+  float: left
+  width :224px
+  .mw-top-info
+    overflow hidden
+    background :#f5848b
+    .handle-area
+      text-align :center
+      margin :15px 0 20px
+      height :40px
+      >a:first-child
+        margin-right 34px
+      >a
+        display :inline-block
+        width:80px
+        height 40px
+        border-radius :5px
+        background :#fff
+        color :#ff8383
+        line-height :40px
+        font-size:14px
+        box-shadow :0 1px 1px #8A2222
+      .private
+        background:#f9c6c7
+        color :#333
+    .person-info
+      padding : 0 16px 12px
+      .username
+        text-align :center
+        font-size :20px
+      .level
+        overflow hidden
+        margin:16px 0 8px
+        span
+          float:left
+          margin-right :5px
+          font-size 14px
+          color #fff
+        .level-progress
+          overflow hidden
+          margin :5px 0
+          .el-progress-bar__inner
+            background :#66f9ff
+      .person-intro
+        font-size :16px
+        line-height :1.6em
+    >.avatar
+      width:150px
+      height :150px
+      margin :36px auto
+      border :6px solid #ff9ca3
+      border-radius :50%
+      cursor pointer
+  .el-menu-vertical
+    background :#f29c98
+    li
+      display: list-item
+      background:#f5adaa
+      margin-bottom:6px
+      text-align: center
+    .el-menu-item
+      color #fff
+      font-size 17px
+      &.active
+      &:hover
+        background :#fac6c8
+        color :#333333!important
+
+.mw-fr-content
+  float left
+  width 798px
+  min-height:990px
+  background #fcfafb
+  padding-top 8px
+  &.no-bgColor
+    background-color transparent
+  .el-tabs
+    &.user-ct
+      .el-tabs__header
+        border :none
+        margin-bottom :0
+        padding :0 14px
+        .el-tabs__nav
+          .el-tabs__item
+            border :none
+            color :#333
+            font-size :16px
+            &.is-active
+              color :#ff8383
+            &:first-child
+              font-size 18px
+              padding-left 0
+              color :#000
+.breadcrumb-wrap.user
+  height 44px
+  line-height 44px
+  font-size 14px
+  padding 0 20px
+  .el-breadcrumb
+    height 44px
+    line-height 44px
+    font-size 14px
+.user-tab__card
+  background :#fff
+  .el-tabs__header
+    padding 0 20px
+    height 46px
+    border-bottom 1px solid #f0dcdd
+  .el-tabs__item
+    height 100%
+    line-height 44px
+    font-size 18px
+    padding 0 20px!important
+    margin-right 150px
+  .el-tabs__item.is-active
+    border-bottom :2px solid #fc6c7b!important
+// 关注粉丝列表公共样式
+.user-af-wrapper
+  .af-tabs-nav
+    height 46px
+    line-height 46px
+    margin-bottom 14px
+    //margin 16px 0 12px
+    background #fff
+    padding 0 50px
+    border-bottom 1px solid #f0dcdd
+    .el-badge
+      .el-button
+        border none
+    &.user-message-nav
+      padding 0 20px
+      >a
+        padding 0 20px
+        margin-right 150px
+        &:last-child
+          margin-right 0
+    >a
+      display inline-block
+      font-size: 18px
+      padding 0 4px
+      margin-right 100px
+  .user-af-list
+    padding 0 10px
+    background #fff
+    border-top 1px solid #efefef
+    >li.af-list-item:last-child
+      border-bottom :none
+    >li.af-list-item
+      width 100%
+      min-height 116px
+      padding 20px 0
+      border-bottom 1px solid #efefef
+      margin 10px 0
+      .af-item-avatar
+        position relative
+        float left
+        width 122px
+        height 72px
+        text-align center
+        .el-badge
+          .el-badge__content
+            top 10px
+            right 16px
+            padding 0 6px
+            line-height 17px!important
+        >a img
+          display inline-block
+          width 72px
+          height 72px
+          border-radius 50%
+          border 1px solid #a4a4a4
+      .zdy-icon__boy,.zdy-icon__girl
+        margin 0 5px
+      .af-item-main
+        overflow hidden
+        height 100%
+        margin-top 1px
+        .af-item-content
+          overflow hidden
+          min-height 72px
+          padding-right 10px
+          .user-info
+            font-size 14px
+            span.level
+              background:#74f2ff
+              color :#fff
+              padding 2px 5px
+              line-height 1em
+              font-size 12px
+              border-radius 4px
+        .af-handle
+          width 80px
+      .item-context
+        font-size 14px
+        line-height 2em
+        padding:10px 20px 10px 0
+      .more-handle
+        text-align right
+        color #999
+        line-height 1
+        >span.b-btn
+          padding:0 7px
+          font-size:14px
+        /*margin-left 20px*/
+        span
+          color #D88C94
+.user-message-wrapper
+  .el-tabs__content
+    padding-top 14px
+    background #fcfafb
+  .user-af-list
+    padding 0
+    margin-left:20px
+    border 1px solid #efefef
+    border-radius 4px
+    margin-bottom 50px
+  .el-tab-pane
+    .zxy-comment-wrap
+      .zxy-comment-list-item
+        padding-left 16px
+        background-color #fff
+
+.el-badge
+  &.tabs-item
+    height 40px
+    vertical-align baseline
+    .el-badge__content
+      top 10px
+      line-height 18px
+      border none
+    .el-button
+      font-size 16px
+  &.subnav-item
+    .el-button
+      background-color transparent
+    .el-badge__content
+      top 22px
+      right 7px
+      border none
+/*right 2px*/
+.area-title
+  font-size 18px
+  line-height 1.2
+  padding 15px
+  a
+    float right
+    &:hover
+      i
+        color #ff8383
+  i.el-icon-arrow-right
+    font-size 17px
+    color #666
+.pl18
+  padding-left 18px
+.cmb
+  margin-bottom 14px
+.cmt
+  margin-top 14px
+.prlb15
+  padding 0 15px 15px 15px

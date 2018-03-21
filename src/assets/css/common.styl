@@ -1,0 +1,1029 @@
+font-color = #FB5E6F
+btn-color =  #F77583
+.el-loading-parent--relative
+  &.el-loading-parent--hidden
+    overflow auto!important
+
+.rank-list
+  position relative
+  height 432px
+  font-size 14px
+  &.ah
+    height auto
+  li
+    display: list-item;
+    height: 18px;
+    line-height: 18px;
+    margin-bottom: 14px;
+    .b-title
+      color #333
+    &:nth-child(3)
+      ~li
+        .order
+          color #333
+    .b-writer
+      color: #999
+    &:first-child
+      height: 92px;
+      width: 100%;
+      margin-bottom:22px;
+      .info
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+        padding-left: 22px;
+        padding-right:10px;
+    .info>div
+      height: 24px;
+      line-height: 24px;
+      width: 100%;
+      color #999
+      &.b-writer
+        height 40px
+        line-height 40px
+      &:last-child
+        position: absolute;
+        bottom: 0;
+    //查看更多样式
+    &.more
+        position absolute
+        bottom 0px
+        width 100%
+        line-height 30px
+        margin-bottom 0
+        height: 30px
+        background #fff0f0
+        color #333
+        border-radius 7px
+        text-align center
+        >a
+          box-shadow none
+  &:last-child
+      marrgin-bottom:0
+    .cover
+      width: 72px;
+      height: 92px;
+      float: left;
+    .order
+      float: left;
+      color: font-color;
+      font-size: 16px;
+      font-weight: 600;
+      width: 30px;
+
+  .lastOne
+    text-align :center
+    height :30px
+    line-height :30px
+    a
+      display :block
+      height:100%
+      background :#efefef
+      border-radius :5px
+      line-height 28px
+    span
+      font-size :16px
+
+  &.base-list
+    height auto
+    li
+      &:first-child
+        height auto
+        margin-bottom 14px
+
+
+.book-cover-wrap
+  position relative
+  display inline-block
+  line-height 0
+  &:after
+    content ''
+    position absolute
+    top 0
+    left 0
+    width 100%
+    height 100%
+    background rgba(0,0,0,0.13)
+    border-radius 5px
+    overflow hidden
+  .b-st
+    position absolute
+    top 0
+    right 0
+    display inline-block
+
+    padding 3px 4px 4px
+    line-height 1em
+    font-size 12px
+    color #fff
+    background-color #999
+    border-radius 9px 7px 0 9px
+
+//排行榜书籍列表样式 start
+.stack-list
+  width :100%
+  //padding-bottom 10px
+  .stack-item a:hover
+    color :#333
+  .stack-item:hover
+    box-shadow: -4px 2px 4px rgba(0,0,0,0.1);
+  .stack-item
+    box-sizing content-box
+    height :162px
+    padding:20px
+    border-bottom:1px solid #efefef
+    &:last-child
+      border-bottom none
+    >a
+      position relative
+      float left
+    .book-cover
+      position relative
+      float: left
+      height :162px
+      border-radius :7px
+      width 124px
+    .si-fr
+      overflow: hidden
+      height :100%
+      padding-left:20px
+      .bTitle
+        font-size :16px
+        height :42px
+        .title
+          float left
+          //width :240px
+          font-size 18px
+          >a
+            display inline-block
+            max-width 280px
+        .handle
+          float: right
+          button
+            height :30px
+            width :64px
+            float: left
+            border-radius:38px
+            line-height: 28px
+            text-align: center
+            //border:1px solid #efefef
+            margin-left:20px
+            background :btn-color
+            color :#fff
+            font-size 14px
+      .si-cmd
+        height :74px
+        padding-top:6px
+        font-size 14px
+        table tr td
+          line-height :24px
+          text-align: left
+
+        table
+          table-layout :fixed
+          .t-name
+            width:80px
+            color :#999
+            text-align:right
+            &.name2
+                width 60px
+          .author
+            width :130px
+          .class,.state
+            width :130px
+          .state
+            width :60px
+      .si-bIntro
+        font-size 14px
+        word-break break-all
+        p
+          text-indent :2em
+          margin-bottom :10px
+          overflow: hidden;
+//排行榜书籍列表样式 end
+
+//作者中心 公共样式部分 start
+.model-left
+  width :121px
+  float left
+.model-right
+  overflow hidden
+//作者中心 公共样式部分 end
+
+.el-select-dropdown__item
+  &.selected
+    background-color #fb5e6f!important
+
+//分页器公共样式
+.pagination
+  padding:20px 0
+.el-pagination
+  float left
+  width calc(100% - 30px)
+  color :#333
+  padding:20px 15px!important
+  font-size 14px
+  height 32px
+  box-sizing content-box!important
+  &.el-pagination--small
+    .el-pager
+      li
+        line-height 20px
+  &.pbg
+    background #fff
+  button[type='button']
+    float left
+    width 32px
+    height 32px
+    border :1px solid #979797
+    border-radius :3px
+    color :#666
+  .el-pager
+    float left
+    li
+      border-radius :3px
+      padding: 0 4px
+      background: #fff
+      font-size: 14px
+      min-width: 32px
+      height: 32px
+      line-height: 30px
+      cursor: pointer
+      box-sizing: border-box
+      text-align: center
+      margin:0 5px
+      border:1px solid #979797
+      &.active
+        border-color #fb5e6f!important
+        box-shadow none
+        &+li
+          border-left :1px solid #979797
+      &:last-child
+        border :1px solid #979797
+        height 32px
+        line-height 30px
+  .el-pagination__jump
+    float right
+    font-size 14px!important
+    height 32px!important
+    line-height 30px!important
+    .el-pagination__editor
+      display inline-block
+      border :1px solid #979797
+      border-radius :3px
+      width :50px
+      height 32px!important
+      line-height 30px!important
+      padding 0
+      .el-input__inner
+        border none
+        height 28px!important
+.comment-child
+  .el-badge
+    .el-button
+      border none
+      color rgb(106, 73, 72)
+      padding 0 10px!important
+  .el-pagination
+    button[type='button']
+      border :none
+    li.active+li
+      border-left :0
+  &.el-pagination--small
+      button[type='button']
+        border :none
+      .el-pager
+        li.active+li
+          border :none
+
+.subNavWrap
+  overflow hidden
+  line-height 64px
+  font-size: 14px;
+  color rgb(116, 116, 116)
+  .sub-nav
+    overflow hidden
+    .el-breadcrumb
+      height: 100%;
+      line-height: 64px;
+      font-size: 14px;
+      color: #666;
+
+
+//书籍评论样式表
+
+
+/*未登录状态时发布评论区域样式  start  */
+.review-list
+  .comment-child
+    .reply
+      margin-bottom :0
+      margin-top :15px
+  .reply
+    margin-bottom :20px
+  .no-login
+    .baffle
+      display: block;
+      position: absolute;
+      z-index: 102;
+      width: 100%;
+      top: 0;
+      line-height: 64px;
+      font-size: 12px;
+      border-radius: 4px;
+      text-align: center;
+      color: #777;
+      background-color: #e5e9ef;
+      overflow: hidden;
+      .b-btn
+        padding: 4px 9px;
+        margin: 0 3px;
+        color: #fff;
+        background-color: #00a1d6;
+        border-radius: 4px;
+    .comment-btn
+      cursor: default;
+      background-color: #e5e9ef!important;
+      border-color: #e5e9ef!important;
+      color: #b8c0cc!important;
+/*未登录状态时发布评论区域样式 end   */
+.review-list .reply .reply-wrap
+  border :none
+
+.review-ul
+  .review-item:first-child>.comments-wrap
+    border-top :1px solid #efefef
+  .comments-wrap
+    padding :25px 0 18px
+.review-list
+  .child-item
+    img
+      width :38px
+      height :38px
+    &>.comments-wrap
+      overflow hidden
+      padding-bottom :0
+  .review-item>.comments-wrap
+    overflow hidden
+    border-bottom :1px solid #efefef
+  .baffle
+    display :none
+  .reply .avatar-wrap
+    margin-top: 8px
+  .child-item
+    .avatar-wrap
+      width :70px
+
+      //border :none
+  .avatar-wrap
+    float: left
+    width: 96px
+    overflow :hidden
+    margin-top:30px
+    a
+      display: inline-block
+    img
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border:1px solid #a2a2a2
+  .comments-wrap
+    .context
+      line-height :1.8em
+      margin-bottom :10px
+      font-size :14px
+      word-break break-all
+  .rw-left
+    overflow hidden
+    margin-right :90px
+    position :relative
+    .more
+      box-sizing:content-box
+      padding:10px 0
+      color: #747474
+      .emoji
+        background :url("../../../static/img/icon/emoji-icon.png") no-repeat 4px 5px
+        padding :7px 4px 7px 28px
+        border :1px solid #ddd
+        border-radius :4px
+        cursor :pointer
+        background-size:auto 70%
+      .words
+        float: right
+  .rw-left textarea
+    font-size: 12px
+    display: inline-block
+    box-sizing: border-box
+    background-color: #f4f5f7
+    border: 1px solid #e5e9ef
+    overflow-y: auto
+    border-radius: 4px
+    color: #555
+    width: calc(100% - 2px)!important
+    height: 65px
+    transition: 0s
+    padding: 5px 10px
+    resize: none
+    line-height :2em
+  .comment-btn
+    width: 70px
+    height: 64px
+    float :right
+    padding: 4px 15px
+    font-size: 14px
+    color: #fff
+    border-radius: 4px
+    text-align: center
+    min-width: 60px
+    background-color: btn-color
+    border: 1px solid btn-color
+    line-height :1.1em
+  .review-ul
+    .info
+      height :30px
+      margin-bottom :10px
+      p
+        float:left
+        padding :7px 0
+        line-height :14px
+        span
+          display :inline-block
+          overflow :hidden
+          &.nickname
+            font-size:14px
+          &.sex
+            margin :0 5px
+          &:first-child
+            margin-top :0
+          &.hotCom
+            padding 0 4px
+            background-color #ff5f5f
+            border-radius 3px
+            line-height 18px
+            height 18px
+            color #fff
+            zoom 0.83
+            margin-left 8px
+      .level
+        background :#75f3ff
+        border-radius :3px
+        color: #fff
+        line-height 1em
+        padding : 1px 4px
+        font-size :12px
+    .addAttention
+      float: right
+      height :30px
+      padding : 6px 18px
+      border:1px solid btn-color
+      border-radius :5px
+      cursor: pointer
+    .data
+      color #666
+      height :24px
+      line-height 24px
+      .date
+        float :left
+      p.handle
+        float :right
+        text-align :right
+        button
+          height 24px
+          padding-left 36px
+          background-repeat:no-repeat
+        .laud
+          background-image :url("../../assets/image/icon/laud-grey.png")
+        .lauded
+          background-image :url("../../assets/image/icon/laud-red.png")
+        .msg
+          background-image: url("../../assets/image/icon/icon-message@1x.png")
+        button
+          margin-left:20px
+          color: #888
+  //回复私信弹窗
+.reply-letter-wrapper.el-dialog
+  transform: translate(-20%,-50%);
+  .personal-letter-bg
+    position absolute
+    left :50%
+    transform:translateX(-50%)
+    top:-40px
+    width 80px
+  .el-dialog__body
+    padding :10px 20px 0
+    .el-form-item
+      margin-bottom 0
+      textarea.el-textarea__inner
+        resize: none
+        height 72px
+
+ a.more
+   font-size: 14px
+   font-weight 500
+   color:#999
+
+/*书籍评论列表  end*/
+
+.moreComment
+  text-align center
+  font-size 14px
+  padding:5px 0
+  background:#efefef
+  cursor :pointer
+  i.el-icon
+    font-size 12px
+    color:#999
+    width: 4px
+
+
+.el-loading-spinner
+  .el-icon-loading
+      font-size 30px!important
+      color #fff!important
+  .el-loading-text
+      color #fff!important
+
+.el-tabs__item:not(.is-disabled)
+  &:hover
+    color #fb5e6f!important
+.el-tabs--card
+  >.el-tabs__header
+    border none!important
+    .el-tabs__nav
+        border none!important
+        .el-tabs__item
+            border-left none!important
+            &:nth-child(2)
+                padding-left 0
+            &:last-child
+              padding-right 0
+
+.el-collapse-item__header
+  padding-left 15px!important
+.el-collapse-item__arrow
+  &.el-icon-arrow-right
+    line-height 48px!important
+
+.el-breadcrumb__separator[class*=icon]
+  line-height 42px!important
+  color #999!important
+.el-breadcrumb__inner
+.el-breadcrumb__inner a
+  font-weight 500!important
+
+.el-form-item__label
+  font-size 16px!important
+.el-input
+  font-size 16px!important
+.el-input__icon
+  position relative!important
+  width 25px!important
+.el-input__inner
+  height 40px!important
+//.el-select
+//  .el-input
+//    .el-input__icon
+//      top 0!important
+
+.el-select-dropdown
+  .el-select-dropdown__item
+    &.selected
+      color #fff!important
+
+      //日期选择器
+.el-date-editor
+  .el-input__icon
+    font-size 14px!important
+  .el-range-separator
+    box-sizing content-box
+
+.el-date-table td.in-range div
+.el-date-table td.in-range div:hover
+.el-date-table.is-week-mode .el-date-table__row.current div
+.el-date-table.is-week-mode .el-date-table__row:hover div
+  background-color #FFD7D7!important
+
+.el-date-editor
+  .el-range-separator
+  .el-range-input
+    font-size 16px!important
+
+.el-year-table
+.el-month-table
+  td
+    padding 10px 0!important
+.el-month-table
+.el-year-table
+  td
+    &.current
+      .cell
+        background-color rgba(255,150,161,1)!important
+        color #fff!important
+    .cell
+      height 46px!important
+      width 46px!important
+      line-height 46px!important
+      border-radius 50%
+    &:not(.disabled)
+      .cell
+        &:hover
+          background-color rgb(255,150,161)
+          color #fff!important
+
+
+.el-table thead
+  color #333!important
+
+//消息提示弹框
+.el-message[role='alert']
+  min-width auto!important
+  top 40%!important
+  .el-message__icon
+    display none
+  .el-message__content
+      padding-left 26px
+//确认信息弹窗公共样式
+
+
+/*新增、编辑章节成功后确认框*/
+.issue-alert
+  width 300px!important
+  text-align center!important
+  padding-bottom 0!important
+  .el-message-box__title
+    display none
+  .el-message-box__content
+    text-align left
+    display inline-block
+    margin 0 auto 10px
+    .el-message-box__message
+      font-size 20px
+    .el-message-box__status
+      font-size 24px!important
+  .el-message-box__btns
+    text-align center
+    border-top 1px solid #ddd
+    padding 10px
+    .el-button--primary
+      width 100%
+      background transparent
+      color #333
+      border none
+      margin 0
+      font-size 18px
+
+.el-button--primary
+  font-size 16px
+
+.el-message-box
+  &.confirm-msg-box
+    width :520px
+    &.middle
+      width 426px
+      .el-button
+        margin-right 60px!important
+      .el-button--primary
+        margin-left 60px!important
+        margin-right 0!important
+      .el-message-box__btns
+        padding:25px 20px 26px
+    &.small
+      width 360px
+      .el-message-box__btns
+        padding:25px 20px 26px!important
+      .el-button
+        margin-right 30px!important
+      .el-button--primary
+        margin-left 30px!important
+        margin-right 0!important
+
+    .el-message-box__content
+      padding 15px 20px
+      text-align center
+    .el-message-box__btns
+      text-align center
+      overflow hidden
+      .el-button
+        display:inline-block
+        width :86px
+        margin-right:90px
+        float right
+        height:38px
+        background:rgba(216,216,216,1)
+        border-radius: 20px
+        border:none
+        color:#fff
+      .el-button--primary
+        background:rgba(247,117,131,1);
+        margin-left:90px
+        margin-right :0
+        float left
+    .el-message-box__header
+        text-align:center
+        padding:14px 20px 20px
+        .el-message-box__title
+          font-weight :400
+          font-size 16px
+          height auto
+          line-height 1em
+          padding-top: 10px
+.img-wrap
+  &:after
+    content ''
+    width 0
+    height 100%
+    display inline-block
+    vertical-align middle
+  .img
+    display inline-block
+    vertical-align middle
+
+ //元素上下居中
+.v-middle:after
+  content: ''
+  display:inline-block
+  width: 0
+  height: 100%
+  vertical-align: middle
+.v-item
+  display inline-block
+  vertical-align middle
+  line-height 1em
+.sline
+  float left
+  width 100%
+  height 1px
+  background #efefef
+.vat
+  display inline-block
+  vertical-align top
+.vab
+  vertical-align baseline
+.vam
+  display inline-block
+  vertical-align middle
+.vabt
+  vertical-align bottom
+//自定义图标样式
+//VIP标识
+.zdy-icon__vip
+  display inline-block
+  width :14px
+  height :14px
+  background :url('../../assets/image/icon/icon_cvip.png') no-repeat left top
+  background-size :cover
+  vertical-align middle
+  margin-left 5px
+  &.small
+    width :12px
+    height :12px
+    vertical-align :3px
+  &.big
+    width 16px
+    height 16px
+    margin-left 10px
+//多选框
+.zdy-icon__checkbox
+  display:inline-block
+  width: 19px
+  height: 19px
+  border 1px solid #cbcbcb
+  border-radius :4px
+  background:#efefef
+  padding :2px
+.zdy-icon__checkbox.checked:after
+  content :''
+  display :block
+  height 100%
+  width:100%
+  border-radius :3px
+  background :#f77482
+//性别
+
+.zdy-icon__sex
+  display inline-block
+  width 14px
+  height 14px
+  margin 0 5px
+  background url('../../assets/image/icon/boy-icon.png') no-repeat
+  &.girl
+    background-image :url('../../assets/image/icon/girl-icon.png')
+.zdy-icon__girl
+  display inline-block
+  width 14px
+  height 14px
+  background url('../../assets/image/icon/girl-icon.png') no-repeat
+//关注
+.zdy-attention__wrap
+  display inline-block
+  height 32px
+  line-height 30px
+  width 80px
+  border-radius 15px
+  padding 0 4px
+  text-align center
+  color #a2a2a2
+  font-size 14px
+  border 1px solid #f77482
+  cursor pointer
+.zdy-icon__attention
+  width :22px
+  height 18px
+  background:url('../../assets/image/icon/icon-heart@_01.png') no-repeat left -1px
+.zdy-icon__attention.cancel
+  background-image url('../../assets/image/icon/icon-heart@_02.png')
+
+.zdy-icon__atn
+  float right
+  height 24px
+  margin 6px 0
+  line-height 22px
+  border-radius 12px
+  border 1px solid #fb5e6f
+  padding 0 7px 0 26px
+  cursor pointer
+  background url('../../assets/image/icon/icon-heart@_02.png') no-repeat 6px center
+  &.cancel
+    background-image url("../../assets/image/icon/icon-heart@_01.png")
+
+
+//用户vip图标
+.zdy-icon__user_vip
+  position absolute
+  right 23px
+  top -4px
+  display inline-block
+  width 22px
+  height: 22px
+  background url('../../assets/image/icon/uservip-icon.png') no-repeat left top
+  background-size cover
+  &.r-5X0
+    right:-5px
+    top:-0px
+  &.r-5
+    right:-5px
+  &.t2
+    top: -6px
+    right 22px
+
+.zdy-icon__zan
+  float right
+  display inline-block
+  height 22px
+  line-height 22px
+  padding-left 26px
+  background:no-repeat left top
+  background-image url("../../assets/image/icon/laud-grey.png")
+  font-size 14px
+  color #999
+  cursor pointer
+  padding-right 4px
+  font-style normal
+
+  &.past
+    background-image url("../../assets/image/icon/laud-red.png")
+
+.zdy-icon__star
+  display inline-block
+  width 14px
+  height 14px
+  margin-left 10px
+  background url("../../assets/image/icon/star2.png") no-repeat left center;
+  //vertical-align middle
+//信息提示框公共样式
+.el-message
+  background-repeat no-repeat
+  background-position 15px center
+  border-radius 4px!important
+  overflow hidden
+  background-image url("../../assets/image/icon/success-icon@1_01.png")!important
+  .el-message__img
+    display none!important
+  &.el-message--success
+    background-image url("../../assets/image/icon/success-icon@1_01.png")!important
+  &.el-message--warning
+    background-image url("../../assets/image/icon/warn-icon@1_01.png")!important
+  &.el-message--error
+    background-image url("../../assets/image/icon/error-icon@1_01.png")!important
+
+.zdy-cover
+  position relative
+  .zdy-mask
+    position: absolute;
+    width: 100%;
+    bottom : 0;
+    left: 0;
+    z-index: 99;
+    background: #444;
+    background: rgba(0,0,0,0.4);
+    transition: .3s all linear;
+    color #fff
+    opacity: 0;
+    padding 0 6px
+    line-height 2em
+    border-bottom-left-radius 7px
+    border-bottom-right-radius 7px
+    >p
+      height 2em
+      overflow hidden
+      text-align center
+    .h34
+      height 34px
+      line-height 34px
+      padding 0 12px
+    &.half
+      height 60px
+  &:hover
+    .zdy-mask
+        opacity 1
+
+//书籍签约状态  ps:(其父元素需要加上 position relative)
+.zdy-icon__sign
+  position absolute
+  right 0
+  top 0
+  width 3em
+  line-height 1.8em
+  height 1.8em
+  border-bottom-left-radius 10px
+  border-top-right-radius 7px
+  background #75D5F8
+  font-size 12px
+  font-style normal
+  color #fff
+  text-align center
+  &.small
+    width 2.8em
+    height 1.6em
+    line-height 1.6em
+  &.new
+    background-color #6ec282
+    border-radius 0.8em
+    border-top-right-radius 7px
+    border-bottom-right-radius 0
+
+//书籍连载完结状态
+.b-state
+  color #47b2d8!important
+  &.end
+    color #ff6f00!important
+.el-menu-vertical
+  overflow: hidden
+  a.el-menu-item
+    display block
+    text-align center
+    margin-bottom 6px
+    background-color #f5adaa
+    &.active
+      box-shadow none
+      background-color #fac6c8
+
+//页面暂无数据
+
+.red
+  color #fb5e6f
+.green
+  color #6ec282
+
+.error-empty
+  position relative
+  width 100%
+  height 400px
+  background url("../../../static/img/error_no_data@1_01.png") no-repeat center 20%
+  >.txt
+    position absolute
+    bottom 10%
+    width 100%
+    height 1.5em
+    text-align center
+    color #999
+    font-size 18px
+    user-select none
+
+//按钮样式
+.lj-btn
+ border-radius 4px
+ background btn-color
+ color #fff
+ text-align center
+ height 30px
+ width 70px
+ line-height 30px
+ cursor pointer
+ font-size 16px
+.btn
+  background btn-color
+  color #fff
+  cursor pointer
+  text-align center
+  margin 0 auto
+  border-radius 4px
+  &.sub
+    width 250px
+    line-height 50px
+    border-radius 25px
+    font-size 20px
+
+
+.bd_weixin_popup
+  box-sizing content-box
