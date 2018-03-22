@@ -27,7 +27,8 @@ const state = {
   hotWords:{}, //搜索热词
   bookClassName:{}, //书籍分类
   bookStackSell:{}, // 书库畅销榜
-  bookStackHotLabel:{} //书库热门标签
+  bookStackHotLabel:{}, //书库热门标签
+  authorWelfare:[], // 作者福利
 };
 
 export function createStore () {

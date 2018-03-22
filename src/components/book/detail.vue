@@ -342,7 +342,7 @@
 <script type="text/ecmascript-6">
   import Vue from 'vue'
   import CarouseRoll from '../carousel/caroual_rec.vue'
-  import {FetchBookDetailData} from '../../api'
+  import { FetchBookDetailData,FetchBookCommentReply,FetchCommentLaud,FetchReplyBookComment,FetchAddBookComment,FetchAddBookShelf } from '../../api'
   import { mapGetters } from 'vuex'
   let ERR_OK = 200;
   let ERR_NO = 400;
@@ -355,7 +355,6 @@
         return {
           showDetail:false, //是否展示全部书籍简介
           imgArray:[],
-//          activeNames:[],
           rewardNum:188,
           answer:false, //书评回复状态
           answerTxt:'', //书评回复内容
@@ -365,7 +364,6 @@
           page: 1, //书评列表页码
           page2:1, //书评回复列表页码
           maxPage: 5,
-//          chapterList:[],
           fansList:{}, //粉丝列表信息
           reply:'',
           onceShow:false,
@@ -387,24 +385,21 @@
         handleCurrentChange(page) {
           this.$store.dispatch("FETCH_COMMENT_LIST",{bid:this.$route.params.bid,page:page}).then(()=>{
             this.$nextTick(()=>{
-              const h = document.getElementById("comment-list-wrap").offsetTop
-              this.toLocation(h)
+              const h = document.getElementById("comment-list-wrap").offsetTop;
+              this.toLocation(h-35)
             })
           })
         },
 //        书评回复列表
-        pageHandler: function (page,index) {
-          this.$ajax("/comm-replyInfo",{
-            commentid:this.commentList.list[index].id,
-            startPage:page
-          },json2 => {
-            if(json2.returnCode===ERR_OK){
-              this.$set(this.commentList.list[index],'childList',json2.data)
-            }
-          })
+        pageHandler(page,index) {
+            FetchBookCommentReply(this.commentList.list[index].id,page).then(res=>{
+                if(res.returnCode===ERR_OK){
+                  this.$set(this.commentList.list[index],'childList',res.data)
+                }
+            });
         },
 //        书籍章节列表
-        handleClick1:function (tab) {
+        handleClick1(tab) {
             if(tab.name==='second'&& !this.firstOne){
                 this.$store.dispatch("FETCH_CHAPTER_LIST",{bid:this.$route.params.bid}).then(()=>{
                   this.firstOne = true
@@ -485,85 +480,55 @@
         },
 //        发布评论
         addComment(){
-          if(this.$trim(this.commentText).length>0){
-             if(this.$regEmoji(this.commentText)){
-               this.$message({message:"内容不可包含emoji表情图",type:'warning'});
-               return false
-             }
-             if(this.$trim(this.commentText).length>200){
-               this.$message("评论内容长度不得超过200字符");
-               return false
-             }
-            this.$ajax('/add-getcomminfo',{
+            FetchAddBookComment({
               bookId:this.bookDetail.bookListInfo.bookId,
               bookName:this.bookDetail.bookListInfo.bookName,
               userName:this.$store.state.userInfo.pseudonym,
               commentContext:this.commentText
-            },json => {
-              if(json.returnCode===ERR_OK){
-                this.$message("评论成功！");
-                this.commentText = '';
-                this.handleCurrentChange(1)
-              }
-            })
-          }else {
-              this.$message({message:'请输入内容！'})
-          }
+            }).then(json=>{
+                if(json.returnCode===ERR_OK){
+                  this.$message("评论成功！");
+                  this.commentText = '';
+                  this.handleCurrentChange(1)
+                }
+            });
         },
 //        回复评论
         addReplyComment(id,index){
-          if(this.$trim(this.answerTxt).length>0){
-            if(this.$regEmoji(this.commentText)){
-              this.$message({message:"内容不可包含emoji表情图",type:'warning'});
-              return false
-            }
-            if(this.answerTxt.length>100){
-              this.$message("评论内容长度不得超过100字符");
-              return false
-            }
-            this.$ajax('/add-replyInfo',{
+            FetchReplyBookComment({
               bookid:this.bookDetail.bookListInfo.bookId,
               bookName:this.bookDetail.bookListInfo.bookName,
               commentId:id,
               userName:this.$store.state.userInfo.pseudonym,
               replyCommentsContent:this.answerTxt,
               puserId:this.commentList.list[index].userId
-            },json => {
-              if(json.returnCode===ERR_OK){
-                this.$message("评论成功！");
-                this.answerTxt = '';
-                this.pageHandler(1,index);
-                this.commentList.list[index].replyCount++
-              }else if(json.returnCode===ERR_NO){
-                this.$router.push("/login")
-              }else {
-                this.$message(json.msg)
-              }
-            })
-          }else {
-              this.$message({message:'请输入内容！',type:'warning'})
-          }
+            }).then(json=>{
+                if(json.returnCode===ERR_OK){
+                  this.$message("评论成功！");
+                  this.answerTxt = '';
+                  this.pageHandler(1,index);
+                  this.commentList.list[index].replyCount++
+                }
+            });
         },
 //        评论点赞
         addLaud(index){
-            this.$ajax("/comm-GiveThumbs",{
-              commentId:this.commentList.list[index].id
-            },json => {
+            FetchCommentLaud(this.commentList.list[index].id).then(json=>{
                 if(json.returnCode===ERR_OK){
                     this.$message(this.commentList.list[index].isthumbs?'取消成功':'点赞成功');
                     if(this.page===1){
                         this.commentList.list.forEach((item)=>{
                             if(item.id===this.commentList.list[index].id){
-                                item.isthumbs = item.isthumbs?0:1;
-                                item.isthumbs?item.thumbsCount++:item.thumbsCount--
+                              item.isthumbs = item.isthumbs?0:1;
+                              item.isthumbs?item.thumbsCount++:item.thumbsCount--
                             }
                         });
                     }else {
-                      this.commentList.list[index].isthumbs = this.commentList.list[index].isthumbs?0:1;
-                      this.commentList.list[index].isthumbs?this.commentList.list[index].thumbsCount++:this.commentList.list[index].thumbsCount--
+                        this.commentList.list[index].isthumbs = this.commentList.list[index].isthumbs?0:1;
+                        this.commentList.list[index].isthumbs?this.commentList.list[index].thumbsCount++:this.commentList.list[index].thumbsCount--
                     }
                 }
-            })
+            });
         },
 //        关注用户
         addAttention(id,name){
@@ -579,24 +544,16 @@
         },
 //        加入书架
         addBookshelf(){
-            if(this.$store.state.userInfo.userId){
-                this.$ajax("/bookshelf-adduserbookshelf",{
-                    bookId:this.bookDetail.bookListInfo.bookId,
-                    userName:this.$store.state.userInfo.pseudonym,
-                    bookName:this.bookDetail.bookListInfo.bookName
-                },json=>{
-                    if(json.returnCode===200){
-                        this.bookDetail.bookListInfo.collectionStatus = (this.bookDetail.bookListInfo.collectionStatus?0:1);
-                        this.$message(json.msg)
-                    }
-                })
-            }else {
-                this.$router.push('/login')
-            }
+            FetchAddBookShelf(this.bookDetail.bookListInfo.bookId,this.$store.state.userInfo.pseudonym,this.bookDetail.bookListInfo.bookName).then(json=>{
+              if(json.returnCode===200){
+                  this.bookDetail.bookListInfo.collectionStatus = (this.bookDetail.bookListInfo.collectionStatus?0:1);
+                  this.$message(json.msg)
+              }
+            });
         }
       },
       mounted(){
-        this.$store.dispatch("FETCH_BOOK_DETAIL",{bid:this.$route.params.bid});
+        this.$store.dispatch("FETCH_BOOK_DETAIL",{ bid:this.$route.params.bid });
         this.onceShow = true;
 //        let height = this.$http(window).height()-440;
 //        this.minHeight = height

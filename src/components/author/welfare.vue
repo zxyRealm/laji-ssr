@@ -39,7 +39,7 @@
 
       data(){
           return {
-            height:0, //窗体可视区域高度
+            height:1024, //窗体可视区域高度
             activeIndex:0,
             title:[
                 '更新全勤',
@@ -93,12 +93,10 @@
         }
       },
       created(){
-          this.$store.dispatch("FETCH_AUTHOR_WELFARE")
+        this.$store.dispatch("FETCH_AUTHOR_WELFARE");
       },
       mounted(){
-         this.$nextTick(()=>{
-           this.height = this.$refs.welfare.clientHeight;
-         });
+        
         this.clientHeight = document.documentElement.clientHeight;
         window.addEventListener('scroll', () => {
           let base1 = parseInt(this.clientHeight*0.3);
@@ -121,13 +119,22 @@
          return 0
         },
         welfareList:function () {
+            console.log(this.$store.state.authorWelfare);
           return this.$store.state.authorWelfare?this.$store.state.authorWelfare.data:[]
         }
+      },
+      watch:{
+          welfareList:function (val) {
+            if(val){
+              this.$nextTick(()=>{
+                this.height = this.$refs.welfare.clientHeight;
+              });
+            }
+          }
       }
     }
 </script>
 <style lang="stylus" scoped type="text/stylus" rel="stylesheet/stylus">
-
 .welfare-wrapper
   position relative
   max-width:1440px

@@ -2,12 +2,12 @@
 // import {createAPI} from './create-api-client';
 // import Category from '../config/category';
 import LRU from 'lru-cache'
+import Com from '../assets/js/common'
 import axios from 'axios';
-import {Message} from 'element-ui'
+import { Message } from 'element-ui'
 const logRequests = true || !!process.env.DEBUG_API;
 const prod = process.env.NODE_ENV == 'production'
 const api = createAPI();
-
 function createAPI() {
   let api = {};
   api.onServer = true;
@@ -20,9 +20,23 @@ function createAPI() {
 
 function fetchUrl (url) {
   if(!prod){
-    url = 'http://www.lajixs.com' + url
+    url = '/api' + url
   }
   return url
+}
+
+function checkTxt(val,len) {
+  if(Com.regEmoji(val)){
+    Message({message:"内容不可包含emoji表情图",type:'warning'});
+    return false
+  }else if(Com.trim(val).length>len){
+    Message({message:"评论内容长度不得超过"+len+"字符",type:'warning'});
+    return false
+  }else if(!Com.trim(val).length){
+    Message({message:"请输入内容",type:'warning'});
+    return false
+  }
+  return true
 }
 
 // warm the front page cache every 15 min
@@ -77,6 +91,13 @@ function fetch(child,data,type,tip=true) {
 export function aycn(url,data,type,tip) {
   return fetch(url,data,type,tip)
 }
+
+// 获取网络时间
+
+export function FetchNetTime() {
+  return fetch('/sys-getNetWorkDateTime','get',false)
+}
+
 // 网站首页数据获取
 export function FetchIndexData () {
   return fetch('/indexdataload','get')
@@ -116,6 +137,12 @@ export function FetchStackListData (op1,op2,op3,op4,op5,page,op6) {
 export function FetchBookDetailData (bid) {
   return fetch('/book-bookInfo',{bookid:bid},'post',false)
 }
+
+// 书籍信息简化版
+export function FetchBookInfo(bid) {
+  return fetch('/book-showBookInfo',{ bookid:bid },'post',false)
+}
+
 // 章节列表
 export function FetchChapterList (bid) {
   return fetch('/books-volumeChapterList/'+bid,'get',false)
@@ -125,14 +152,42 @@ export function FetchChapterList (bid) {
 export function FetchBookCommentList (bid,page) {
   return fetch('/comm-getcomminfo',{id:bid,startPage:page,commentType:0,type:1,},'post',false)
 }
-
+// 热评
 export function FetchBookCommentHot (bid) {
   return fetch('/comm-HotCommentInfo',{bookid:bid},'post',false)
 }
 
 // 书评回复列表
-export function FetchBookCommentReply (page,cid) {
+export function FetchBookCommentReply (cid,page) {
   return fetch("/comm-replyInfo",{commentid:cid,startPage:page},'post',false)
+}
+
+// 发布书评
+
+export function FetchAddBookComment(data) {
+  let val = data.commentContext;
+  if(checkTxt(val,200)){
+    return fetch("/add-getcomminfo",data)
+  }else {
+    return Promise.resolve({})
+  }
+}
+
+// 回复书评
+
+export function FetchReplyBookComment(data) {
+  let val = data.replyCommentsContent;
+  if(checkTxt(val,100)){
+    return fetch("/add-replyInfo",data)
+  }else {
+    return Promise.resolve({})
+  }
+}
+
+// 书评点赞
+
+export function FetchCommentLaud(id) {
+  return fetch("/comm-GiveThumbs",{commentId:id})
 }
 
 // 书籍自动订阅
@@ -186,4 +241,102 @@ export function FetchUserRegister(data) {
 // 阅读章节
 export function FetchReadChapter(data) {
   return fetch('/book-read',data,'post',false)
+}
+
+// 加入书架
+export function FetchAddBookShelf(bid,user,book) {
+  if(Com.cookie("user_id")){
+    return fetch("/bookshelf-adduserbookshelf",{
+      bookId:bid,
+      userName:user,
+      bookName:book})
+  }else {
+    return Promise.resolve({returnCode:400})
+  }
+}
+
+
+// 阅读章节
+
+// 吐槽列表
+export function FetchGetPrattle(id,page) {
+  page = page | 1;
+  return fetch("/pcomm-getParagraphcommentpid/"+id+'/'+page,'get',false)
+}
+
+// 发布吐槽
+
+export function FetchAddPrattle(data) {
+  let val = data.commentContext;
+  if(checkTxt(val,50)){
+    return fetch("/pcomm-addParagraphcomment",data)
+  }else {
+    return Promise.resolve({})
+  }
+}
+
+// 添加阅读记录
+
+export function FetchAddRecords(data) {
+  return fetch("/person-addBookReadRecord",data,'post',false)
+}
+
+// 订阅章节
+export function FetchSubscribeChapter(data) {
+  return fetch("/book-subscription",data)
+}
+
+// 支付
+
+export function FetchWebPay(type,name,sum) {
+  switch (type){
+
+    case 'alipay':{ //支付宝支付
+      return fetch("/payment-alipay",{
+        username:name,
+        apymentType:1,
+        WIDtotal_fee:sum
+      })
+    }
+    case 'weixin':{ //微信支付
+      return fetch("/WeChatPay/ScanCodePayment",{
+        nickName:name,
+        userPayMoney:sum
+      })
+    }
+    default:{
+      return Promise.resolve({})
+    }
+  }
+}
+
+// 作者中心
+
+// 作者书籍列表
+export function FetchAuthorBookList(aid) {
+  return fetch("book-AuthorAllBookInfo",{authorId:aid},'post',false)
+}
+
+// 作者收入
+export function FetchAuthorIncome(type,data) {
+  switch (type){
+    case 'allIncome':{   //总收入
+      return fetch("/allincomestatistics",data,'post',false)
+    }
+    case 'monIncome':{ // 月报
+      return fetch("/getAuthorMonthlyreportByAuthormonByAuthorIDWeb",data,'post',false)
+    }
+    case 'chapter':{  // 书籍章节订阅详情
+      return fetch("/subscriptionstatistics",data,'post',false)
+    }
+    default:{
+      return Promise.resolve({returnCode:500})
+    }
+  }
+}
+
+// 最新月报时间
+
+export function FetchLatestMonth() {
+  return fetch('/sys-getDataPosition','get',false)
 }

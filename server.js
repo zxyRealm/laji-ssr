@@ -1,4 +1,4 @@
-
+const opn = require('opn');
 const fs = require('fs');
 const path = require('path');
 const LRU = require('lru-cache');
@@ -8,7 +8,7 @@ const compression = require('compression');
 const microcache = require('route-cache');
 const resolve = file => path.resolve(__dirname, file);
 const { createBundleRenderer } = require('vue-server-renderer');
-
+const proxyMiddleware = require('http-proxy-middleware');
 const isProd = process.env.NODE_ENV === 'production';
 const useMicroCache = process.env.MICRO_CACHE !== 'false';
 const serverInfo =
@@ -64,6 +64,8 @@ const serve = (path, cache) => express.static(resolve(path), {
   maxAge: cache && isProd ? 1000 * 60 * 60 * 24 * 30 : 0
 });
 
+const port = process.env.PORT || 3030;
+
 app.use(compression({ threshold: 0 }));
 app.use(favicon('./static/favicon.ico'));
 app.use('/dist', serve('./dist', true));
@@ -78,6 +80,30 @@ app.use('/service-worker.js', serve('./dist/service-worker.js'));
 // 1-second microcache.
 // https://www.nginx.com/blog/benefits-of-microcaching-nginx/
 app.use(microcache.cacheSeconds(1, req => useMicroCache && req.originalUrl));
+
+if(!isProd){
+  const proxyTable = {
+    '/api': {
+      target:'http://192.168.0.136:8081',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api':''
+      }
+    }
+  };
+
+// proxy api requests
+  Object.keys(proxyTable).forEach(function (context) {
+    let options = proxyTable[context];
+    if (typeof options === 'string') {
+      options = { target: options }
+    }
+    app.use(proxyMiddleware(options.filter || context, options))
+  });
+
+  opn(`http://localhost:${port}`)
+}
+
 
 function render (req, res) {
   const s = Date.now();
@@ -117,7 +143,6 @@ app.get('*', isProd ? render : (req, res) => {
   readyPromise.then(() => render(req, res))
 });
 
-const port = process.env.PORT || 3030;
 app.listen(port, () => {
   console.log(`server started at localhost:${port}`)
 });

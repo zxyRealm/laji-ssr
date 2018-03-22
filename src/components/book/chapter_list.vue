@@ -50,41 +50,32 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { mapGetters } from 'vuex'
+  import { FetchBookInfo } from '../../api'
     export default{
       data(){
         return {
           bookInfo:{},
-          chapterList:{}
         }
       },
       methods:{
-        getChapterList(){
-          this.$ajax("/book-showBookInfo",{bookid:this.$route.params.bid},json=>{
-            if(json.returnCode===200){
-              this.bookInfo = json.data
-              this.$ajax("/books-volumeChapterList/"+this.$route.params.bid,'',json=>{
-                if(json.returnCode===200){
-                  let data = json.data.chapterInfo,newArr=[]
-                  data.forEach((item,index)=>{
-                    if(item.resultList.length>0){
-                      let counts = 0
-                      item.length = item.resultList.length
-                      item.resultList.forEach((item2)=>{
-                        counts += item2.chapterLength
-                      })
-                      item.counts = counts
-                      newArr.push(item)
-                    }
-                  })
-                  this.chapterList = newArr
-                }
-              },'get')
-            }
-          })
-        }
+          getChapterList(){
+              let bid = this.$route.params.bid;
+              FetchBookInfo(bid).then(res=>{
+                  if(res.returnCode===200){
+                      this.bookInfo = res.data;
+                      this.$store.dispatch("FETCH_CHAPTER_LIST",{ bid:bid })
+                  }
+              })
+          }
       },
       mounted(){
-        this.getChapterList()
+          this.getChapterList()
+      },
+      computed:{
+         ...mapGetters([
+             'chapterList'
+         ])
       }
     }
 </script>

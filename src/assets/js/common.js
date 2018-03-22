@@ -143,9 +143,21 @@ function cookie(key,value,expiredays,path,domain) {
   }
 }
 
+function regEmoji(val) {
+  let regx = /[\ud83c-\ud83e][\udc00-\udfff]|[\u2600-\u27ff]/;
+  return regx.test(val)
+}
+function trim(str) {
+  if(typeof str === 'string'){
+    str = str.replace(/^(\s|| )?/,'').replace(/(\s|| )$/,'')
+  }
+  return str
+}
 export default {
   IdCodeValid,
   formatTime,
   ResetChapterTxt,
-  cookie
+  cookie,
+  regEmoji,
+  trim
 }

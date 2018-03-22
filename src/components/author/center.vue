@@ -76,6 +76,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchAuthorBookList } from '../../api'
     export default{
       data() {
           return {
@@ -85,12 +86,16 @@
       },
       methods:{
         getBookList(){
-          this.$ajax("/book-AuthorAllBookInfo",{ authorId:this.$cookie('user_id')},json => {
+          FetchAuthorBookList(this.$cookie('user_id')).then(json=>{
             this.showIt = true;
             if(json.returnCode===200){
               this.dataList = json.data;
             }
-          },'post','json',true)
+          });
+//          this.$ajax("/book-AuthorAllBookInfo",{ authorId:this.$cookie('user_id')},json => {
+//
+//
+//          },'post','json',true)
         },
         upDateStatus(type,index){
           let val = this.dataList[index];

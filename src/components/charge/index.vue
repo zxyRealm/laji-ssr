@@ -29,10 +29,18 @@
             <div class="title">
               支付方式
             </div>
-            <el-radio-group v-model="chargeForm.type" class="charge-type">
-              <el-radio-button label="alipay">{{null}}</el-radio-button>
-              <el-radio-button label="weixin">{{null}}</el-radio-button>
-            </el-radio-group>
+            <div class="radio-group">
+              <label for="alipay" :class="{current:chargeForm.type=='alipay'}">
+                <input type="radio" name="payWay" value="alipay" id="alipay"  v-model="chargeForm.type">
+              </label>
+              <label for="weixin" :class="{current:chargeForm.type=='weixin'}">
+                <input type="radio" name="payWay" value="weixin" id="weixin" v-model="chargeForm.type" >
+              </label>
+            </div>
+            <!--<el-radio-group v-model="chargeForm.type" class="charge-type">-->
+              <!--<el-radio-button label="alipay">{{null}}</el-radio-button>-->
+              <!--<el-radio-button label="weixin">{{null}}</el-radio-button>-->
+            <!--</el-radio-group>-->
           </el-form-item>
 
           <el-form-item prop="number">
@@ -98,74 +106,58 @@
 
 <script type="text/ecmascript-6">
 import QRcode from 'qrcode'
-
+import { FetchWebPay } from '../../api'
 export default{
 
     data(){
         return {
-          dialogVisible:false,
+            dialogVisible:false,
             chargeForm:{
-              type:'alipay',
-              number:'20'
+                type:'alipay',
+                number:'30'
             },
-          rule:{
-            type:[
-              {require:true,message:'请选取支付方式',trigger:'blur'}
-            ],
-            number:[
-              {require:true,message:'请选取充值金额',trigger:'blur'}
-            ]
-          },
-          isWeiXin:false,
-          tipInfo:'',
-          alipayHref:''
+            rule:{
+                type:[
+                  {require:true,message:'请选取支付方式',trigger:'blur'}
+                ],
+                number:[
+                  {require:true,message:'请选取充值金额',trigger:'blur'}
+                ]
+            },
+            isWeiXin:false,
+            tipInfo:'',
+            alipayHref:''
         }
     },
   methods:{
     submitForm(formName){
       this.$refs[formName].validate((valid) => {
         if (valid) {
-            this.$myLoad()
-            if(this.chargeForm.type==='alipay'){
-                this.$ajax("/payment-alipay",{
-                  username:this.$store.state.userInfo.pseudonym,
-                  apymentType:1,
-                  WIDtotal_fee:this.chargeForm.number
-                },json=>{
-                  this.$nextTick(()=>{
-                    this.$loading().close()
-                  })
-                  if(json.returnCode===200){
-                      this.alipayHref = json.data;
-                      this.dialogVisible = true;
-                  }
-                })
-            }else if(this.chargeForm.type==='weixin'){
-                this.$ajax("/WeChatPay/ScanCodePayment",{
-                  nickName:this.$store.state.userInfo.pseudonym,
-                  userPayMoney:this.chargeForm.number
-                },json=>{
-                  this.$nextTick(()=>{
-                    this.$loading().close()
-                  })
+            this.$myLoad();
+            FetchWebPay(this.chargeForm.type,this.$store.state.userInfo.pseudonym,this.chargeForm.number).then(json=>{
+                this.$nextTick(()=>{
+                    this.$loading().close();
                     if(json.returnCode===200){
-                      this.isWeiXin = true;
-                      setTimeout(()=>{
-                        let canvas = document.getElementById('WxpayCanvas');
-                        QRcode.toCanvas(canvas,json.data.code_url,{
-                          errorCorrectionLevel:'H',
-                          scale:16,
-                          height:300,
-                          width:300
-                        },function(err) {
-                          console.log(err)
-                        });
-                      },200);
+                        if(this.chargeForm.type==='weixin'){
+                            this.isWeiXin = true;
+                            setTimeout(()=>{
+                                let canvas = document.getElementById('WxpayCanvas');
+                                QRcode.toCanvas(canvas,json.data.code_url,{
+                                    errorCorrectionLevel:'H',
+                                    scale:16,
+                                    height:300,
+                                    width:300
+                                },function(err) {
+                                    console.log(err)
+                                });
+                            },200);
+                        }else {
+                            this.alipayHref = json.data;
+                            this.dialogVisible = true;
+                        }
                     }
-                })
-            }
-        } else {
-          return false;
+                });
+            });
         }
       })
     },
@@ -205,6 +197,7 @@ export default{
 
 </script>
 <style lang="stylus" type="text/stylus" rel="stylesheet/stylus">
+@import "../../assets/css/common.styl"
 .pay-confirm-box
   .el-dialog
     margin-top -124px
@@ -291,6 +284,22 @@ export default{
     .title
       font-size :18px
       line-height :60px
+    .radio-group
+        input[name=payWay]
+          display none
+        label
+          display inline-block
+          width 170px
+          height:72px
+          border-radius 7px
+          box-shadow 0 1px 15px
+          &[for=weixin]
+            background url('weixin@1_01.png') no-repeat center center
+          &[for=alipay]
+            margin-right 46px
+            background url('alipay@1_01.png') no-repeat center center
+          &.current
+            border :2px solid #ff8383
     .el-radio-group
       &.charge-number
         .el-radio__label
@@ -307,29 +316,6 @@ export default{
             position absolute
             width calc(100% - 26px)
             line-height 2
-      &.charge-type
-        .el-radio-button
-          margin-right :46px
-          .el-radio-button__inner
-            width 170px
-            height:72px
-            border:none!important
-            border-radius 7px
-            box-shadow 0 1px 15px #ead4df!important
-          &.is-active
-            .el-radio-button__inner
-              border :2px solid #ff8383!important
-              background-color :transparent!important
-              box-shadow none!important
-              transition none
-          &:first-child
-            .el-radio-button__inner
-              background url('alipay@1_01.png') no-repeat center center
-          &:nth-child(2)
-            .el-radio-button__inner
-              background url('weixin@1_01.png') no-repeat center center
-
-
 .charge-shade-wrap
   position fixed
   left 0

@@ -103,77 +103,79 @@
           <div :style="{top:barStyle.top}" class="read-side-bar-box">
               <div class="read-side-bar read-side-bar-left">
                 <!--章节目录-->
-                <el-popover
-                  ref="popover1"
-                  placement="right-start"
-                  width="600"
-                  popper-class="boxShadow"
-                  v-model="visible"
-                  trigger="click">
-                  <div class="catalog-child">
-                    <h3 class="title">目录</h3>
-                    <div class="collapse-wrap scrollBar">
-                      <template v-if="chapterList.list" >
-                        <el-collapse v-model="activeNames">
-                            <el-collapse-item v-for="(item,$index) in chapterList.list" :key="$index" :name="$index">
-                                <template slot="title">{{item.volumeName}}</template>
-                                <div v-for="(item2,$index2) in item.resultList" class="collapse-item-link txt-overflow v-middle">
-                                  <router-link :to="'/chapter/'+item2.id" @click='visible=false' class="txt-overflow v-item" target="_blank" >{{item2.chapterTitle}}</router-link>
-                                  <i v-if="item2.chapterIsvip" class="zdy-icon__vip"></i>
-                                </div>
-                            </el-collapse-item>
-                        </el-collapse>
-                      </template>
-                    </div>
-                  </div>
-                </el-popover>
-                <el-button class="btn clr9" v-popover:popover1 :style="{backgroundColor:intercalate[setData.theme].bgColor,borderColor:intercalate[setData.theme].brColor}">
+                <!--<el-popover-->
+                  <!--ref="popover1"-->
+                  <!--placement="right-start"-->
+                  <!--width="600"-->
+                  <!--popper-class="boxShadow"-->
+                  <!--v-model="visible"-->
+                  <!--trigger="click">-->
+                  <!--<div class="catalog-child">-->
+                    <!--<h3 class="title">目录</h3>-->
+                    <!--<div class="collapse-wrap scrollBar">-->
+                      <!--<template v-if="chapterList.list" >-->
+                        <!--<el-collapse v-model="activeNames">-->
+                            <!--<el-collapse-item v-for="(item,$index) in chapterList.list" :key="$index" :name="$index">-->
+                                <!--<template slot="title">{{item.volumeName}}</template>-->
+                                <!--<div v-for="(item2,$index2) in item.resultList" class="collapse-item-link txt-overflow v-middle">-->
+                                  <!--<router-link :to="'/chapter/'+item2.id" @click='visible=false' class="txt-overflow v-item" target="_blank" >{{item2.chapterTitle}}</router-link>-->
+                                  <!--<i v-if="item2.chapterIsvip" class="zdy-icon__vip"></i>-->
+                                <!--</div>-->
+                            <!--</el-collapse-item>-->
+                        <!--</el-collapse>-->
+                      <!--</template>-->
+                    <!--</div>-->
+                  <!--</div>-->
+                <!--</el-popover>-->
+                <!--v-popover:popover1 -->
+                <el-button class="btn clr9" :style="{backgroundColor:intercalate[setData.theme].bgColor,borderColor:intercalate[setData.theme].brColor}">
                   <div class="catalog">
                     <i></i><p>目录</p>
                   </div>
                 </el-button>
                 <!--页面设置-->
-                <el-popover
-                  ref="popover2"
-                  placement="right-start"
-                  width="400"
-                  trigger="click">
-                  <div class="setup-wrap">
-                    <!--<h3 class="title">设置</h3>-->
-                    <p class="sw-title">主题设置</p>
-                    <el-row class="theme">
-                        <el-radio-group size="small" v-model="setData.theme">
-                          <el-radio-button :label="0" :style="{backgroundColor: intercalate[0].bgColor}">{{null}}</el-radio-button>
-                          <el-radio-button :label="1" :style="{backgroundColor: intercalate[1].bgColor}">{{null}}</el-radio-button>
-                          <el-radio-button :label="2" :style="{backgroundColor: intercalate[2].bgColor}">{{null}}</el-radio-button>
-                          <el-radio-button :label="3" :style="{backgroundColor: intercalate[3].bgColor}">{{null}}</el-radio-button>
-                        </el-radio-group>
-                    </el-row>
-                    <p class="sw-title">字体大小</p>
-                    <el-row class="font-size">
-                      <el-input-number :step="2" :min="14" :max="42" size="small" v-model="setData.size"></el-input-number>
-                    </el-row>
-                    <p class="sw-title">正文字体</p>
-                    <el-row class="font-family">
-                      <el-radio-group size="small" v-model="setData.family">
-                        <el-radio-button label="Microsoft YaHei">微软雅黑</el-radio-button>
-                        <el-radio-button label="SimSun">宋体</el-radio-button>
-                        <el-radio-button label="KaiTi">楷体</el-radio-button>
+                <!--<el-popover-->
+                  <!--ref="popover2"-->
+                  <!--placement="right-start"-->
+                  <!--width="400"-->
+                  <!--trigger="click">-->
+                  <!--<div class="setup-wrap">-->
+                    <!--&lt;!&ndash;<h3 class="title">设置</h3>&ndash;&gt;-->
+                    <!--<p class="sw-title">主题设置</p>-->
+                    <!--<el-row class="theme">-->
+                        <!--<el-radio-group size="small" v-model="setData.theme">-->
+                          <!--<el-radio-button :label="0" :style="{backgroundColor: intercalate[0].bgColor}">{{null}}</el-radio-button>-->
+                          <!--<el-radio-button :label="1" :style="{backgroundColor: intercalate[1].bgColor}">{{null}}</el-radio-button>-->
+                          <!--<el-radio-button :label="2" :style="{backgroundColor: intercalate[2].bgColor}">{{null}}</el-radio-button>-->
+                          <!--<el-radio-button :label="3" :style="{backgroundColor: intercalate[3].bgColor}">{{null}}</el-radio-button>-->
+                        <!--</el-radio-group>-->
+                    <!--</el-row>-->
+                    <!--<p class="sw-title">字体大小</p>-->
+                    <!--<el-row class="font-size">-->
+                      <!--<el-input-number :step="2" :min="14" :max="42" size="small" v-model="setData.size"></el-input-number>-->
+                    <!--</el-row>-->
+                    <!--<p class="sw-title">正文字体</p>-->
+                    <!--<el-row class="font-family">-->
+                      <!--<el-radio-group size="small" v-model="setData.family">-->
+                        <!--<el-radio-button label="Microsoft YaHei">微软雅黑</el-radio-button>-->
+                        <!--<el-radio-button label="SimSun">宋体</el-radio-button>-->
+                        <!--<el-radio-button label="KaiTi">楷体</el-radio-button>-->
 
-                      </el-radio-group>
-                    </el-row>
-                    <p class="sw-title">自动订阅</p>
-                    <el-row class="subscribe">
-                      <el-switch
-                        @change="getAutoState"
-                        v-model="automaticTake"
-                        active-color="#13ce66"
-                        inative-color="#ff4949">
-                      </el-switch>
-                    </el-row>
-                  </div>
-                </el-popover>
-                <el-button class="btn clr9" v-popover:popover2 :style="{backgroundColor:intercalate[setData.theme].bgColor,borderColor:intercalate[setData.theme].brColor}">
+                      <!--</el-radio-group>-->
+                    <!--</el-row>-->
+                    <!--<p class="sw-title">自动订阅</p>-->
+                    <!--<el-row class="subscribe">-->
+                      <!--<el-switch-->
+                        <!--@change="getAutoState"-->
+                        <!--v-model="automaticTake"-->
+                        <!--active-color="#13ce66"-->
+                        <!--inative-color="#ff4949">-->
+                      <!--</el-switch>-->
+                    <!--</el-row>-->
+                  <!--</div>-->
+                <!--</el-popover>-->
+                <!--v-popover:popover2 -->
+                <el-button class="btn clr9" :style="{backgroundColor:intercalate[setData.theme].bgColor,borderColor:intercalate[setData.theme].brColor}">
                   <div class="setUp">
                     <i></i><p>设置</p>
                   </div>
@@ -270,7 +272,7 @@
     </div>
 </template>
 <script type="text/ecmascript-6">
-import { FetchReadChapter,FetchAutoSubscribe } from '../../api'
+import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,FetchGetPrattle,FetchAddRecords,FetchSubscribeChapter } from '../../api'
  import Badge from '../custom/badge.vue'
  import BadgeItem from '../custom/badge-item.vue'
  import { mapState, mapActions } from 'vuex'
@@ -378,7 +380,7 @@ import { FetchReadChapter,FetchAutoSubscribe } from '../../api'
         getChapterInfo(id){
           FetchReadChapter({chapterId:id,readType:1}).then(json=>{
             if(json.data && json.returnCode!==1000){
-              let desc = json.data.bookInfo.bookName + '是辣鸡小说网作者'+json.data.bookInfo.writerName+'全力打造的一部'+json.data.bookInfo.classificationName+'小说，辣鸡小说第一时间提供'+json.data.bookInfo.bookName+'最新章节，'+json.data.bookInfo.bookName+'全文阅读请上辣鸡小说'
+              let desc = json.data.bookInfo.bookName + '是辣鸡小说网作者'+json.data.bookInfo.writerName+'全力打造的一部'+json.data.bookInfo.classificationName+'小说，辣鸡小说第一时间提供'+json.data.bookInfo.bookName+'最新章节，'+json.data.bookInfo.bookName+'全文阅读请上辣鸡小说';
               this.$nextTick(function () {
                 window._bd_share_config = {
                   common:{
@@ -393,10 +395,10 @@ import { FetchReadChapter,FetchAutoSubscribe } from '../../api'
                 };
                 const s = document.createElement('script');
                 s.type = 'text/javascript';
-                s.id = 'baidu__share'
+                s.id = 'baidu__share';
                 s.src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5);
                 document.body.appendChild(s);
-              })
+              });
               json.data.bookInfo.rewardCount = json.data.rewardTotalNumber;
               json.data.chapterInfo.authorWords = json.data.chapterInfo.authorWords.replace(/\s*\n+\s*/g,'<br>　　');
               this.bookInfo = json.data.bookInfo;
@@ -503,29 +505,40 @@ import { FetchReadChapter,FetchAutoSubscribe } from '../../api'
         },
 //        发布间贴
         submitForm(index){
-            if(this.$trim(this.FormReply.content).length>0){
-              if(this.$regEmoji(this.FormReply.content)){
-                this.$message({message:"内容不可包含emoji表情图",type:'warning'});
-                return false
+            FetchAddPrattle({
+              pid:this.chapterInfo.chapterData[index].id,
+              commentContext:this.FormReply.content,
+              bookId:this.chapterInfo.bookId,
+              bookName:this.bookInfo.bookName,
+              chapterId:this.chapterInfo.id,
+              chapterName:this.chapterInfo.chapterTitle,
+              userName:this.$store.state.userInfo.pseudonym
+            }).then(json=>{
+              if(json.returnCode===ERR_OK){
+                this.FormReply.content = '';
+                this.chapterInfo.chapterData[index].count++;
+                this.getPaComment(index,1);
               }
-               this.$ajax("/pcomm-addParagraphcomment",{
-                 pid:this.chapterInfo.chapterData[index].id,
-                 commentContext:this.FormReply.content,
-                 bookId:this.chapterInfo.bookId,
-                 bookName:this.bookInfo.bookName,
-                 chapterId:this.chapterInfo.id,
-                 chapterName:this.chapterInfo.chapterTitle,
-                 userName:this.$store.state.userInfo.pseudonym
-               },json => {
-                 if(json.returnCode===ERR_OK){
-                   this.FormReply.content = '';
-                   this.chapterInfo.chapterData[index].count++;
-                   this.getPaComment(index,1);
-                 }else if(json.returnCode===ERR_NO){
-                   this.$router.push('/login');
-                 }
-               })
-            }
+            })
+//            if(this.$trim(this.FormReply.content).length>0){
+//              if(this.$regEmoji(this.FormReply.content)){
+//                this.$message({message:"内容不可包含emoji表情图",type:'warning'});
+//                return false
+//              }
+//               this.$ajax("/pcomm-addParagraphcomment",{
+//                 pid:this.chapterInfo.chapterData[index].id,
+//                 commentContext:this.FormReply.content,
+//                 bookId:this.chapterInfo.bookId,
+//                 bookName:this.bookInfo.bookName,
+//                 chapterId:this.chapterInfo.id,
+//                 chapterName:this.chapterInfo.chapterTitle,
+//                 userName:this.$store.state.userInfo.pseudonym
+//               },json => {
+//                 else if(json.returnCode===ERR_NO){
+//                   this.$router.push('/login');
+//                 }
+//               })
+//            }
         },
 //        点赞
         addThumbs(index,val){
@@ -592,16 +605,16 @@ import { FetchReadChapter,FetchAutoSubscribe } from '../../api'
         },
 //        收藏本书/加入书架
         addBookShelf(){
-            this.$ajax("/bookshelf-adduserbookshelf",{
-                userName:this.$store.state.userInfo.pseudonym,
-                bookId:this.chapterInfo.bookId,
-                bookName:this.chapterInfo.bookTitle
-            },json => {
-                if(json.returnCode===200){
-                    this.$message(json.msg);
-                    this.bookInfo.collectionStatus = this.bookInfo.collectionStatus?0:1;
-                }
-            })
+            FetchAddBookShelf(
+              this.chapterInfo.bookId,
+              this.$store.state.userInfo.pseudonym,
+              this.chapterInfo.bookTitle
+            ).then(json=>{
+              if(json.returnCode===200){
+                this.$message(json.msg);
+                this.bookInfo.collectionStatus = this.bookInfo.collectionStatus?0:1;
+              }
+            });
         },
 //        打赏、推荐票、金票
         myConsume:function (type) {
@@ -692,28 +705,23 @@ import { FetchReadChapter,FetchAutoSubscribe } from '../../api'
           }
         },
         getPaComment(index,page){
-          page = !page?1:page;
-          this.preUuid = this.chapterInfo.chapterData[index].id;
           this.isFocus = false;
-          if(this.preUuid){
-            this.$ajax("/pcomm-getParagraphcommentpid/"+this.preUuid+"/"+page,'',json=>{
-              if(json.returnCode===ERR_OK){
-               this.chapterComment = json.data
-              }
-            },'get')
-          }
+          FetchGetPrattle(this.chapterInfo.chapterData[index].id,page).then(json=>{
+            if(json.returnCode===ERR_OK){
+              this.chapterComment = json.data
+            }
+          });
         },
 //        添加阅读记录
         addReadRecord(){
           if(this.$store.state.userInfo.userId){
-            this.$ajax("/person-addBookReadRecord",{
+            FetchAddRecords({
               userName:this.$store.state.userInfo.pseudonym,
               bookId:this.chapterInfo.bookId,
               bookName:this.chapterInfo.bookTitle,
               chapterName:this.chapterInfo.chapterTitle,
               chapterId:this.chapterInfo.id
-            },json=>{
-            },'post','json','custom')
+            });
           }
         },
 //        章节订阅
@@ -721,27 +729,27 @@ import { FetchReadChapter,FetchAutoSubscribe } from '../../api'
           if(this.buyForm.autoState){
             this.getAutoState(true)
           }
-          this.$ajax("/book-subscription",{
+          FetchSubscribeChapter({
             userName:this.$store.state.userInfo.pseudonym,
             bookName:this.chapterInfo.bookTitle,
             bookId:this.chapterInfo.bookId,
             bookChapterId:this.chapterInfo.id,
             bookChapterName:this.chapterInfo.chapterTitle
-          },json=>{
+          }).then(json=>{
             this.dialogFormVisible = false;
             if(json.returnCode===200 || json.returnCode===100){
-               this.dialogFormVisible = false;
-               this.isRead = true;
-               this.chapterInfo.chapterData = this.formatTxt({content:json.data.chapterContent,count:this.countList});
-               this.getAutoState();
-               if(type!=='auto'){
-                 this.$message("订阅成功！");
-               }
-               this.$freshen()
+              this.dialogFormVisible = false;
+              this.isRead = true;
+              this.chapterInfo.chapterData = this.formatTxt({content:json.data.chapterContent,count:this.countList});
+              this.getAutoState();
+              if(type!=='auto'){
+                this.$message("订阅成功！");
+              }
+              this.$freshen()
             }else if(json.returnCode===300){
-                window.open('/charge');
+              window.open('/charge');
             }
-          })
+          });
         },
 //        发布书评
         addBookComment(){
@@ -797,9 +805,8 @@ import { FetchReadChapter,FetchAutoSubscribe } from '../../api'
         },
 
         'chapterInfo.bookId':function (val) {
-
           if(val){
-            this.getChapterList()
+            this.getChapterList();
             this.getAutoState()
           }
         },
@@ -815,7 +822,7 @@ import { FetchReadChapter,FetchAutoSubscribe } from '../../api'
       },
       mounted(){
         if(this.chapterInfo.bookId){
-//          this.getAutoState();
+          this.getAutoState();
         }
         this.getChapterInfo(this.$route.params.cid);
         if(localStorage.setData){
@@ -840,15 +847,17 @@ import { FetchReadChapter,FetchAutoSubscribe } from '../../api'
             this.isShow.state1 = 'hidden'
           }
         };
-        document.onkeydown = e => {
-         if(!this.isFocus){
-           if(e.keyCode===37){
-             this.skipPage(this.chapterList.preCid,'pre')
-           }else if(e.keyCode===39){
-             this.skipPage(this.chapterList.nextCid,'next')
-           }
-         }
-        };
+        if(this.$route.name==='Chapter'){
+          document.onkeydown = e => {
+            if(!this.isFocus){
+              if(e.keyCode===37){
+                this.skipPage(this.chapterList.preCid,'pre')
+              }else if(e.keyCode===39){
+                this.skipPage(this.chapterList.nextCid,'next')
+              }
+            }
+          };
+        }
         this.handleTip()
       },
       computed:{

@@ -1,8 +1,8 @@
 <template>
     <div class="author-income-wrapper" style="background: #fff">
       <div class="author-tabs">
-        <router-link to="/author/income/all">我的收入</router-link>
-        <router-link to="/author/income/mon">我的月报</router-link>
+        <router-link :to="'/author/income/all'">我的收入</router-link>
+        <router-link :to="'/author/income/mon'">我的月报</router-link>
         <a href="javascript:0;" class="remuneration" @click="centerDialogVisible=true">申请稿酬</a>
       </div>
 
@@ -38,12 +38,16 @@
         <template v-if="$route.name==='allIncome'">
           <div class="author-table-wrapper">
             <div class="table-box bsw">
-              <table>
-                <tr>
-                  <td width="516" colspan="2" class="tl">收入明细：</td>
-                  <td width="338px" class="tr" colspan="3">总收入：{{chartData.total}}</td>
-                </tr>
-              </table>
+              <el-row class="table">
+                <el-col :span="10">收入明细：</el-col>
+                <el-col :span="14" class="tr">总收入：{{chartData.total}}</el-col>
+              </el-row>
+              <!--<table>-->
+                <!--<tr>-->
+                  <!--<td width="516" colspan="2" class="tl"></td>-->
+                  <!--<td width="338px" class="tr" colspan="3"></td>-->
+                <!--</tr>-->
+              <!--</table>-->
               <el-table
                 :data="tableList"
                 @expand-change="rowExpand"
@@ -144,22 +148,36 @@
         <template v-else>
           <div class="author-table-wrapper">
             <div class="table-box bsw">
-              <table>
-                <tr>
-                  <td width="516" colspan="3" class="tl">收入明细：</td>
-                  <td width="338px" class="tr" colspan="4">总收入：{{chartData.total}}</td>
-                </tr>
-                <tr>
-                  <td >作品</td>
-                  <td width="120px">订阅</td>
-                  <td width="120px">打赏</td>
-                  <td width="120px">小米椒</td>
-                  <td width="120px">第三方</td>
-                  <td width="138px">全勤</td>
-                </tr>
-              </table>
+              <el-row>
+                <el-col>收入明细：</el-col>
+                <el-col>总收入：{{chartData.total}}</el-col>
+              </el-row>
+              <el-row>
+                <el-col>作品</el-col>
+                <el-col>订阅</el-col>
+                <el-col>打赏</el-col>
+                <el-col>小米椒</el-col>
+                <el-col>第三方</el-col>
+                <el-col>全勤</el-col>
+                <!--<tr>-->
+                  <!--<td >作品</td>-->
+                  <!--<td width="120px">订阅</td>-->
+                  <!--<td width="120px">打赏</td>-->
+                  <!--<td width="120px">小米椒</td>-->
+                  <!--<td width="120px">第三方</td>-->
+                  <!--<td width="138px">全勤</td>-->
+                <!--</tr>-->
+              </el-row>
+              <!--<table>-->
+                <!--<tr>-->
+                  <!--<td width="516" colspan="3" class="tl">收入明细：</td>-->
+                  <!--<td width="338px" class="tr" colspan="4">总收入：{{chartData.total}}</td>-->
+                <!--</tr>-->
+                
+              <!--</table>-->
               <table class="content-table">
-                <tr v-for="item in tableList">
+               
+                <tr v-for="item in tableList" :key="item.bookid">
                   <td width="224">
                     <p class="title txt-overflow">
                       <router-link :to="'/book/'+item.bookid" :target="'_blank'">
@@ -199,6 +217,7 @@
 
 <script type="text/ecmascript-6">
   import echarts from 'echarts'
+  import { FetchNetTime,FetchAuthorIncome,FetchLatestMonth } from '../../api'
     export default{
       data(){
             return {
@@ -265,116 +284,128 @@
             }
         },
       methods:{
-        changeDate(date){
-          if(date){
-            this.getAllDate(date,1)
-          }
-        },
-        formatStr(val){
-          let Str,
-          date =()=>{
-            let arr = this.allDate.split('/');
-            return arr[0]+'-'+parseInt(arr[1])
-          };
-          if(val){
-            Str = JSON.parse(JSON.parse(JSON.stringify(val)))
-          }
-          return !Str?0:(!Str[date()]?0:Str[date()])
-        },
-        formData(val){
-            let obj = {
-              sArr:[],
-              lArr:[],
-              total:0, //总收入
-              count:{
-                sub:0, //订阅
-                rec:0, //推荐
-                reward:0, //打赏
-                other:0, //第三方
-                daily:0 //全勤
-              }
+          changeDate(date){
+            if(date){
+              this.getAllDate(date,1)
+            }
+          },
+          formatStr(val){
+            let Str,
+            date =()=>{
+              let arr = this.allDate.split('/');
+              return arr[0]+'-'+parseInt(arr[1])
             };
-            if(this.$route.name==='monIncome'){
-              val.forEach((item)=>{
-                obj.count.sub = this.add(obj.count.sub,item.bubscribe);
-                obj.count.rec = this.add(obj.count.rec,item.millet);
-                obj.count.reward = this.add(obj.count.reward,item.pepper);
-                obj.count.other = this.add(obj.count.other,item.thirdPart);
-                obj.count.daily = this.add(obj.count.daily,item.checkworkattendance);
-              });
-            }else {
-              val.forEach((item)=>{
-                obj.count.sub += item.subscribe;
-                obj.count.rec += item.recommend;
-                obj.count.reward += item.areward;
-                obj.count.other += item.diShanFang;
-                obj.count.daily += item.kaoqin;
-              });
+            if(val){
+              Str = JSON.parse(JSON.parse(JSON.stringify(val)))
             }
-            let des = this.$route.name==='allIncome'?'辣椒':''
-            obj.sArr.splice(0,0,
-              {name:'订阅 +' + obj.count.sub + des,value:obj.count.sub},
-              {name:'打赏 +' +obj.count.reward + des,value:obj.count.reward},
-              {name:'小米椒 +' + obj.count.rec + des,value:obj.count.rec},
-              {name:'第三方 +' + obj.count.other,value:obj.count.other},
-              {name:'全勤 +' + obj.count.daily,value:obj.count.daily}
-            );
-            obj.lArr.splice(0,0,
-              {name:'订阅 +' + obj.count.sub + des,icon:'diamond'},
-              {name:'打赏 +' + obj.count.reward + des,icon:'diamond'},
-              {name:'小米椒 +' + obj.count.rec + des,icon:'diamond'},
-              {name:'第三方 +' + obj.count.other,icon:'diamond'},
-              {name:'全勤 +' + obj.count.daily,icon:'diamond'},
-            );
-            if(this.$route.name==='allIncome'){
-              obj.sArr = obj.sArr.slice(0,3);
-              obj.lArr = obj.lArr.slice(0,3);
-              obj.total += obj.count.sub + obj.count.rec + obj.count.reward ;
-              obj.total = obj.total + '辣椒'
-            }else {
-              obj.total += obj.count.sub + obj.count.rec + obj.count.reward + obj.count.other + obj.count.daily;
-            }
-            return obj;
-        },
-        getNowDate(){
-          if(this.$route.name==='allIncome'){
-            this.$ajax("/sys-getNetWorkDateTime",'',json=>{
-              if(json.returnCode===200){
-                let date = new Date(json.data.beijing);
-                let year = date.getFullYear();
-                let mon = date.getMonth()>=9?(date.getMonth()+1):'0' + (date.getMonth()+1);
-                let day = date.getDate()>9?date.getDate():'0' + date.getDate();
-                this.allDate = [year+'-'+mon+'-01',year+"-"+mon+"-"+day]
-                this.getAllDate(this.allDate);
-              }
-            },'get');
-          }else if(this.$route.name==='monIncome'){
-            this.$ajax("/sys-getDataPosition",'',time=>{
-              if(time.returnCode===200){
-                let self = this;
-                this.monthOption2 = {
-                  disabledDate(t) {
-                    return t.getTime() > new Date(time.data.replace(/-/g,'/'));
-                  }
+            return !Str?0:(!Str[date()]?0:Str[date()])
+          },
+          formData(val){
+              let obj = {
+                sArr:[],
+                lArr:[],
+                total:0, //总收入
+                count:{
+                  sub:0, //订阅
+                  rec:0, //推荐
+                  reward:0, //打赏
+                  other:0, //第三方
+                  daily:0 //全勤
                 }
-                this.monDate = time.data
-                this.getAllDate(this.monDate);
+              };
+              if(this.$route.name==='monIncome'){
+                val.forEach((item)=>{
+                  obj.count.sub = this.add(obj.count.sub,item.bubscribe);
+                  obj.count.rec = this.add(obj.count.rec,item.millet);
+                  obj.count.reward = this.add(obj.count.reward,item.pepper);
+                  obj.count.other = this.add(obj.count.other,item.thirdPart);
+                  obj.count.daily = this.add(obj.count.daily,item.checkworkattendance);
+                });
+              }else {
+                val.forEach((item)=>{
+                  obj.count.sub += item.subscribe;
+                  obj.count.rec += item.recommend;
+                  obj.count.reward += item.areward;
+                  obj.count.other += item.diShanFang;
+                  obj.count.daily += item.kaoqin;
+                });
               }
-            },'get');
-          }
-
-        },
-        getAllDate(date,page){
-            page = (!page?1:page);
-            let start;
+              let des = this.$route.name==='allIncome'?'辣椒':''
+              obj.sArr.splice(0,0,
+                {name:'订阅 +' + obj.count.sub + des,value:obj.count.sub},
+                {name:'打赏 +' +obj.count.reward + des,value:obj.count.reward},
+                {name:'小米椒 +' + obj.count.rec + des,value:obj.count.rec},
+                {name:'第三方 +' + obj.count.other,value:obj.count.other},
+                {name:'全勤 +' + obj.count.daily,value:obj.count.daily}
+              );
+              obj.lArr.splice(0,0,
+                {name:'订阅 +' + obj.count.sub + des,icon:'diamond'},
+                {name:'打赏 +' + obj.count.reward + des,icon:'diamond'},
+                {name:'小米椒 +' + obj.count.rec + des,icon:'diamond'},
+                {name:'第三方 +' + obj.count.other,icon:'diamond'},
+                {name:'全勤 +' + obj.count.daily,icon:'diamond'},
+              );
+              if(this.$route.name==='allIncome'){
+                obj.sArr = obj.sArr.slice(0,3);
+                obj.lArr = obj.lArr.slice(0,3);
+                obj.total += obj.count.sub + obj.count.rec + obj.count.reward ;
+                obj.total = obj.total + '辣椒'
+              }else {
+                obj.total += obj.count.sub + obj.count.rec + obj.count.reward + obj.count.other + obj.count.daily;
+              }
+              return obj;
+          },
+          getNowDate(){
             if(this.$route.name==='allIncome'){
-              start = date[0] +' 00:00:00';
-              this.$ajax('/allincomestatistics',{
-                startdate:start,
-                enddate:date[1] +' 23:59:59',
-                startpage:page
-              },json=>{
+              FetchNetTime().then(json=>{
                 if(json.returnCode===200){
+                  let date = new Date(json.data.beijing);
+                  let year = date.getFullYear();
+                  let mon = date.getMonth()>=9?(date.getMonth()+1):'0' + (date.getMonth()+1);
+                  let day = date.getDate()>9?date.getDate():'0' + date.getDate();
+                  this.allDate = [year+'-'+mon+'-01',year+"-"+mon+"-"+day];
+                  this.getAllDate(this.allDate);
+                }
+              });
+            }else if(this.$route.name==='monIncome'){
+                FetchLatestMonth().then(time=>{
+                  if(time.returnCode===200){
+                    this.monthOption2 = {
+                      disabledDate(t) {
+                        return t.getTime() > new Date(time.data.replace(/-/g,'/'));
+                      }
+                    };
+                    this.monDate = time.data;
+                    this.getAllDate(this.monDate);
+                  }
+                });
+            }
+  
+          },
+          getAllDate(date,page){
+            page = page | 1;
+            let start;
+            let type = this.$route.name;
+            let data = ()=> {
+                if(type==='allIncome'){
+                    return {
+                      startdate:date[0] +' 00:00:00',
+                      enddate:date[1] +' 23:59:59',
+                      startpage:page
+                    }
+                }else if(type==='monIncome'){
+                   this.tableList = [];
+                   start = date.split('-');
+                   return {
+                     year:start[0],
+                     month:start[1]
+                   }
+                }
+            };
+            console.log(type,data());
+            FetchAuthorIncome(type,data()).then(json=>{
+              if(json.returnCode===200 || !json.data){
+                if(type==='allIncome' && json.data){
                   json.data.Alldata.forEach((item,index)=>{
                     item.order = index;
                     if(item.recommend){
@@ -388,62 +419,51 @@
                   this.option.series[0].data = val.sArr;
                   this.option.legend.data = val.lArr;
                   this.incomeChart.setOption(this.option);
-                }
-              })
-            }else {
-              start = date.split('-');
-              this.tableList = [];
-              this.$ajax('/getAuthorMonthlyreportByAuthormonByAuthorIDWeb',{
-                year:start[0],
-                month:start[1]
-              },json=>{
-                  if(json.returnCode===200 || !json.data){
-                      if(json.data){
-                        json.data.forEach((item)=>{
-                          item.pepper = item.pepper.toFixed(2);
-                          item.millet = item.millet.toFixed(2);
-                          item.bubscribe = item.bubscribe.toFixed(2);
-                          item.thirdPart = item.thirdPart.toFixed(2);
-                          item.checkworkattendance = item.checkworkattendance.toFixed(2);
-                        });
-                      }
-                      this.tableList = JSON.parse(JSON.stringify(json.data?json.data:[]));
-                      let list = this.formData(this.tableList);
-                      this.chartData = list;
-                      this.option.title.text = '总收入: ' + list.total;
-                      this.option.series[0].data = list.sArr;
-                      this.option.legend.data = list.lArr;
-                      this.incomeChart.setOption(this.option);
+                }else if(type==='monIncome'){
+                  if(json.data){
+                    json.data.forEach((item)=>{
+                      item.pepper = item.pepper.toFixed(2);
+                      item.millet = item.millet.toFixed(2);
+                      item.bubscribe = item.bubscribe.toFixed(2);
+                      item.thirdPart = item.thirdPart.toFixed(2);
+                      item.checkworkattendance = item.checkworkattendance.toFixed(2);
+                    });
                   }
-              })
-            }
-
-        },
-        rowExpand(row,expand){
-          if(expand){
-            this.getChapterDetail(row,1)
-          }
-        },
-        getChapterDetail(row,page){
-          if(this.allDate){
-            this.$ajax("/subscriptionstatistics",{
-              startdate:this.allDate[0]+' 00:00:00',
-              enddate:this.allDate[1]+' 23:59:59',
-              bookid:row.bookid,
-              startpage:!page?1:page
-            },json=>{
-              if(json.returnCode===200){
-                this.$set(this.tableList[row.order],'child',json.data)
+                  this.tableList = JSON.parse(JSON.stringify(json.data?json.data:[]));
+                  let list = this.formData(this.tableList);
+                  this.chartData = list;
+                  this.option.title.text = '总收入: ' + list.total;
+                  this.option.series[0].data = list.sArr;
+                  this.option.legend.data = list.lArr;
+                  this.incomeChart.setOption(this.option);
+                }
               }
-            })
-          }
-
+            });
         },
-        handleCurrentChange(page,val){
-          this.getChapterDetail(val,page)
-        },
+          rowExpand(row,expand){
+              if(expand){
+                this.getChapterDetail(row,1)
+              }
+          },
+          getChapterDetail(row,page){
+              if(this.allDate){
+                  FetchAuthorIncome('chapter',{
+                    startdate:this.allDate[0]+' 00:00:00',
+                    enddate:this.allDate[1]+' 23:59:59',
+                    bookid:row.bookid,
+                    startpage:!page?1:page
+                  }).then(json=>{
+                    if(json.returnCode===200){
+                      this.$set(this.tableList[row.order],'child',json.data)
+                    }
+                  })
+              }
+          },
+          handleCurrentChange(page,val){
+            this.getChapterDetail(val,page)
+          },
 //        浮点数相加
-        add(a, b) {
+          add(a, b) {
           var c, d, e;
           try {
             c = a.toString().split(".")[1].length;
@@ -458,7 +478,7 @@
           return e = Math.pow(10, Math.max(c, d)),((this.mul(a, e) + this.mul(b, e)) / e);
         },
 //        浮点数相乘
-        mul(a, b) {
+          mul(a, b) {
           var c = 0,
             d = a.toString(),
             e = b.toString();
@@ -472,9 +492,11 @@
         }
       },
       mounted(){
-        this.getNowDate();
-        this.incomeChart = echarts.init(document.getElementById('ichart-all'));
-        this.incomeChart.setOption(this.option)
+          this.incomeChart = echarts.init(document.getElementById('ichart-all'));
+          this.incomeChart.setOption(this.option);
+          this.$nextTick(()=>{
+            this.getNowDate();
+          });
       },
       watch:{
           '$route':function () {
@@ -484,9 +506,15 @@
     }
 </script>
 <style lang="stylus" type="text/stylus" rel="stylesheet/stylus">
+.el-row
+  &.table
+      padding 0 20px
+      height 62px
+      line-height 62px
+      font-size 16px
+      border-bottom 1px solid #efefef
 .income-wrap
   padding 0 10px
-
 .el-input__icon
   position relative!important
 .date-range-wrapper

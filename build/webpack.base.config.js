@@ -92,5 +92,6 @@ module.exports = {
       ]
     : [
         new FriendlyErrorsPlugin()
-      ]
-}
+      ],
+
+};
