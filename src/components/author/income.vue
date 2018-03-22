@@ -42,12 +42,6 @@
                 <el-col :span="10">收入明细：</el-col>
                 <el-col :span="14" class="tr">总收入：{{chartData.total}}</el-col>
               </el-row>
-              <!--<table>-->
-                <!--<tr>-->
-                  <!--<td width="516" colspan="2" class="tl"></td>-->
-                  <!--<td width="338px" class="tr" colspan="3"></td>-->
-                <!--</tr>-->
-              <!--</table>-->
               <el-table
                 :data="tableList"
                 @expand-change="rowExpand"
@@ -148,35 +142,21 @@
         <template v-else>
           <div class="author-table-wrapper">
             <div class="table-box bsw">
-              <el-row>
-                <el-col>收入明细：</el-col>
-                <el-col>总收入：{{chartData.total}}</el-col>
+              <el-row class="table">
+                <el-col :span="10">收入明细：</el-col>
+                <el-col :span="14" class="tr">总收入：{{chartData.total}}</el-col>
               </el-row>
-              <el-row>
-                <el-col>作品</el-col>
-                <el-col>订阅</el-col>
-                <el-col>打赏</el-col>
-                <el-col>小米椒</el-col>
-                <el-col>第三方</el-col>
-                <el-col>全勤</el-col>
-                <!--<tr>-->
-                  <!--<td >作品</td>-->
-                  <!--<td width="120px">订阅</td>-->
-                  <!--<td width="120px">打赏</td>-->
-                  <!--<td width="120px">小米椒</td>-->
-                  <!--<td width="120px">第三方</td>-->
-                  <!--<td width="138px">全勤</td>-->
-                <!--</tr>-->
+              <el-row class="table head">
+                <el-col class="w230" >作品</el-col>
+                <el-col class="w120" >订阅</el-col>
+                <el-col class="w120">打赏</el-col>
+                <el-col class="w120">小米椒</el-col>
+                <el-col class="w120">第三方</el-col>
+                <el-col class="w112">全勤</el-col>
               </el-row>
-              <!--<table>-->
-                <!--<tr>-->
-                  <!--<td width="516" colspan="3" class="tl">收入明细：</td>-->
-                  <!--<td width="338px" class="tr" colspan="4">总收入：{{chartData.total}}</td>-->
-                <!--</tr>-->
-                
-              <!--</table>-->
+
               <table class="content-table">
-               
+
                 <tr v-for="item in tableList" :key="item.bookid">
                   <td width="224">
                     <p class="title txt-overflow">
@@ -380,7 +360,7 @@
                   }
                 });
             }
-  
+
           },
           getAllDate(date,page){
             page = page | 1;
@@ -402,7 +382,6 @@
                    }
                 }
             };
-            console.log(type,data());
             FetchAuthorIncome(type,data()).then(json=>{
               if(json.returnCode===200 || !json.data){
                 if(type==='allIncome' && json.data){
@@ -513,6 +492,16 @@
       line-height 62px
       font-size 16px
       border-bottom 1px solid #efefef
+      &.head
+          font-size 14px
+          .el-col
+              float left
+              &.w120
+                 width 120px
+              &.w112
+                width 112px
+              &.w230
+                width 230px
 .income-wrap
   padding 0 10px
 .el-input__icon

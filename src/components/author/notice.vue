@@ -44,6 +44,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchAuthorNotice } from '../../api'
     export default{
         data(){
           return{
@@ -52,14 +53,11 @@
         },
       methods:{
         getNoticeList(page){
-          this.$ajax("/sys-getNotice",{
-            page:page,
-            menuId:2
-          },json=>{
+          FetchAuthorNotice(page).then(json=>{
             if(json.returnCode){
               this.noticeList = json.data
             }
-          },'get')
+          })
         },
         handleCurrentChange(page){
            this.getNoticeList(page)

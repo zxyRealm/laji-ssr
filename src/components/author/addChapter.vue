@@ -44,7 +44,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="章节名称" prop="chapterTitle">
-            <el-input style="width: 260px" @blur="checkChapterName($event)" v-model="ruleForm.chapterTitle"></el-input>
+            <el-input style="width: 260px" v-model="ruleForm.chapterTitle"></el-input>
           </el-form-item>
           <el-form-item label="章节内容" class="contentBox" prop="chapterContent">
             <el-input class="context" type="textarea" :rows="15" style="width:686px"  v-model="ruleForm.chapterContent"></el-input>
@@ -100,11 +100,11 @@
     </div>
 </template>
 <script type="text/ecmascript-6">
+import { FetchGetBookInfo,FetchAuthorHandleBook ,FetchNetTime,FetchCheckName } from '../../api'
   export default {
     data() {
       let validateContent = (rule,value,callback) =>{
          if(this.ruleForm.chapterLength){
-            console.log("content blur")
              this.ruleForm.chapterContent = this.ruleForm.chapterContent.replace(/^\s*\n+\s*/,'').replace(/\s*\n+\s*/g,'\n\n　　');
              if(this.ruleForm.chapterLength>20000){
                  this.isPending = false;
@@ -121,7 +121,7 @@
          }
       };
       let validateVolume = (rule,value,callback) => {
-          value = this.$trim(value)
+          value = this.$trim(value);
           if(!value||value.length<1){
             this.volumeForm.volumeName = '';
             callback(new Error("卷名不能为空"))
@@ -129,16 +129,16 @@
             if(value.length>20){
               callback(new Error("总长度不可超过20个字符"))
             }else {
-              this.$ajax("/books-getCheckVolume",{
-                volumeName:value,
-                bookid:this.ruleForm.bookId
-              },json => {
-                if (json.returnCode===200) {
-                  callback()
-                } else {
-                  callback(new Error(json.msg))
-                }
-              });
+                FetchCheckName({
+                  volumeName:value,
+                  bookid:this.ruleForm.bookId
+                },'volume').then(json=>{
+                  if (json.returnCode===200) {
+                    callback()
+                  } else {
+                    callback(new Error(json.msg))
+                  }
+                })
             }
           }
        };
@@ -152,10 +152,10 @@
                 callback(new Error('章节名长度不可超过20字符'));
                 return false
             }
-            this.$ajax('/chapter-checkName',{
+            FetchCheckName({
               chapterName:value,
               bookId:this.$route.params.bid
-            },json=> {
+            },'chapter').then(json=>{
               if(json.returnCode===200){
                 callback()
               }else{
@@ -233,7 +233,7 @@
              }else if(this.ruleForm.chapterIsvip){
                this.$nextTick(()=>{
                  this.$loading().close()
-               })
+               });
                this.$alert('确认设置为收费章节？', '', {
                  confirmButtonText: '确  定',
                  customClass:'issue-alert',
@@ -252,7 +252,7 @@
           } else {
             this.$nextTick(()=>{
               this.$loading().close()
-            })
+            });
             this.$message({message:"请完善必填信息！",type:'warning'});
             return false;
           }
@@ -262,59 +262,60 @@
           //          首先获取网络时间
           let cloneData = JSON.parse(JSON.stringify(this.ruleForm));
               cloneData.chapterContent = this.$trim(cloneData.chapterContent).replace(/\n+\s+/g,'<H><LG>')+"<H><LG>";
-          this.$ajax("/sys-getNetWorkDateTime",'',time=>{
-              if(time.returnCode===200){
-                  if(cloneData.releaseTime){
-                      cloneData.releaseTime = this.$formTime(cloneData.releaseTime,"long")
-                  }else {
-                      cloneData.releaseTime = this.$formTime(time.data.beijing,'long')
-                  }
-                  this.$ajax("/chapter-creates",cloneData,json=>{
-                      this.$nextTick(()=>{
-                        this.$loading().close()
-                      })
-                      if(json.returnCode===200){
-                          this.$alert(cloneData.whetherPublic===1?"保存草稿成功":'发布成功', '', {
-                              confirmButtonText: '确  定',
-                              customClass:'issue-alert',
-                              lockScroll:false,
-                              type:'success',
-                              callback: action => {
-                                if(cloneData.whetherPublic===1){
-                                    this.$router.push({name:'DraftList'})
-                                }else {
-                                    this.$router.push({name:'ChapterList'})
-                                }
-                              }
-                          });
+          FetchNetTime().then(time=>{
+               if(time.returnCode===200){
+                   if(cloneData.releaseTime){
+                     cloneData.releaseTime = this.$formTime(cloneData.releaseTime,"long")
+                   }else {
+                     cloneData.releaseTime = this.$formTime(time.data.beijing,'long')
+                   }
+                   FetchAuthorHandleBook(cloneData,'ac').then(json=>{
+                       this.$nextTick(()=>{
+                         this.$loading().close()
+                       });
+                       if(json.returnCode===200){
+                         this.$alert(cloneData.whetherPublic===1?"保存草稿成功":'发布成功', '', {
+                           confirmButtonText: '确  定',
+                           customClass:'issue-alert',
+                           lockScroll:false,
+                           type:'success',
+                           callback: action => {
+                             if(cloneData.whetherPublic===1){
+                               this.$router.push({name:'DraftList'})
+                             }else {
+                               this.$router.push({name:'ChapterList'})
+                             }
+                           }
+                         });
 
-                      }else {
-                          this.$message({message:json.msg,type:'error'})
-                      }
-                  })
-              }else {
-                  this.$nextTick(()=>{
-                    this.$loading().close()
-                  })
-              }
-          },'get','json',true)
+                       }else {
+                         this.$message({message:json.msg,type:'error'})
+                       }
+                   });
+               }else {
+                   this.$nextTick(()=>{
+                     this.$loading().close()
+                   })
+               }
+          });
+
 
       },
 //      新增分卷
       addNewVolume(formName){
         this.$refs[formName].validate((valid) => {
            if(valid){
-             this.$ajax("/books-addvolume",{
-               volumeName:this.volumeForm.volumeName,
-               bookName:this.ruleForm.bookTitle,
-               bookid:this.$route.params.bid
-             },json => {
-               if (json.returnCode === 200) {
-                 this.dialogFormVisible = false;
-                 this.$message("添加成功");
-                 this.getChapterInfo()
-               }
-             })
+               FetchAuthorHandleBook({
+                 volumeName:this.volumeForm.volumeName,
+                 bookName:this.ruleForm.bookTitle,
+                 bookid:this.$route.params.bid
+               },'av').then(json=>{
+                 if (json.returnCode === 200) {
+                   this.dialogFormVisible = false;
+                   this.$message("添加成功");
+                   this.getChapterInfo()
+                 }
+               })
            }
         });
       },
@@ -323,28 +324,21 @@
       },
 //      章节信息回显
       getChapterInfo(){
-        this.$ajax("/book-showBookInfo",{
-          bookid:this.$route.params.bid
-        },json => {
+        FetchGetBookInfo(this.$route.params.bid,'book').then(json=>{
           if(json.returnCode===200){
             this.ruleForm.bookTitle = json.data.bookName;
             this.ruleForm.bookId = json.data.bookId;
             this.isVip = json.data.bookCheckStatus;
             this.ruleForm.chapterIsvip = this.isVip===2?1:0;
-            this.$ajax("/books-getvolume",{bookId:this.$route.params.bid},json => {
-              if(json.returnCode===200 && json.data.length){
-                this.volumeList = json.data.reverse();
+            FetchGetBookInfo(this.$route.params.bid,'volume').then(json2=>{
+              if(json2.returnCode===200 && json2.data.length){
+                this.volumeList = json2.data.reverse();
                 this.ruleForm.volumeId = this.volumeList[0].id
               }
             });
           }
-        })
+        });
       },
-      //      校验章节名是否重复
-      checkChapterName(event){
-         if(event.target.value.length>0){
-         }
-      }
     },
     watch:{
       "ruleForm.chapterContent":function (val) {

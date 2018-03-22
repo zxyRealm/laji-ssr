@@ -14,7 +14,8 @@ export default {
   bookStackSell: state => state.bookStackSell ? state.bookStackSell.data : [],
   bookStackHotLabel: state => state.bookStackHotLabel ? state.bookStackHotLabel.data : [],
   stackList: state => state.stackList ? state.stackList.data : {},
-  bookClassName: state => state.bookClassName ? state.bookClassName.data : []
+  bookClassName: state => state.bookClassName ? state.bookClassName.data : [],
+  authorChapterList:state => state.authorChapterList,
 }
 
 

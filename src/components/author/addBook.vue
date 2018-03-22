@@ -93,7 +93,7 @@
           </el-col>
         </el-form-item>
         <el-form-item class="mt20"></el-form-item>
-        <el-form-item >
+        <el-form-item labelWidth="0px" >
           <el-button
             class="edit-book-btn"
             type="primary"
@@ -119,7 +119,7 @@
 
 <script type="text/ecmascript-6">
   import Cropper from '../common/img_upload.vue'
-
+  import { FetchGetBookInfo,FetchAuthorHandleBook,FetchCheckName } from '../../api'
   export default{
     components:{
        'pic-cropper':Cropper
@@ -134,14 +134,13 @@
           if(this.$route.name==='addBook'){
             let reg = /^[a-zA-Z0-9\u4e00-\u9fa5:：]{1,20}$/;
             if(!reg.test(txt)){callback(new Error("书籍名称只能包含中文、数字、字母和冒号"));return false;}
-            this.$ajax("/book-checkName",
-              { bookName:this.bookInfo.bookName },json=> {
-                if(json.returnCode!==200){
-                  callback(new Error('作品名称已存在，请重新填写'))
-                }else{
-                  callback()
-                }
-              })
+            FetchCheckName({ bookName:this.bookInfo.bookName },'book').then(json=>{
+              if(json.returnCode!==200){
+                callback(new Error('作品名称已存在，请重新填写'))
+              }else{
+                callback()
+              }
+            })
           }else {
             callback()
           }
@@ -172,7 +171,7 @@
             }
           }
         }
-      }
+      };
       return {
         bookId:'',
         fullscreenLoading:false,
@@ -217,90 +216,81 @@
     },
     methods: {
       addNewBook:function (formName) {
-        this.$myLoad()
+        this.$myLoad();
         this.$refs[formName].validate((valid) => {
           if(valid){
             let formData = JSON.parse(JSON.stringify(this.bookInfo));
+            let type = this.$route.name === 'addBook'?'ab':'eb';
             delete formData.bookImage;
             delete formData.bookWriterId;
             formData.bookLabId = formData.bookLabId.toString();
             formData.bookName = this.$trim(formData.bookName);
-//            添加新书籍
-            if(this.$route.name==='addBook'){
-              formData.writerName = this.$store.state.userInfo.pseudonym;
-              this.$ajax("/book-create", formData,json => {
-                  if(json.returnCode===200){
-                      this.bookId = json.data;
-                      this.$nextTick(()=>{
-                        this.$refs.bookCoverUpdate.submitImageFile((res)=>{
-                          this.$nextTick(()=>{
-                            this.$loading().close()
-                          })
-                          if(res.returnCode===200){
-                            this.$alert('书籍创建成功', '', {
-                              confirmButtonText: '确  定',
-                              customClass:'issue-alert',
-                              lockScroll:false,
-                              type:'success',
-                              callback: action => {
-                                  if(action==='confirm'){
-                                    this.$router.push("/author/writing/addChapter/"+json.data);
-                                  }else {
-                                    this.$router.push("/author/writing/index")
-                                  }
-                              }
-                            });
-                          }
-                        });
-                      })
-                  }else {
-                    this.$nextTick(()=>{
-                      this.$loading().close()
-                    })
-                  }
-                })
-            }else{
-              this.$ajax("/book-update",formData,json => {
+            formData.writerName = this.$store.state.userInfo.pseudonym;
+//            添加/修改书籍
+              FetchAuthorHandleBook(formData,type).then(json=>{
                 if(json.returnCode===200){
-                  this.$refs.bookCoverUpdate.submitImageFile((res)=>{
+                  if(type==='ab'){
+                    this.bookId = json.data;
                     this.$nextTick(()=>{
-                      this.$loading().close()
+                      this.$refs.bookCoverUpdate.submitImageFile((res)=>{
+                        this.$nextTick(()=>{
+                          this.$loading().close()
+                        });
+                        if(res.returnCode===200){
+                          this.$alert('书籍创建成功', '', {
+                            confirmButtonText: '确  定',
+                            customClass:'issue-alert',
+                            lockScroll:false,
+                            type:'success',
+                            callback: action => {
+                              if(action==='confirm'){
+                                this.$router.push("/author/writing/addChapter/"+json.data);
+                              }else {
+                                this.$router.push("/author/writing/index")
+                              }
+                            }
+                          });
+                        }
+                      });
                     })
-                    if(res.returnCode===200){
-                      this.getLabel();
-                      this.$message('编辑成功');
-                    }
-                  });
+                  }else {
+                    this.$refs.bookCoverUpdate.submitImageFile((res)=>{
+                      this.$nextTick(()=>{
+                        this.$loading().close()
+                      })
+                      if(res.returnCode===200){
+                        this.getLabel();
+                        this.$message('编辑成功');
+                      }
+                    });
+                  }
                 }else {
                   this.$nextTick(()=>{
                     this.$loading().close()
                   })
                 }
               });
-            }
+
           }else{
             this.$nextTick(()=>{
               this.$loading().close()
-            })
+            });
             this.$message({message:"请检查输入信息是否完整！",type:'warning'});
           }
         });
       },
       getLabel() {
-        this.$ajax('/book-EditBookEcho','',
-        json => {
+        FetchGetBookInfo('','label').then(json=>{
           const labelList = json.data.booklablesList;
           this.classList = json.data.classificationList;
           this.bookLabelList = labelList;
           if(this.$route.name==='EditBook'){
-            this.$ajax("/book-showBookInfo",{
-              bookid:this.$route.params.bid
-            },json2 => {
+            FetchGetBookInfo(this.$route.params.bid,'book').then(json2=>{
               if(json2.returnCode===200){
-                  let arr = [];
-                  json2.data.bookLabId.split(",").map((item) => {
-                    arr.push(parseInt(item))
-                  });
+                let arr = [];
+                json2.data.bookLabId.split(",").map((item) => {
+                  arr.push(parseInt(item))
+                });
                 json2.data.bookLabId = arr;
                 this.bookInfo.bookLabId = json2.data.bookLabId;
                 this.bookInfo.bookName = json2.data.bookName;
@@ -310,9 +300,20 @@
                 this.bookInfo.bookId = json2.data.bookId;
                 this.bookInfo.bookIntroduction = json2.data.bookIntroduction;
               }
-            });
+            })
           }
-        },'get');
+        });
+//        this.$ajax('/book-EditBookEcho','',
+//        json => {
+//
+//          if(this.$route.name==='EditBook'){
+//            this.$ajax("/book-showBookInfo",{
+//              bookid:this.$route.params.bid
+//            },json2 => {
+//
+//            });
+//          }
+//        },'get');
       },
 
       setCover(url){

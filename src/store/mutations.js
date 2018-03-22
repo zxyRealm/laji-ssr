@@ -86,5 +86,9 @@ export default {
     }else {
       state.userInfo = {}
     }
+  },
+  SET_AUTHOR_CHAPTER_LIST(state,data){
+    state.authorChapterList = data | [];
+    console.log('设置后',state.authorChapterList)
   }
 }

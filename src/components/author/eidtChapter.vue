@@ -106,6 +106,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+  import { FetchCheckName,FetchGetBookInfo,FetchAuthorHandleBook,FetchNetTime } from '../../api'
   export default {
     data() {
       let validateContent = (rule,value,callback) =>{
@@ -136,21 +137,21 @@
         }
       };
       let validateVolume = (rule,value,callback) => {
-        if(!value||this.$trim(value).length<1){
-          this.volumeForm.volumeName = '';
-          callback(new Error("卷名不能为空"))
-        }else {
-          this.$ajax("/books-getCheckVolume",{
-            volumeName:value,
-            bookid:this.ruleForm.bookId
-          },json => {
-            if (json.returnCode===200) {
-              callback()
-            } else {
-              callback(new Error(json.msg))
-            }
-          });
-        }
+          if(!value||this.$trim(value).length<1){
+              this.volumeForm.volumeName = '';
+              callback(new Error("卷名不能为空"))
+          }else {
+              FetchCheckName({
+                volumeName:value,
+                bookid:this.ruleForm.bookId
+              },'volume').then(json=>{
+                if (json.returnCode===200) {
+                  callback()
+                } else {
+                  callback(new Error(json.msg))
+                }
+              });
+          }
       };
       let validateCheckCn = (rule,value,callback) => {
         value = this.$trim(value);
@@ -162,20 +163,20 @@
             callback()
           }else {
             if(value.length>20){
-              callback(new Error('章节名长度不可超过20字符'));
-              return false
+                callback(new Error('章节名长度不可超过20字符'));
+                return false
             }
-            this.$ajax('/chapter-checkName',{
-              chapterName:value,
-              bookId:this.ruleForm.bookId
-            },json=> {
-              if(json.returnCode===200){
-                callback()
-              }else{
-                this.$message('章节名重复，请重新填写！');
-                callback(new Error('章节名重复，请重新填写！'));
-              }
-            })
+            FetchCheckName({
+                chapterName:value,
+                bookId:this.ruleForm.bookId
+            },'chapter').then(json=>{
+                if(json.returnCode===200){
+                  callback()
+                }else{
+                  this.$message('章节名重复，请重新填写！');
+                  callback(new Error('章节名重复，请重新填写！'));
+                }
+            });
           }
         }
       };
@@ -244,7 +245,7 @@
     methods: {
 //        添加新章节
       submitForm(type) {
-        this.$myLoad()
+        this.$myLoad();
         this.$refs['editChapterForm'].validate((valid) => {
           if (valid) {
             if(type==='draft'){
@@ -266,7 +267,7 @@
         if(this.ruleForm.chapterLength>20000){
           this.$nextTick(()=>{
             this.$loading().close()
-          })
+          });
 //          this.isLoading = false;
           this.$confirm('文章内容超出字数长度限制，请保证字数长度在20000以内！', '提示', {
             confirmButtonText: '确定',
@@ -277,11 +278,10 @@
         }
         let cloneData = JSON.parse(JSON.stringify(this.ruleForm));
         let release = () =>{
-          this.$ajax("/chapter-update",cloneData,json=>{
+          FetchAuthorHandleBook(cloneData,'ec').then(json=>{
             this.$nextTick(()=>{
               this.$loading().close()
-            })
-//            this.isLoading = false;
+            });
             if(json.returnCode===200){
               this.$alert(!cloneData.whetherPublic?"编辑成功":(cloneData.whetherPublic===1?'保存草稿成功':'草稿发布成功'), '', {
                 confirmButtonText: '确  定',
@@ -294,7 +294,7 @@
                 }
               });
             }
-          })
+          });
         };
 
         if(this.ruleForm.whetherPublic===1){
@@ -318,17 +318,17 @@
       addNewVolume(formName){
         this.$refs[formName].validate((valid) => {
           if(valid){
-            this.$ajax("/books-addvolume",{
-              volumeName:this.volumeForm.volumeName,
-              bookName:this.ruleForm.bookTitle,
-              bookid:this.$route.params.bid
-            },json => {
-              if(json.returnCode === 200) {
-                this.dialogFormVisible = false;
-                this.$message("添加成功");
-                this.getChapterInfo()
-              }
-            })
+              FetchAuthorHandleBook({
+                volumeName:this.volumeForm.volumeName,
+                bookName:this.ruleForm.bookTitle,
+                bookid:this.$route.params.bid
+              },'av').then(json=>{
+                if(json.returnCode === 200) {
+                  this.dialogFormVisible = false;
+                  this.$message("添加成功");
+                  this.getChapterInfo()
+                }
+              });
           }else {
             this.$message({message:'请填写卷名！',type:'warning'})
           }
@@ -339,58 +339,56 @@
       {
         let reg1 = /<LG>[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}<\/?LG ?\/?>/;
         let reg2 = /<LG>[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}<\/?LG ?\/?>/g;
-        this.$ajax("/sys-getNetWorkDateTime",'',time=>{
-          if(time.returnCode===200){
-            this.$ajax("/chapter-getChapterInfo",{chapterid:this.$route.params.cid},json=>{
-              this.update = false;
-              if(json.returnCode===200){
-                this.reLoad = false;
-                this.original = JSON.parse(JSON.stringify(json.data));
-                this.initial = [];
-                delete json.data.createChapterTime;
-                json.data.releaseTime =  new Date(json.data.releaseTime);
-                this.oldChapterName = json.data.chapterTitle;
-                if(json.data.whetherPublic===1){
-                  json.data.chapterContent = json.data.chapterContent.replace(/<H><LG>/g,'\n\n  ');
-                }else {
-                  let idList = json.data.chapterContent.match(reg2);
-                  let txtList = json.data.chapterContent.split(reg1);
-                  json.data.chapterContent = json.data.chapterContent.replace(reg2,'\n');
-                  idList.forEach((item,index)=>{
-                    this.initial.push({
-                      uuid:item,
-                      content:this.$trim(txtList[index])
-                    })
-                  });
-                }
-                this.ruleForm = json.data;
-                this.getVolume();
-                setTimeout(()=>{
-                    this.reLoad = true;
-                },100)
-              }
-            });
-            let count = 0;
-            setInterval(()=>{
+        FetchNetTime().then(time=>{
+           if(time.returnCode===200){
+             let count = 0;
+             setInterval(()=>{
                count++;
                this.$set(this.original,'nowTime',time.data.beijing+count*1000);
-            },1000)
-          }
-        },'get')
+             },1000);
+             FetchGetBookInfo(this.$route.params.cid,'chapter').then(json=>{
+               this.update = false;
+               if(json.returnCode===200){
+                 this.reLoad = false;
+                 this.original = JSON.parse(JSON.stringify(json.data));
+                 this.initial = [];
+                 delete json.data.createChapterTime;
+                 json.data.releaseTime =  new Date(json.data.releaseTime);
+                 this.oldChapterName = json.data.chapterTitle;
+                 if(json.data.whetherPublic===1){
+                   json.data.chapterContent = json.data.chapterContent.replace(/<H><LG>/g,'\n\n  ');
+                 }else {
+                   let idList = json.data.chapterContent.match(reg2);
+                   let txtList = json.data.chapterContent.split(reg1);
+                   json.data.chapterContent = json.data.chapterContent.replace(reg2,'\n');
+                   idList.forEach((item,index)=>{
+                     this.initial.push({
+                       uuid:item,
+                       content:this.$trim(txtList[index])
+                     })
+                   });
+                 }
+                 this.ruleForm = json.data;
+                 this.getVolume();
+                 setTimeout(()=>{
+                   this.reLoad = true;
+                 },100)
+               }
+             })
+           }
+        });
       },
       //      获取分卷列表
       getVolume(){
-        this.$ajax("/books-getvolume",{bookId:this.ruleForm.bookId},json => {
+        FetchGetBookInfo(this.ruleForm.bookId,'volume').then(json=>{
           if(json.returnCode===200){
             if(json.data < 1){
-              this.$ajax("/book-showBookInfo",{
-                bookid:this.$route.params.bid
-              },json => {
-                if(json.returnCode===200){
-                  this.ruleForm.bookTitle = json.data.bookName;
-                  this.ruleForm.bookId = json.data.bookId;
-                }
-              })
+                FetchGetBookInfo(this.$route.params.bid,'book').then(json2=>{
+                    if(json2.returnCode===200){
+                      this.ruleForm.bookTitle = json2.data.bookName;
+                      this.ruleForm.bookId = json2.data.bookId;
+                    }
+                });
             }else {
               this.volumeList = json.data;
               this.ruleForm.bookTitle = json.data[0].bookName;
@@ -399,11 +397,6 @@
             this.update = true
           }
         });
-      },
-//      校验章节名是否重复
-      checkChapterName(event){
-        if(event.target.value.length>0){
-        }
       },
       editChange(e){
         let parents = document.getElementById('content_edit_sole');
@@ -445,18 +438,18 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.$ajax("/chapterToVolume",{
-              chapterid:this.ruleForm.id,
-              volumeid:val,
-              bookid:this.ruleForm.bookId,
-            },json=>{
-             if(json.returnCode===200){
-               this.$message({
-                 type: 'success',
-                 message: '调整成功!'
-               });
-             }
-            })
+              FetchAuthorHandleBook({
+                chapterid:this.ruleForm.id,
+                volumeid:val,
+                bookid:this.ruleForm.bookId,
+              },'cv').then(json=>{
+                if(json.returnCode===200){
+                  this.$message({
+                    type: 'success',
+                    message: '调整成功!'
+                  });
+                }
+              });
           }).catch(() => {
             this.$message({message: '已取消调整'});
             this.getChapterInfo()

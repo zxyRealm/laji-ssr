@@ -68,13 +68,14 @@
 
 <script type="text/ecmascript-6">
  import draggable from 'vuedraggable'
+ import { FetchNetTime,FetchAuthorChapterList,FetchAuthorHandleBook } from '../../api'
+ import { mapGetters } from 'vuex'
   export default {
     components:{
       draggable
     },
     data() {
       return {
-        ChapterList:[],
         newDrag:true,
         cloneList:[],
         curTime:'',
@@ -83,26 +84,17 @@
     },
     methods:{
       getChapterList(){
-        this.$ajax("/sys-getNetWorkDateTime",'',time=>{
-            if(time.returnCode===200){
-                this.curTime = time.data.beijing;
-                clearInterval(this.autoTime);
-                this.autoTime = setInterval(()=>{
+          FetchNetTime().then(time=>{
+              if(time.returnCode===200){
+                  this.curTime = time.data.beijing;
+                  clearInterval(this.autoTime);
+                  this.autoTime = setInterval(()=>{
                     this.curTime+=1000
-                },1000)
-            }
-        },'get');
-        this.$ajax("/books-authorChapterList/"+this.$route.params.bid+'/2','',json => {
-          if(json.returnCode===200){
-            let arr = [];
-            json.data.reverse().forEach((item)=>{
-              if(item.resultList.length>0){
-                 arr = arr.concat(item.resultList)
+                  },1000)
               }
-            });
-            this.ChapterList = arr;
-          }
-        },'get');
+          });
+          this.$store.dispatch('FETCH_AUTHOR_CHAPTER_LIST',this.$route.params.bid);
+//          FetchAuthorChapterList(this.$route.params.bid)/
       },
       dragMove(evt){
         let val = evt.draggedContext;
@@ -125,17 +117,17 @@
       dragEnd(evt){
         let old = this.cloneList[evt.oldIndex];
         let New = this.cloneList[evt.newIndex];
-        this.$myLoad('正在调整中...')
-        this.$ajax("/sys-chapteOrderUpdate",{
+        this.$myLoad('正在调整中...');
+        FetchAuthorHandleBook({
           startNum:old.chapterOrder,
           endNum:New.chapterOrder,
           bookid:old.bookId,
           volumeid:old.volumeId,
           startChapterid:old.id
-        },res=>{
+        },'cc').then(res=>{
           this.$nextTick(()=>{
             this.$loading().close()
-          })
+          });
           if(res.returnCode===200){
             this.getChapterList();
             this.$message({ message:'调整成功',type:'success' })
@@ -159,6 +151,11 @@
     },
     mounted(){
         this.getChapterList();
+    },
+    computed:{
+      ...mapGetters({
+        ChapterList:'authorChapterList'
+      })
     }
   }
 </script>

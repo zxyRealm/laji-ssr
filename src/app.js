@@ -4,7 +4,6 @@
 import Vue from 'vue'
 import App from './App.vue'
 import './assets/js/common'
-import Axios from 'axios'
 // import Consume from './components/custom/custom'
 import filter from './filter'
 import myIcon from './components/custom/icon.vue'
@@ -16,7 +15,6 @@ import titleMixin from './util/title'
 import * as filters from './util/filters'
 
 import ElementUI from 'element-ui'
-Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 Vue.use(ElementUI);
 Vue.component(myIcon.name,myIcon);
 Vue.component(Hint.name,Hint);

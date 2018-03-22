@@ -4,6 +4,7 @@
 import LRU from 'lru-cache'
 import Com from '../assets/js/common'
 import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 import { Message } from 'element-ui'
 const logRequests = true || !!process.env.DEBUG_API;
 const prod = process.env.NODE_ENV == 'production'
@@ -46,10 +47,12 @@ function fetch(child,data,type,tip=true) {
     let format = '';
     child = fetchUrl(child);
     if(typeof data !=='string'){
-      for (let k in data){
-        format += k+'='+ data[k] +'&'
+      if(type!=='get'){
+        for (let k in data){
+          format += k+'='+ data[k] +'&'
+        }
+        data = format.slice(0,-1)
       }
-      data = format.slice(0,-1)
     }else {
       tip = type;
       type = data;
@@ -63,7 +66,8 @@ function fetch(child,data,type,tip=true) {
     } else {
         return new Promise((resolve, reject) => {
             if(type==='get'){
-              axios.get(child,data).then(res => {
+
+              axios.get(child,{params:data}).then(res => {
                 const val = res.data;
                 if (val) val.__lastUpdated = Date.now();
                 cache && cache.set(child, val);
@@ -150,15 +154,17 @@ export function FetchChapterList (bid) {
 
 // 书籍评论信息列表
 export function FetchBookCommentList (bid,page) {
+  page = page | 1;
   return fetch('/comm-getcomminfo',{id:bid,startPage:page,commentType:0,type:1,},'post',false)
 }
 // 热评
 export function FetchBookCommentHot (bid) {
-  return fetch('/comm-HotCommentInfo',{bookid:bid},'post',false)
+  return fetch('/comm-HotCommentInfo',{ bookid:bid },'post',false)
 }
 
 // 书评回复列表
 export function FetchBookCommentReply (cid,page) {
+  page = page | 1;
   return fetch("/comm-replyInfo",{commentid:cid,startPage:page},'post',false)
 }
 
@@ -259,9 +265,20 @@ export function FetchAddBookShelf(bid,user,book) {
 // 阅读章节
 
 // 吐槽列表
-export function FetchGetPrattle(id,page) {
+export function FetchGetPrattle(id,page,type) {
   page = page | 1;
-  return fetch("/pcomm-getParagraphcommentpid/"+id+'/'+page,'get',false)
+  let url;
+  switch (type){
+    case 'book':
+      url = '/pcomm-getParagraphcommentbookid/';
+      break;
+    case 'chapter':
+      url = '/pcomm-getParagraphcomment/';
+      break;
+    default:
+      url = "/pcomm-getParagraphcommentpid/";
+  }
+  return fetch(url+id+'/'+page,'get',false)
 }
 
 // 发布吐槽
@@ -314,7 +331,7 @@ export function FetchWebPay(type,name,sum) {
 
 // 作者书籍列表
 export function FetchAuthorBookList(aid) {
-  return fetch("book-AuthorAllBookInfo",{authorId:aid},'post',false)
+  return fetch("/book-AuthorAllBookInfo",{authorId:aid},'post',false)
 }
 
 // 作者收入
@@ -340,3 +357,93 @@ export function FetchAuthorIncome(type,data) {
 export function FetchLatestMonth() {
   return fetch('/sys-getDataPosition','get',false)
 }
+// 作者收获辣椒
+export function FetchAuthorGainLog(page) {
+  return fetch('/spicyirewardticketlog',{ startpage:page },'post',false)
+}
+
+// 作者中心章节列表
+
+export function FetchAuthorChapterList(bid,type) {
+  type = type | 2;
+  return fetch('/books-authorChapterList/'+ bid +'/'+ type,'get')
+}
+
+// 站内公告
+export function FetchAuthorNotice(page,mid) {
+  page = page | 1;
+  mid = mid | 2;
+  return fetch('/sys-getNotice',{ page:page,menuId:mid },'get',false)
+}
+
+// 新增书籍 / 编辑书籍信息
+export function FetchAuthorHandleBook(data,type) {
+  let url;
+  switch (type){
+    case 'cc': //章节调序
+      url = '/sys-chapteOrderUpdate';
+      break;
+    case 'cv': //调整分卷
+      url = '/chapterToVolume';
+      break;
+    case 'av': //新增分卷
+      url = '/books-addvolume';
+      break;
+    case 'ac': //新增章节
+      url = '/chapter-creates';
+      break;
+    case 'ec':  //修改章节
+      url = '/chapter-update';
+      break;
+    case 'eb': //修改书籍信息
+      url = '/book-update';
+          break;
+    default: //新增书籍
+      url = '/book-create'
+  }
+  return fetch(url,data)
+}
+// 新建章节
+
+// 获取书籍、章节、分卷信息
+
+export function FetchGetBookInfo(id,type) {
+  let url,data,way='post';
+  data = { bookid : id };
+  switch (type){
+    case 'volume':
+      url = '/books-getvolume';
+      data = { bookId : id };
+      break;
+    case 'chapter': //章节信息
+      url = '/chapter-getChapterInfo';
+      data = { chapterid:id };
+      break;
+    case 'label': //书籍标签分类
+      url = '/book-EditBookEcho';
+      data = {};
+      way = 'get';
+      break;
+    default: //书籍信息
+      url = '/book-showBookInfo';
+  }
+  return fetch(url,data,way,false)
+}
+
+// 校验章节名、书名、卷名
+export function FetchCheckName(data,type) {
+  let url;
+  switch (type){
+    case 'book':
+      url = '/book-checkName';
+      break;
+    case 'chapter':
+      url = '/chapter-checkName';
+      break;
+    default:
+      url = '/books-getCheckVolume';
+  }
+  return fetch(url,data,'post',false)
+}
+
+

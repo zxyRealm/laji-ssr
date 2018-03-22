@@ -29,6 +29,7 @@ const state = {
   bookStackSell:{}, // 书库畅销榜
   bookStackHotLabel:{}, //书库热门标签
   authorWelfare:[], // 作者福利
+  authorChapterList:[],
 };
 
 export function createStore () {

@@ -84,7 +84,7 @@ app.use(microcache.cacheSeconds(1, req => useMicroCache && req.originalUrl));
 if(!isProd){
   const proxyTable = {
     '/api': {
-      target:'http://192.168.0.136:8081',
+      target:'http://www.lajixs.com',
       changeOrigin: true,
       pathRewrite: {
         '^/api':''

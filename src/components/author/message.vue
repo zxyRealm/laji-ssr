@@ -52,6 +52,7 @@
   let ERR_OK = 200;
   let ERR_NO = 400;
   import Comment from '../comment/zxy-comment.vue'
+ import { FetchAuthorChapterList,FetchAuthorBookList,FetchBookCommentList,FetchBookCommentReply,FetchGetPrattle,FetchAuthorGainLog } from '../../api'
     export default{
       data(){
           return {
@@ -76,26 +77,26 @@
       },
       methods:{
         getBookList(){
-          this.$ajax("/book-AuthorAllBookInfo",{authorId:this.$cookie('user_id')},json => {
-            if(json.returnCode===ERR_OK){
-              this.bookList = json.data.reverse();
-              if(this.bookList.length){
-                for(let k=0,len=this.bookList.length;k<len;k++){
+            FetchAuthorBookList(this.$cookie("user_id")).then(json=>{
+              if(json.returnCode===ERR_OK){
+                this.bookList = json.data.reverse();
+                if(this.bookList.length){
+                  for(let k=0,len=this.bookList.length;k<len;k++){
                     if(this.bookList[k].bookCheckStatus){
                       this.currentBid = this.bookList[k].bookId;
                       break;
                     }
-                }
-                if(this.$route.name==='messageBcom'){
-                  this.getBookComment()
-                }else if(this.$route.name==='messageCcom'){
-                  this.getChapterComment(1,'book')
-                }else if(this.$route.name==='messageHarvest'){
-                  this.harvest(1)
+                  }
+                  if(this.$route.name==='messageBcom'){
+                    this.getBookComment()
+                  }else if(this.$route.name==='messageCcom'){
+                    this.getChapterComment(1,'book')
+                  }else if(this.$route.name==='messageHarvest'){
+                    this.harvest(1)
+                  }
                 }
               }
-            }
-          })
+            })
         },
         handleDataBook(index,type){
              if(type==='delete1'){
@@ -175,15 +176,10 @@
           },
         getBookComment(page,type){
           type = !type?'default':type;
-          page = !page?1:page;
+          page = page | 1;
           this.page = page;
           if(this.currentBid){
-            this.$ajax("/comm-getcomminfo",{
-              id:this.currentBid,
-              commentType:0,
-              type:1,
-              startPage:page
-            },json => {
+            FetchBookCommentList(this.currentBid,page).then(json=>{
               if(json.returnCode===ERR_OK){
                 this.commentList = json.data;
                 this.commentList.list.map((item, index) => {
@@ -196,41 +192,33 @@
           }
         },
         getReply(cmid,page,index){
-          page = !page?1:page;
-          this.$ajax("/comm-replyInfo",{
-            commentid:cmid,
-            startPage:page
-          },json=>{
-              if(json.returnCode===ERR_OK){
-                this.$set(this.commentList.list[index],"dataList",json.data)
-              }else if(json.returnCode===ERR_NO){
-                this.$router.push("/login")
-              }else{
-                this.$message(json.msg)
-              }
-          })
-
+          FetchBookCommentReply(cmid,page).then(json=>{
+            if(json.returnCode===ERR_OK){
+              this.$set(this.commentList.list[index],"dataList",json.data)
+            }
+          });
         },
-        getChapterComment(page,type){
-          let url,id;
+        getChapterComment(page){
+          let id,type;
             if(this.filterData.cid){
-              url = '/pcomm-getParagraphcomment/';
+              type = 'chapter';
               id = this.filterData.cid
             }else{
-              url = '/pcomm-getParagraphcommentbookid/';
+                type = 'book';
               id = this.currentBid;
               if(id){
                 this.getChapterList()
               }
             }
             if(id){
-              this.$ajax(url+id+"/"+page,'',json => {
+              FetchGetPrattle(id,page,type).then(json=>{
                 this.chapterCommentList ={};
                 if(json.returnCode===200){
                   this.chapterCommentList = json.data
                 }
-              },'get','json',true)
+              });
             }
+
         },
         handleDataChapter(index,type){
 //          段评分页
@@ -269,7 +257,7 @@
           }
         },
         getChapterList(){
-          this.$ajax("/books-authorChapterList/"+this.currentBid+'/2','',json => {
+          FetchAuthorChapterList(this.currentBid).then(json=>{
             let newArr = [];
             if(json.returnCode===200){
               let data = json.data;
@@ -278,20 +266,16 @@
                   newArr = newArr.concat(item.resultList);
                 }
               });
-              this.chapterList = newArr
-            }else if(!json.data){
-              this.chapterList = []
             }
-          },'get','json',true)
+            this.chapterList = newArr
+          });
         },
         harvest(page){
-          this.$ajax("/spicyirewardticketlog",{
-            startpage:page
-          },json=>{
-            if(json.returnCode===200){
+            FetchAuthorGainLog(page).then(json=>{
+              if(json.returnCode===200){
                 this.harvestList = json.data
-            }
-          },'post','json',true)
+              }
+            })
         },
         handleDataHarvest(index,type){
           this.$send('letter',{

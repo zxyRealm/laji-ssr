@@ -19,6 +19,7 @@ import {
   FetchBookRankSell,
   FetchAuthorWelfare,
   FetchFreshenInfo,
+  FetchAuthorChapterList,
 } from '../api'
 import { WEB_INDEX_INFO } from './mutations'
 function shareInit() {
@@ -224,4 +225,20 @@ export default {
   // 注册
 
   // 忘记密码
+
+  FETCH_AUTHOR_CHAPTER_LIST:({commit},id)=>{
+    return FetchAuthorChapterList(id).then(res=>{
+      let arr = [];
+      console.log(res.data)
+      if(res.returnCode===200){
+        res.data.reverse().forEach((item)=>{
+          if(item.resultList.length>0){
+            arr = arr.concat(item.resultList)
+          }
+        });
+      }
+      console.log('格式化',arr)
+      commit('SET_AUTHOR_CHAPTER_LIST',arr)
+    })
+  }
 }
