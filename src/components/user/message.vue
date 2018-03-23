@@ -100,7 +100,7 @@
 
 <script type="text/ecmascript-6">
   import Comment from '../comment/zxy-comment.vue'
-  import { FetchGetUserData } from '../../api'
+  import { FetchGetUserData,aycn } from '../../api'
     export default{
       components:{
           "zxy-comment":Comment
@@ -156,7 +156,7 @@
                 this.$updateCount()
               }
             })
-         
+
         },
 //        显示回复弹窗
         showReply(index){
@@ -206,12 +206,12 @@
             if(this.$trim(this.privateForm.messageContent).length<1){this.privateForm.messageContent = ''}
             if (valid) {
               this.privateForm.userName = this.$store.state.userInfo.pseudonym;
-              this.$ajax("/person-sendmessage",this.privateForm,json=>{
-                  if(json.returnCode===200){
-                    this.$message("发送成功！");
-                    this.dialogFormVisible = false
-                  }
-              })
+              aycn('/person-sendmessage',this.privateForm).then(json=>{
+                if(json.returnCode===200){
+                  this.$message("发送成功！");
+                  this.dialogFormVisible = false
+                }
+              });
             } else {
               this.$message({message:'请填写发送内容！',type:'warning'});
               return false;
@@ -221,17 +221,17 @@
 //        删除私信
         deleteLetter(index){
             let value = this.letterList.list[index];
-            this.$ajax("/person-updatemessage",{
+            aycn('/person-updatemessage',{
               userid:value.userId,
               senduserid:value.userId,
               messageid:value.id,
               messageType:2
-            },json=>{
+            }).then(json=>{
               if(json.returnCode===200){
-                  this.$message("删除成功");
-                  this.getLetterList(this.letterList.pageNum)
+                this.$message("删除成功");
+                this.getLetterList(this.letterList.pageNum)
               }
-            })
+            });
         },
         formatTxt(txt){
           return txt.replace(/\s*\n+\s*/g, '<br><br>　　')

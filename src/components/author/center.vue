@@ -61,7 +61,7 @@
                     <a :class="item.bookCheckStatus==2?'active':null" @click="item.bookCheckStatus !==2?upDateStatus('vip',$index):null">
                       {{item.bookCheckStatus | check('vip')}}
                     </a>
-                    
+
                     <a :class="(item.bookAuthorization==1||item.bookAuthorization==2)?'active':null" @click="item.bookAuthorization==0 || item.bookAuthorization==3?upDateStatus('sign',$index):null">
                       {{ item.bookAuthorization | sign }}
                     </a>
@@ -92,10 +92,6 @@
               this.dataList = json.data;
             }
           });
-//          this.$ajax("/book-AuthorAllBookInfo",{ authorId:this.$cookie('user_id')},json => {
-//
-//
-//          },'post','json',true)
         },
         upDateStatus(type,index){
           let val = this.dataList[index];
@@ -115,7 +111,7 @@
               }else {
                 tip = '请主动联系网站客服，申请签约！'
               }
-              
+
             }
             this.$confirm(tip, '提示', {
               confirmButtonText: '确定',
@@ -124,7 +120,7 @@
             })
           };
           apply()
-          
+
         }
       },
       mounted() {

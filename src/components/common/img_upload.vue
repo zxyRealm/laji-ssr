@@ -42,15 +42,15 @@
         </div>
       </div>
     </div>
-
 </template>
 
 <script type="text/ecmascript-6">
   import $ from 'jquery';
-//  import '../../assets/js/jquery.min.js'
-//  import '../../assets/js/jquery.Jcrop.js'
+  import '../../assets/js/jquery.min.js'
+  import '../../assets/js/jquery.Jcrop.js'
   import '../../assets/css/jquery.Jcrop.min.css'
   export default{
+    name:'cropper',
     props:{
       action:{
           default:''
@@ -240,6 +240,7 @@
         let self = this;
         this.$preview = $('#preview-pane');
         this.$pimg = $('#preview-pane .preview-container img');
+        console.log($.Jcrop());
         $('#pre-picture').Jcrop({
           bgFade: true,
 //        allowSelect:false,
@@ -341,13 +342,24 @@
       visible:function (val) {
         if(val){
           this.$nextTick(()=>{
-            this.resetCrop(this.img_url)
+              setTimeout(()=>{
+                this.resetCrop(this.img_url)
+              },500)
+//
           })
         }
       }
     },
     mounted(){
-    
+        this.$nextTick(()=>{
+          setTimeout(()=>{
+//            this.resetCrop(this.img_url)
+          },3000)
+//          this.resetCrop(this.img_url);
+        })
+//      require('../../assets/js/jquery.min.js');
+//      require('../../assets/js/jquery.Jcrop.js')
+
     }
   }
 

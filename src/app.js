@@ -14,7 +14,7 @@ import { createRouter } from './router'
 import { sync } from 'vuex-router-sync'
 import titleMixin from './util/title'
 import * as filters from './util/filters'
-
+import { aycn } from './api'
 import ElementUI from 'element-ui'
 Vue.use(ElementUI);
 Vue.component(myIcon.name,myIcon);
@@ -41,114 +41,95 @@ export function createApp () {
   const router = createRouter();
 
   // 全局导航钩子
-  router.beforeEach((to, from, next) => {
-    let uid = Number(router.app.$cookie('user_id'));
-    // let uid = 0
-    console.log(document);
-    if(to.name==='Login' && uid){
-      next({
-        path: '/',
-      });
-      return false
-    }
-    if(uid && Number(to.params.uid)===uid){
-      if(to.name==='Reader'){
-        next({
-          path:'/user/index'
-        })
-      }else if(to.name==='bookShelf'){
-        next({
-          path:'/user/shelf'
-        })
-      }else if(to.name==='bookReview'){
-        next({
-          path:'/user/comment/book/1'
-        })
-      }else if(to.name==='spitSlot'){
-        next({
-          path:'/user/comment/chapter'
-        })
-      }else if(to.name==='Attention'){
-        next({
-          path:'/user/attention'
-        })
-      }else if(to.name==='Fans'){
-        next({
-          path:'/user/fans'
-        })
-      }
-    }
-    // 判断该路由是否需要登录权限
-    if (to.meta.requireAuth) {
-      if(uid){
-        axios.post("/person-checkLoginState").then((res)=>{
-          if(res.data.returnCode===200){
-            if(to.path.indexOf('/author')>-1){
-              if(res.data.data===1 && to.name!=='authorApply'){
-                next({
-                  path:"/author/apply"
-                })
-              }else {
-                if(res.data.data===2 &&!from.name&&to.name==='authorApply'){
-                  next({
-                    path:'/author/writing/index'
-                  })
-                }else {
-                  next()
-                }
-              }
-            }else {
-              next()
-            }
-          }else{
-            router.app.$options.store.state.userInfo = {};
-            next({
-              path: '/login',
-              query: {redirect: to.fullPath}
-            })
-          }
-        }).catch((err)=>{
-          console.log(err)
-        });
-      }else {
-        router.app.$options.store.state.userInfo = {};
-        next({
-          path: '/login',
-          query: {redirect: to.fullPath}
-        })
-      }
-    }else if(to.fullPath==='/login'){
-      next({
-        path: '/login',
-        query: {redirect: from.fullPath}
-      })
-    }else {
-      next();
-    }
-  });
-
-
-
-  router.afterEach(() => {
-    console.log('分享前');
-    if(typeof window!=='undefined'){
-      console.log('分享');
-      // window.scrollTo(0,0)
-      setTimeout(()=>{
-        var _hmt = _hmt || [];
-        (function() {
-          //每次执行前，先移除上次插入的代码
-          document.getElementById('baidu_tj') && document.getElementById('baidu_tj').remove();
-          var hm = document.createElement("script");
-          hm.src = "https://hm.baidu.com/hm.js?ae2f46c8c11aad77feae3035de5c127e";
-          hm.id = "baidu_tj";
-          var s = document.getElementsByTagName("script")[0];
-          s.parentNode.insertBefore(hm, s);
-        })();
-      },0);
-    }
-
-  });
+  // router.beforeEach((to, from, next) => {
+  //   let uid = Number(router.app.$cookie('user_id'));
+  //   // let uid = 0
+  //   if(to.name==='Login' && uid){
+  //     next({
+  //       path: '/',
+  //     });
+  //     return false
+  //   }
+  //   if(uid && Number(to.params.uid)===uid){
+  //     if(to.name==='Reader'){
+  //       next({
+  //         path:'/user/index'
+  //       })
+  //     }else if(to.name==='bookShelf'){
+  //       next({
+  //         path:'/user/shelf'
+  //       })
+  //     }else if(to.name==='bookReview'){
+  //       next({
+  //         path:'/user/comment/book/1'
+  //       })
+  //     }else if(to.name==='spitSlot'){
+  //       next({
+  //         path:'/user/comment/chapter'
+  //       })
+  //     }else if(to.name==='Attention'){
+  //       next({
+  //         path:'/user/attention'
+  //       })
+  //     }else if(to.name==='Fans'){
+  //       next({
+  //         path:'/user/fans'
+  //       })
+  //     }
+  //   }
+  //   // 判断该路由是否需要登录权限
+  //   if (to.meta.requireAuth) {
+  //     if(uid){
+  //       aycn('/person-checkLoginState','post',false).then(res=>{
+  //         if(res.data.returnCode===200){
+  //           if(to.path.indexOf('/author')>-1){
+  //             if(res.data.data===1 && to.name!=='authorApply'){
+  //               next({
+  //                 path:"/author/apply"
+  //               })
+  //             }else {
+  //               if(res.data.data===2 &&!from.name&&to.name==='authorApply'){
+  //                 next({
+  //                   path:'/author/writing/index'
+  //                 })
+  //               }else {
+  //                 next()
+  //               }
+  //             }
+  //           }else {
+  //             next()
+  //           }
+  //         }else{
+  //           router.app.$options.store.state.userInfo = {};
+  //           next({
+  //             path: '/login',
+  //             query: {redirect: to.fullPath}
+  //           })
+  //         }
+  //       })
+  //     }else {
+  //       router.app.$options.store.state.userInfo = {};
+  //       next({
+  //         path: '/login',
+  //         query: {redirect: to.fullPath}
+  //       })
+  //     }
+  //   }else if(to.fullPath==='/login'){
+  //     next({
+  //       path: '/login',
+  //       query: {redirect: from.fullPath}
+  //     })
+  //   }else {
+  //     next();
+  //   }
+  // });
+  //
+  //
+  //
+  // router.afterEach(() => {
+  //
+  //
+  // });
 
 
 

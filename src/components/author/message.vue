@@ -52,7 +52,7 @@
   let ERR_OK = 200;
   let ERR_NO = 400;
   import Comment from '../comment/zxy-comment.vue'
- import { FetchAuthorChapterList,FetchAuthorBookList,FetchBookCommentList,FetchBookCommentReply,FetchGetPrattle,FetchAuthorGainLog } from '../../api'
+ import { aycn,FetchHandleUserInfo,FetchAuthorChapterList,FetchAuthorBookList,FetchBookCommentList,FetchBookCommentReply,FetchGetPrattle,FetchAuthorGainLog } from '../../api'
     export default{
       data(){
           return {
@@ -107,57 +107,49 @@
                  cancelButtonText:'否',
                  callback: action => {
                    if(action==='confirm'){
-                     this.$ajax("/comm-delcomminfo",{
-                       id:index,
-                       type:0
-                     },json => {
+                     FetchHandleUserInfo(index,'dc').then(json=>{
                        if(json.returnCode===ERR_OK){
                          this.$message('删除成功');
                          this.getBookComment(this.page)
                        }
-                     })
+                     });
                    }
                  }
                });
 
              }else if(type==='delete2'){
-               this.$ajax("/comm-deletereplyInfo",{
-                 commentid:index
-               },json => {
-                 if(json.returnCode===ERR_OK){
-                   this.$message('删除成功');
-                   this.getBookComment(this.page)
-                 }else{
-                   this.$message(json.msg)
-                 }
-               })
+                 FetchHandleUserInfo(index,'dcr').then(json=>{
+                   if(json.returnCode===ERR_OK){
+                     this.$message('删除成功');
+                     this.getBookComment(this.page)
+                   }
+                 });
              }
              else if(type==='upTop'){
                index.state = !index.state?1:0;
-               this.$ajax("/comm-isTop/"+index.id+"/"+index.bid+"/"+index.state,'',json => {
+               aycn("/comm-isTop/"+index.id+"/"+index.bid+"/"+index.state,'get').then(json=>{
                  if(json.returnCode===ERR_OK){
                    if(index.state){
-                       this.$message("置顶成功")
+                     this.$message("置顶成功")
                    }else {
-                       this.$message("取消成功")
+                     this.$message("取消成功")
                    }
                    this.getBookComment(this.page);
                  }
-               },'get')
+               })
              }else if(type==='zan'){
                //        评论点赞
-               this.$ajax("/comm-GiveThumbs",{
-                 commentId:this.commentList.list[index].id
-               },json => {
+               FetchHandleUserInfo(this.commentList.list[index].id,'bal').then(json=>{
                  if(json.returnCode===ERR_OK){
-                    if(!this.commentList.list[index].isthumbs){
-                      this.$message({message:"点赞成功",duration:1500});
-                    }else {
-                      this.$message({message:"取消点赞",duration:1500});
-                    }
+                   if(!this.commentList.list[index].isthumbs){
+                     this.$message({message:"点赞成功",duration:1500});
+                   }else {
+                     this.$message({message:"取消点赞",duration:1500});
+                   }
                    this.getBookComment(this.page)
                  }
-               })
+               });
+
              }else if(type==='reply'){
                if(!this.commentList.list[index].state){
                    this.commentList.list.map((item) => {
@@ -233,27 +225,24 @@
               cancelButtonText:'否',
               callback: action => {
                 if(action==='confirm'){
-                  this.$ajax("/pcomm-delParagraphcomment",{
-                    id:index
-                  },json=>{
-                    if(json.returnCode===200){
-                      this.$message("删除成功！");
-                      this.getChapterComment(this.chapterCommentList.pageNum,'cid')
-                    }
-                  })
+                    FetchHandleUserInfo(index,'dg').then(json=>{
+                      if(json.returnCode===200){
+                        this.$message("删除成功！");
+                        this.getChapterComment(this.chapterCommentList.pageNum,'cid')
+                      }
+                    });
                 }
               }
             });
 
           }else if(type==='zan'){
-              this.$ajax("/paragraphcomment-GiveThumbs",{
-                paragraphcommentid:this.chapterCommentList.list[index].id
-              },json => {
+              FetchHandleUserInfo(this.chapterCommentList.list[index].id,'pal').then(json=>{
                 if(json.returnCode===200){
                   this.$message(this.chapterCommentList.list[index].isthumbs?'取消成功':'点赞成功');
                   this.getChapterComment(this.chapterCommentList.pageNum)
                 }
-              })
+              });
+
           }
         },
         getChapterList(){

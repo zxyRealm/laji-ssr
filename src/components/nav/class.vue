@@ -86,20 +86,9 @@
       methods: {
         getBookList(){
         },
-        getBookClass() {
-          this.$ajax('/ranking-classification','',(json) => {
-            if(json.returnCode===200){
-              this.classList = json.data;
-            }
-          },'get')
-        }
-      },
-      created(){
-
       },
       mounted(){
         this.$store.dispatch("FETCH_BOOK_CLASS_NAME")
-//        this.getBookClass()
       },
       computed:{
         ...mapGetters([

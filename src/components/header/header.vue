@@ -118,6 +118,7 @@
 import Vue from 'vue'
 import Nav from '../nav/nav.vue'
 import Dheader from './detailHeader.vue'
+import { FetchSearchHotWords,aycn } from '../../api'
 export default({
   data(){
     return {
@@ -171,11 +172,11 @@ export default({
       };
     },
     loadAll(){
-        this.$ajax("/sys-hotwords",'',json=>{
-          if(json.returnCode===200){
-            this.hotList = json.data
-          }
-        },'get');
+      FetchSearchHotWords().then(json=>{
+        if(json.returnCode===200){
+          this.hotList = json.data
+        }
+      })
     },
     search(val){
       let txt = this.$trim(this.searchTxt);
@@ -191,16 +192,14 @@ export default({
       }else if(commend==='user'){
         this.$router.push("/user/index")
       }else if(commend==='exit'){
-        this.$ajax("/person-ClearUserInfo",'',json=>{
-          if(json.returnCode===200){
-            this.$message("退出成功！");
-            this.$cookie('user_id','',-1);
-            this.$store.state.userInfo = {};
-            this.$router.push('/')
-          }else {
-            this.$message(json.msg)
-          }
-        });
+          aycn('/person-ClearUserInfo').then(json=>{
+            if(json.returnCode===200){
+              this.$message("退出成功！");
+              this.$cookie('user_id','',-1);
+              this.$store.state.userInfo = {};
+              this.$router.push('/')
+            }
+          })
       }
     },
     getBack(){
@@ -235,7 +234,7 @@ export default({
       })()
     }
   },
-  
+
   watch:{
     "$route.params.keywords":function (val) {
       this.searchTxt = val

@@ -48,7 +48,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import { FetchUserRegister,FetchUserLogin } from '../../api'
+  import { FetchUserRegister,FetchUserLogin,FetchCheckName } from '../../api'
   export default{
     data() {
       let validateName =(rule,value,callback) => {
@@ -58,13 +58,13 @@
               if(!/^[\u4e00-\u9fa5a-zA-Z0-9]{2,16}$/.test(value)){
                 callback(new Error('正确格式为：长度在2-16之间，只能包含数字、字母、汉字。'));
               }else {
-                  this.$ajax("/person-checkNickName/"+value,'',json=>{
-                      if(json.returnCode===200){
-                          callback()
-                      }else {
-                          callback(new Error(json.msg));
-                      }
-                  },'get');
+                FetchCheckName(value,'name').then(json=>{
+                  if(json.returnCode===200){
+                    callback()
+                  }else {
+                    callback(new Error(json.msg));
+                  }
+                });
               }
           }
       };
@@ -178,21 +178,13 @@
                     },200);
                   }
                 });
-//                this.$ajax('/person-login',{
 //
-//                },json=>{
-//
-//                },'post','json',true)
               }else {
                 if(json.msg==='验证码错误'){
                   this.$message.error('验证码错误，请重新获取')
                 }
               }
             });
-//              this.$ajax("/person-regInfo",
-//                subData,(json) => {
-//
-//              });
           } else {
             this.$message('请检查所填信息是否正确！');
             return false;
@@ -203,32 +195,30 @@
         this.$refs[formName].resetFields();
       },
       getCode(){
-
           if(this.registerList.userPhone===undefined || this.registerList.userPhone===''){
             this.$message("请先填写手机号！")
           }else {
             if((/^1[34578]\d{9}$/.test(this.registerList.userPhone))){
-              this.$ajax("/verification/sys-getShortMessage",
-                {
-                  userMob:this.registerList.userPhone,
-                  type:"RegisterPwd"
-                },(json)=> {
-                  if(json.returnCode===200){
-                     this.$message("发送成功");
-                     this.btnTxt = '60秒后重新发送';
-                     this.timer = setInterval(()=>{
-                        this.limit-=1;
-                        this.btnTxt = Math.ceil(this.limit) +'秒后重新发送';
-                        sessionStorage.setItem('set_time_limit',this.limit);
-                        if(this.limit<=0){
-                          this.btnTxt = '点击发送';
-                          sessionStorage.removeItem('set_time_limit');
-                          this.limit = 60;
-                          clearInterval(this.timer)
-                        }
-                     },1000);
-                  }
-                })
+              FetchCheckName({
+                userMob:this.registerList.userPhone,
+                type:"RegisterPwd"
+              },'phone').then(json=>{
+                if(json.returnCode===200){
+                  this.$message("发送成功");
+                  this.btnTxt = '60秒后重新发送';
+                  this.timer = setInterval(()=>{
+                    this.limit-=1;
+                    this.btnTxt = Math.ceil(this.limit) +'秒后重新发送';
+                    sessionStorage.setItem('set_time_limit',this.limit);
+                    if(this.limit<=0){
+                      this.btnTxt = '点击发送';
+                      sessionStorage.removeItem('set_time_limit');
+                      this.limit = 60;
+                      clearInterval(this.timer)
+                    }
+                  },1000);
+                }
+              })
             }
           }
       }

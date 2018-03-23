@@ -138,6 +138,7 @@
   import Vue from 'vue'
   import areaLinkage from 'vue-area-linkage'
 //  Vue.use(areaLinkage);
+  import { aycn } from '../../api'
   import Common from '../../assets/js/common'
     export default({
       data() {
@@ -307,7 +308,7 @@
             if (valid) {
               let data = JSON.parse(JSON.stringify(this.applyInfo));
               data.userBorndate = Common.formatTime(data.userBorndate);
-              this.$ajax("/person-applicantAuthor",data,json => {
+              aycn('/person-applicantAuthor',data).then(json=>{
                 this.subLoad = false;
                 if(json.returnCode===200){
                   this.active++;
@@ -322,7 +323,7 @@
                     }
                   });
                 }
-              })
+              });
             } else {
               this.subLoad = false;
               this.$message({message:"请完善个人信息！",type:'warning'});
@@ -331,7 +332,7 @@
           });
         },
         getInfo(){
-          this.$ajax("/person-info",json => {
+            aycn('/person-info').then(json=>{
               if(json.returnCode===200){
                 this.applyInfo.pseudonym = json.data.pseudonym;
                 this.applyInfo.userPhone = json.data.userPhone;
@@ -339,7 +340,6 @@
               }else if(json.returnCode===400){
                 this.$router.push('/login');
                 this.$cookie("user_id",'',-1);
-              }else{
               }
             })
         },

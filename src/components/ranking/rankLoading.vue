@@ -80,6 +80,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchAddBookShelf,FetchGetBookInfo } from '../../api'
     export default{
       props:{
         userInfo:Object
@@ -121,38 +122,32 @@
               type = 8;
               break;
           }
-          this.$ajax("/ranking-book",{
+          FetchGetBookInfo({
             type:type,
             page:this.$route.params.page
-          },function (json){
+          },'rank').then(json=>{
             if(json.returnCode===200){
-               if(self.$route.params.type==='latest'){
+              if(self.$route.params.type==='latest'){
                 self.dataList = json.data.newBookRankingList
-               }else {
-                 if(self.$route.params.time==='week'){
-                   self.dataList = json.data.week
-                 }else if(self.$route.params.time==='month'){
-                   self.dataList = json.data.month
-                 }else{
-                   self.dataList = json.data.total
-                 }
-               }
+              }else {
+                if(self.$route.params.time==='week'){
+                  self.dataList = json.data.week
+                }else if(self.$route.params.time==='month'){
+                  self.dataList = json.data.month
+                }else{
+                  self.dataList = json.data.total
+                }
+              }
             }
-          })
+          });
         },
         addBookShelf(bid,name,index){
-            this.$ajax("/bookshelf-adduserbookshelf",{
-                userName:this.$store.state.userInfo.pseudonym,
-                bookId:bid,
-                bookName:name
-            },json=>{
-                if(json.returnCode===200){
-                    this.$message(json.msg);
-                    this.dataList.list[index].collectionStatus = this.dataList.list[index].collectionStatus?0:1;
-                }else if(json.returnCode===400){
-                    this.$router.push('/login')
-                }
-            })
+            FetchAddBookShelf(bid,this.$store.state.userInfo.pseudonym,name).then(json=>{
+              if(json.returnCode===200){
+                this.$message(json.msg);
+                this.dataList.list[index].collectionStatus = this.dataList.list[index].collectionStatus?0:1;
+              }
+            });
         }
 
       },

@@ -42,6 +42,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { aycn } from '../../api'
     export default{
       data(){
           var validateEmail = (rule, value, callback) => {
@@ -106,12 +107,12 @@
         editUserInfo(){
           this.$refs['editForm'].validate((valid) => {
             if (valid) {
-                this.$ajax("/person-updateInfo",this.userInfo,json=>{
-                  if(json.returnCode===200){
-                      this.$message("更新成功！");
-                     this.$freshen()
-                  }
-                });
+              aycn('/person-updateInfo',this.userInfo).then(json=>{
+                if(json.returnCode===200){
+                  this.$message("更新成功！");
+                  this.$freshen()
+                }
+              });
             } else {
               return false;
             }

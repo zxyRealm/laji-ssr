@@ -56,7 +56,7 @@
                   <el-badge :value="$store.state.message.total" class="message-item" style="vertical-align: top;">
                     <span class="pr10">消息</span>
                   </el-badge>
-                  
+
                   <div class="user-dropdown-menu">
                     <div class="user-dropdown-item-wrap">
                       <router-link class="user-dropdown-item" to="/user/message/notice">
@@ -68,7 +68,7 @@
                       <router-link class="user-dropdown-item" to="/user/message/comment">
                         <el-badge :is-dot="$store.state.message.userCommentReplyCount>0" class="dot-item">评论</el-badge>
                       </router-link>
-                     
+
                     </div>
                   </div>
                 </div>
@@ -89,6 +89,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { aycn } from '../../api'
     export default{
       data(){
           return {
@@ -102,12 +103,12 @@
       methods: {
         handleCommand1(commend){
           if(commend==='exit'){ //退出账号
-            this.$ajax("/person-ClearUserInfo",json=>{
+            aycn('/person-ClearUserInfo').then(json=>{
               if(json.returnCode===200){
-                this.$message({message:"退出成功！",type:'success'});
+                this.$message("退出成功！");
                 this.$cookie('user_id','',-1);
                 this.$store.state.userInfo = {};
-                this.$router.push('/');
+                this.$router.push('/')
               }
             });
           }else if(commend==='center'){ //个人中心
@@ -117,8 +118,6 @@
           }else if(commend==='user'){ //我的账号
             this.$router.push("/user/index")
           }
-        },
-        handleCommand2(){
         },
         addFavorite(){
           let url = window.location;
@@ -169,7 +168,7 @@
           }
         })
       },
-     
+
       watch:{
           "$route":{
             handler(){
@@ -207,7 +206,7 @@ font-color = #FB5E6F
       color #fff
       &:hover
         color #fff!important
-        
+
     .user-dropdown-menu
       a
         &:hover
@@ -223,7 +222,7 @@ font-color = #FB5E6F
           background-image :url("../../../static/img/icon/search.png")!important
       button
         background-image :url("../../../static/img/icon/w-search.png")!important
-        
+
 .dHeader
   height :42px
   line-height :42px

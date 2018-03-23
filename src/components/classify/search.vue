@@ -77,6 +77,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchAddBookShelf,FetchSearchHotWords,FetchGetBookInfo } from '../../api'
     export default{
       data(){
           return {
@@ -107,39 +108,35 @@
           };
         },
         getData(){
-            this.$ajax('/stacks-search',{
-              keyWord:this.$route.params.keywords,
-              startupPage:this.$route.params.page,
-              isHotWorld:1
-            },json=>{
-                this.searchList = {};
-                if(json.returnCode===200){
-                    let val = this.$route.params.keywords.replace(/\[/g,'\\[').replace(/\]/g,'\\]');
-                    let reg = new RegExp(val,'g');
-                    json.data.list.forEach((item)=>{
-                      item.bookName = item.bookName.replace(reg,'<font style="color: #ff8383;font-weight: 600">'+this.$route.params.keywords+'</font>');
-                      item.writerName = item.writerName.replace(reg,'<font style="color: #ff8383;font-weight: 600">'+this.$route.params.keywords+'</font>');
-                    });
-                  this.searchList = json.data
-                }
-            })
+          FetchGetBookInfo({
+            keyWord:this.$route.params.keywords,
+            startupPage:this.$route.params.page,
+            isHotWorld:1
+          },'search').then(json=>{
+            this.searchList = {};
+            if(json.returnCode===200){
+              let val = this.$route.params.keywords.replace(/\[/g,'\\[').replace(/\]/g,'\\]');
+              let reg = new RegExp(val,'g');
+              json.data.list.forEach((item)=>{
+                item.bookName = item.bookName.replace(reg,'<font style="color: #ff8383;font-weight: 600">'+this.$route.params.keywords+'</font>');
+                item.writerName = item.writerName.replace(reg,'<font style="color: #ff8383;font-weight: 600">'+this.$route.params.keywords+'</font>');
+              });
+              this.searchList = json.data
+            }
+          });
         },
         loadAll(){
-          this.$ajax("/sys-hotwords",'',json=>{
+          FetchSearchHotWords().then(json=>{
             if(json.returnCode===200){
               this.hotList = json.data
             }
-          },'get');
+          });
         },
         //        加入书架
         addBookshelf(index){
           if(this.$store.state.userInfo.userId){
             let val = this.searchList.list[index];
-            this.$ajax("/bookshelf-adduserbookshelf",{
-              bookId:val.bookId,
-              userName:this.$store.state.userInfo.pseudonym,
-              bookName:val.bookName
-            },json=>{
+            FetchAddBookShelf(val.bookId,this.$store.state.userInfo.pseudonym,val.bookName).then(json=>{
               if(json.returnCode===200){
                 this.searchList.list[index].collectionStatus = (this.searchList.list[index].collectionStatus?0:1);
                 this.$message(json.msg)

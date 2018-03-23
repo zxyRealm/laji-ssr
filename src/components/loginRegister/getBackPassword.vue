@@ -57,6 +57,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchCheckName } from '../../api'
     export default{
       data() {
         let checkMobile = (rule, value, callback) => {
@@ -128,13 +129,13 @@
         nextForm(formName){
           this.$refs[formName].validate((valid)=>{
               if(valid){
-                  this.$ajax("/verification/person-checkedCode",{
+                  FetchCheckName({
                     checkCode:this.modifyList.code,
                     phoneId:this.modifyList.phoneId
-                  },json=>{
-                      if(json.returnCode===200){
-                        this.activeModule = 2
-                      }
+                  },'code').then(json=>{
+                    if(json.returnCode===200){
+                      this.activeModule = 2
+                    }
                   });
               }else {
                   this.$message("请检查信息是否完整！")
@@ -150,53 +151,50 @@
               subData.newPwd = this.$md5(subData.newPwd);
               subData.checkPass = this.$md5(subData.checkPass);
               if(this.$route.name==='modifyPage'){
-                this.$ajax("/person-updatepwd",
-                  subData,(json) => {
-                    if(json.returnCode===200){
+                FetchCheckName(subData,'change').then(json=>{
+                  if(json.returnCode===200){
 //                        直接修改密码
-                      this.$alert('', '修改成功！您可以重新登录了', {
-                        confirmButtonText: '是',
-                        showCancelButton:true,
-                        customClass:'confirm-msg-box',
-                        cancelButtonText:'否',
-                        callback: action => {
-                          this.$exit('default');
-                          let href = this.$route.query.redirect?'/login?redirect='+this.$route.query.redirect:'/login?redirect=/index';
-                          this.$router.push(href)
-                        }
-                      });
-                    }else {
-                      if(json.msg==='验证码错误'){
-                        this.$message.error('验证码错误，请重新获取');
-                        this.activeModule = 1;
+                    this.$alert('', '修改成功！您可以重新登录了', {
+                      confirmButtonText: '是',
+                      showCancelButton:true,
+                      customClass:'confirm-msg-box',
+                      cancelButtonText:'否',
+                      callback: action => {
+                        this.$exit('default');
+                        let href = this.$route.query.redirect?'/login?redirect='+this.$route.query.redirect:'/login?redirect=/index';
+                        this.$router.push(href)
                       }
+                    });
+                  }else {
+                    if(json.msg==='验证码错误'){
+                      this.$message.error('验证码错误，请重新获取');
+                      this.activeModule = 1;
                     }
-                  });
+                  }
+                });
               }else {
 //                忘记密码时修改密码
-                this.$ajax("/person-pwdRetrieval",
-                  subData,(json) => {
-                    if(json.returnCode===200){
-                      this.activeModule = 3;
+                FetchCheckName(subData,'back').then(json=>{
+                  if(json.returnCode===200){
+                    this.activeModule = 3;
 //                        直接修改密码
-                      this.$alert('', '修改成功！您可以重新登录了', {
-                        confirmButtonText: '是',
-                        showCancelButton:true,
-                        customClass:'confirm-msg-box',
-                        cancelButtonText:'否',
-                        callback: action => {
-                          this.$exit('default');
-                          let href = this.$route.query.redirect?'/login?redirect='+this.$route.query.redirect:'/login?redirect=/index';
-                          this.$router.push(href)
-                        }
-                      });
-                    }else {
-                      if(json.msg==='验证码错误'){
-                        this.$message.error('验证码错误，请重新获取')
+                    this.$alert('', '修改成功！您可以重新登录了', {
+                      confirmButtonText: '是',
+                      showCancelButton:true,
+                      customClass:'confirm-msg-box',
+                      cancelButtonText:'否',
+                      callback: action => {
+                        this.$exit('default');
+                        let href = this.$route.query.redirect?'/login?redirect='+this.$route.query.redirect:'/login?redirect=/index';
+                        this.$router.push(href)
                       }
+                    });
+                  }else {
+                    if(json.msg==='验证码错误'){
+                      this.$message.error('验证码错误，请重新获取')
                     }
-                  });
-
+                  }
+                });
               }
             } else {
               this.$message({message:"请检查信息是否完整！",type:'warning'});
@@ -210,12 +208,10 @@
         getCode(){
           if(this.modifyList.phoneId){
             if((/^1[34578]\d{9}$/.test(this.modifyList.phoneId))){
-              this.$ajax("/verification/sys-getShortMessage",
-                {
+                FetchCheckName({
                   userMob:this.modifyList.phoneId,
                   type:"findPwd"
-                },json=> {
-
+                },'phone').then(json=>{
                   if(json.returnCode===200){
                     this.btnTxt = '60秒后重新发送';
                     this.timer = setInterval(()=>{
@@ -230,7 +226,7 @@
                       }
                     },1000);
                   }
-                })
+                });
             }
           }
         }

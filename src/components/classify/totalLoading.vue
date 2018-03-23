@@ -70,6 +70,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+  import { FetchAddBookShelf } from '../../api'
   import { mapGetters } from 'vuex'
     export default{
       data() {
@@ -80,18 +81,12 @@
           this.$router.push({name:'totalChild',params:{page:val}});
         },
         addBookShelf(bid,name,index){
-          this.$ajax("/bookshelf-adduserbookshelf",{
-            userName:this.$store.state.userInfo.pseudonym,
-            bookId:bid,
-            bookName:name
-          },json=>{
+          FetchAddBookShelf(bid,this.$store.state.userInfo.pseudonym,name).then(json=>{
             if(json.returnCode===200){
               this.$message(json.msg);
               this.dataList.list[index].collectionStatus = this.dataList.list[index].collectionStatus?0:1;
-            }else if(json.returnCode===400){
-              this.$router.push('/login')
             }
-          })
+          });
         }
       },
       mounted(){

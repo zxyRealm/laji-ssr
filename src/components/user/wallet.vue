@@ -102,7 +102,7 @@
                       <th width="160">数量</th>
                     </tr>
                   </thead>
-                 
+
                   <template v-for="(item,index) in recordList.list">
                     <tr >
                       <td>{{item.giveDateTime | time('long')}}</td>
@@ -131,7 +131,7 @@
                       <th>状态</th>
                     </tr>
                   </thead>
-                 
+
                   <template v-for="(item,index) in recordList.list">
                     <tr >
                       <td>{{ item.giveDateTime | time('long')}}</td>
@@ -178,39 +178,14 @@
           this.$router.push({params:{page:page}})
         },
         getRecordList(){
-            let url,name = this.$route.name,page = this.$route.params.page;
+            let page = this.$route.params.page;
             let type = this.$route.name.replace('wallet','');
-            
+
             FetchMineWallet(type,page,this.$cookie('user_id')).then(json=>{
               if(json.returnCode===200 || !json.data){
                 this.recordList = json.data;
               }
             });
-            console.log(type);
-//            if(name==='walletCharge'){
-//              url = '/user-RechargeRecord'
-//            }else if(name==='walletConsume'){
-//              url = '/userSubscriptionRecord'
-//            }else if(name==='walletPepper'){
-//              url = '/userGoldenTicketRecord'
-//            }else if(name==='walletReward'){
-//              url = '/spicyirewardticketlogByUserId'
-//            }else if(name==='walletAnnuum'){
-//              url = '/userRecommendTicketRecord'
-//            }
-//            if(name!=='walletCharge'){
-//                formData = {
-//                    startpage:page,
-//                    userid:this.$cookie('user_id')
-//                }
-//            }
-////            this.recordList = {};
-//            this.$ajax(url,formData,json=>{
-//                if(json.returnCode===200 || !json.data){
-//                  this.recordList = json.data;
-//                }
-//            },'post','json',true)
-
         }
       },
       mounted(){

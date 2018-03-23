@@ -342,7 +342,7 @@
 <script type="text/ecmascript-6">
   import Vue from 'vue'
   import CarouseRoll from '../carousel/caroual_rec.vue'
-  import { FetchBookDetailData,FetchBookCommentReply,FetchCommentLaud,FetchReplyBookComment,FetchAddBookComment,FetchAddBookShelf } from '../../api'
+  import { FetchUserGift,FetchUpdateInfo,FetchBookDetailData,FetchBookCommentReply,FetchCommentLaud,FetchReplyBookComment,FetchAddBookComment,FetchAddBookShelf } from '../../api'
   import { mapGetters } from 'vuex'
   let ERR_OK = 200;
   let ERR_NO = 400;
@@ -422,7 +422,6 @@
             value:val,
             beforeClose:(action,instance,done) => {
               if(action==='confirm'){
-                let typeUrl;
                 let data = {
                   message:null,
                   bookid:this.bookDetail.bookListInfo.bookId,
@@ -433,25 +432,15 @@
                   if(type==='reward'){
 //                   垃圾币打赏
                     data.message = instance.formData.content;
-                    data.spicyiTicketCount = instance.formData.count;
-                    typeUrl = '/user-SpicyiRewardTicket'
-                  }else if(type==='ticket') {
-//                      金票打赏
-                    data.goldenTicketCount = instance.formData.count;
-                    typeUrl = '/user-RewardGonderTicket'
-                  }else if(type==='recommend') {
-//                      推荐票投送
-                    data.recommendTicketCount = instance.formData.count;
-                    typeUrl = '/user-RecommendationTicket'
                   }
-                 this.$ajax(typeUrl,data,json => {
-                   done();
-                   if(json.returnCode===200){
-                     this.$message(json.msg);
-                     this.getBookInfo();
-                     this.$freshen();
-                   }
-                 })
+                FetchUserGift(type,instance.formData.count,data).then(json=>{
+                  done();
+                  if(json.returnCode===200){
+                    this.$message(json.msg);
+                    this.getBookInfo();
+                    this.$freshen();
+                  }
+                });
               }else{
                 done()
               }
@@ -532,15 +521,12 @@
         },
 //        关注用户
         addAttention(id,name){
-          this.$ajax("/fans-addFans",{
-            followId:id,
-            followUserName:name
-          },json=>{
+          FetchUpdateInfo('add',this.$cookie('user_id'),id,name).then(json=>{
             if(json.returnCode===ERR_OK){
               this.$message("关注成功");
               this.handleCurrentChange(this.page)
             }
-          })
+          });
         },
 //        加入书架
         addBookshelf(){
@@ -580,7 +566,7 @@
     };
 </script>
 <style lang="stylus" type="text/stylus" rel="stylesheet/stylus">
-  
+
   font-color = #FB5E6F
   btn-color =  #F77583
 .tabWrap

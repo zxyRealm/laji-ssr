@@ -102,18 +102,6 @@
         this.page = page;
         this.$route.params.page = this.page;
       },
-      getHotLabel(){
-        this.$ajax("/stacks-hotLable",'',json=>{
-            if(json.returnCode===200){
-                this.labelList = json.data
-            }
-        },'get');
-        this.$ajax("/stacks-changxiaobang",'',json=>{
-            if(json.returnCode===200){
-               this.sellList = json.data
-            }
-        },'get')
-      }
     },
     mounted() {
         this.$store.dispatch("FETCH_BOOK_RANK_COMMON")

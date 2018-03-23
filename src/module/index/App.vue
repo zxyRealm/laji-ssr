@@ -26,17 +26,10 @@
       }
     },
     methods:{
-      getUserInfo(index){
+      getUserInfo(){
         if(Number(this.$cookie('user_id'))){
-          this.$ajax("/person-info",json => {
-            if(json.returnCode===200){
-              this.$store.state.userInfo = json.data
-            }else{
-              this.$cookie('user_id','',-1);
-              this.$store.state.userInfo = {}
-            }
-          });
-          this.$updateCount()
+            this.$store.dispatch('FETCH_FRESHEN_INFO');
+            this.$updateCount()
         }
       }
     },

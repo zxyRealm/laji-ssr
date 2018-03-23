@@ -103,6 +103,7 @@
       </el-form>
 
       <pic-cropper
+        v-if="ready"
         ref="bookCoverUpdate"
         action="/sys-BookCoverAvatarimgUpload"
         :visible.sync="dialogTableVisible"
@@ -118,11 +119,10 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import Cropper from '../common/img_upload.vue'
   import { FetchGetBookInfo,FetchAuthorHandleBook,FetchCheckName } from '../../api'
   export default{
     components:{
-       'pic-cropper':Cropper
+        'pic-cropper':()=>import("../common/img_upload.vue")
     },
     data(){
       let checkName = (rule, value, callback) => {
@@ -173,6 +173,7 @@
         }
       };
       return {
+        ready:false,
         bookId:'',
         fullscreenLoading:false,
         dialogTableVisible:false,
@@ -303,17 +304,6 @@
             })
           }
         });
-//        this.$ajax('/book-EditBookEcho','',
-//        json => {
-//
-//          if(this.$route.name==='EditBook'){
-//            this.$ajax("/book-showBookInfo",{
-//              bookid:this.$route.params.bid
-//            },json2 => {
-//
-//            });
-//          }
-//        },'get');
       },
 
       setCover(url){
@@ -329,6 +319,7 @@
     mounted(){
       this.$route.params.bid?this.bookId=this.$route.params.bid:'';
       this.getLabel();
+      this.ready = true
     },
     computed:{
       "words"(){

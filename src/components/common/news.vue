@@ -10,6 +10,7 @@
 
 <script type="text/ecmascript-6">
   import 'quill/dist/quill.snow.css'
+  import { aycn } from '../../api'
   export default{
       data(){
         return{
@@ -18,13 +19,13 @@
       },
       methods:{
         getNewsContent(){
-          this.$ajax("/sysgetNoticeById",{
+          aycn("/sysgetNoticeById",{
             noticeid:this.$route.params.id
-          },json=>{
+          }).then(json=>{
             if(json.returnCode===200){
               this.newsContent = json.data
             }
-          },'get')
+          })
         }
       },
       mounted(){

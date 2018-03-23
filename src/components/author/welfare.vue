@@ -72,31 +72,30 @@
             },5);
           },
         getWelfare(){
-          this.$ajax("/sys-welfareBulletin",'',json=>{
-            if(json.returnCode===200){
-              json.data.forEach((item)=>{
-                item.content = item.content.replace(/\n+/g,'<br>')
-              });
-              this.welfareList = json.data;
-              this.$nextTick(()=>{
-                this.height = this.$refs.welfare.clientHeight;
-                let origin = 581;
-
-                this.position.push(origin);
-                this.$refs.welfareItem.map((item) => {
-                  origin += item.clientHeight;
-                  this.position.push(origin)
-                });
-              })
-            }
-          },'get')
+//          this.$ajax("/sys-welfareBulletin",'',json=>{
+//            if(json.returnCode===200){
+//              json.data.forEach((item)=>{
+//                item.content = item.content.replace(/\n+/g,'<br>')
+//              });
+//              this.welfareList = json.data;
+//              this.$nextTick(()=>{
+//                this.height = this.$refs.welfare.clientHeight;
+//                let origin = 581;
+//                this.position.push(origin);
+//                this.$refs.welfareItem.map((item) => {
+//                  origin += item.clientHeight;
+//                  this.position.push(origin)
+//                });
+//              })
+//            }
+//          },'get')
         }
       },
       created(){
         this.$store.dispatch("FETCH_AUTHOR_WELFARE");
       },
       mounted(){
-        
+
         this.clientHeight = document.documentElement.clientHeight;
         window.addEventListener('scroll', () => {
           let base1 = parseInt(this.clientHeight*0.3);
@@ -119,7 +118,6 @@
          return 0
         },
         welfareList:function () {
-            console.log(this.$store.state.authorWelfare);
           return this.$store.state.authorWelfare?this.$store.state.authorWelfare.data:[]
         }
       },

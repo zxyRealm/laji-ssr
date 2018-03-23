@@ -419,6 +419,14 @@ export function FetchGetBookInfo(id,type) {
   let url,data,way='post';
   data = { bookid : id };
   switch (type){
+    case 'rank':
+      url = '/ranking-book';
+      data = id;
+      break;
+    case 'search':
+      url = '/stacks-search';
+      data = id;
+      break;
     case 'draft':
       url = '/chapter-getdrafts';
       data = { bookid : id , startpage:1 };
@@ -444,8 +452,25 @@ export function FetchGetBookInfo(id,type) {
 
 // 校验章节名、书名、卷名
 export function FetchCheckName(data,type) {
-  let url;
+  let url,way='post';
   switch (type){
+    case 'back': //修改密码
+      url = '/person-pwdRetrieval';
+      break;
+    case 'change': //修改密码
+      url = '/person-updatepwd';
+      break;
+    case 'code': //验证码
+      url = '/verification/person-checkedCode';
+      break;
+    case 'phone': //手机号
+      url = '/verification/sys-getShortMessage';
+      break;
+    case 'name': //昵称
+      url = '/person-checkNickName/'+data;
+      way = 'get';
+      data = {};
+      break;
     case 'book':
       url = '/book-checkName';
       break;
@@ -455,7 +480,7 @@ export function FetchCheckName(data,type) {
     default:
       url = '/books-getCheckVolume';
   }
-  return fetch(url,data,'post',false)
+  return fetch(url,data,way,false)
 }
 
 
@@ -617,6 +642,24 @@ export function FetchUpdateInfo(type,uid,aid,aname) {
         followId:aid,
         userid:uid
       };
+  }
+  return fetch(url,data)
+}
+
+export function FetchUserGift(type,count,data) {
+  let url;
+  switch (type){
+    case 'reward': //辣椒
+      url = '/user-SpicyiRewardTicket';
+      data.spicyiTicketCount = count;
+      break;
+    case 'ticket': //金椒
+      url = '/user-RewardGonderTicket';
+      data.goldenTicketCount = count;
+      break;
+    default: //小米椒
+      url = '/user-RecommendationTicket';
+      data.recommendTicketCount = count;
   }
   return fetch(url,data)
 }

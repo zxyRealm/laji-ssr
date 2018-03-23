@@ -127,7 +127,7 @@
                     </div>
                   </div>
                 </el-popover>
-               
+
                 <el-button class="btn clr9" v-popover:popover1  :style="{backgroundColor:intercalate[setData.theme].bgColor,borderColor:intercalate[setData.theme].brColor}">
                   <div class="catalog">
                     <i></i><p>目录</p>
@@ -174,7 +174,7 @@
                     </el-row>
                   </div>
                 </el-popover>
-               
+
                 <el-button class="btn clr9"  v-popover:popover2  :style="{backgroundColor:intercalate[setData.theme].bgColor,borderColor:intercalate[setData.theme].brColor}">
                   <div class="setUp">
                     <i></i><p>设置</p>
@@ -271,7 +271,7 @@
     </div>
 </template>
 <script type="text/ecmascript-6">
-import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,FetchGetPrattle,FetchAddRecords,FetchSubscribeChapter,FetchHandleUserInfo } from '../../api'
+import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,FetchGetPrattle,FetchAddRecords,FetchSubscribeChapter,FetchHandleUserInfo } from '../../api'
  import Badge from '../custom/badge.vue'
  import BadgeItem from '../custom/badge-item.vue'
  import { mapState, mapActions,mapGetters } from 'vuex'
@@ -594,7 +594,6 @@ import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,F
             value:val,
             beforeClose:(action,instance,done) => {
               if(action==='confirm'){
-                let typeUrl;
                 let data = {
                   message:null,
                   userId:this.$store.state.userInfo.userId,
@@ -605,27 +604,13 @@ import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,F
                 if(type==='reward'){
 //                   垃圾币打赏
                   data.message = instance.formData.content;
-                  data.spicyiTicketCount = instance.formData.count;
-                  typeUrl = 'user-SpicyiRewardTicket'
-                }else if(type==='ticket') {
-//                      金票打赏
-                  data.goldenTicketCount = instance.formData.count;
-                  typeUrl = 'user-RewardGonderTicket'
-                }else if(type==='recommend') {
-//                      推荐票投送
-                  data.recommendTicketCount = instance.formData.count;
-                  typeUrl = 'user-RecommendationTicket'
                 }
-                this.$ajax("/"+typeUrl,data,json => {
+                FetchUserGift(type,instance.formData.count,data).then(json=>{
                   done();
                   if(json.returnCode===ERR_OK){
                     this.$message({message:json.msg,duration:2000})
-                  }else if(json.returnCode===ERR_NO){
-                    this.$router.push('/login')
-                  }else {
-                    this.$message(json.msg)
                   }
-                })
+                });
               }else {
                 done()
               }
@@ -723,12 +708,12 @@ import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,F
                 if(action==='confirm'){
                   if(len>0 && len<200){
                     if(this.$regEmoji(instance.messageContent)){return false}
-                    this.$ajax("/add-getcomminfo",{
+                    FetchAddBookComment({
                       bookId:this.bookInfo.bookId,
                       bookName:this.bookInfo.bookName,
                       userName:this.$store.state.userInfo.pseudonym,
                       commentContext:instance.messageContent
-                    },json=>{
+                    }).then(json=>{
                       if(json.returnCode===200){
                         this.$message("发送成功！");
                         done()
