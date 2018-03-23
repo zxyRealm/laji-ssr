@@ -20,16 +20,18 @@
       </div>
       <div class="table-wrapper bsw" >
         <table class="writing-table">
-          <tr>
-            <td width="40">
-              <el-checkbox v-model="selectAll" @change="checkAll"></el-checkbox>
-            </td>
-            <th width="120" >卷名</th>
-            <th width="280">章节名</th>
-            <th width="80">字数</th>
-            <th>创建时间</th>
-            <th width="80">状态</th>
-          </tr>
+          <thead>
+            <tr>
+              <td width="40">
+                <el-checkbox v-model="selectAll" @change="checkAll"></el-checkbox>
+              </td>
+              <th width="120" >卷名</th>
+              <th width="280">章节名</th>
+              <th width="80">字数</th>
+              <th>创建时间</th>
+              <th width="80">状态</th>
+            </tr>
+          </thead>
           <template v-for="(item,$index) in draftList">
             <tr :select="item.select" :cid="item.chapterid" @click="selectIt($index)">
               <td><el-checkbox v-model="item.select"></el-checkbox></td>
@@ -57,6 +59,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchGetBookInfo,FetchAuthorHandleBook } from '../../api'
   export default {
     data() {
       return {
@@ -77,18 +80,19 @@
             })
           }
       },
-      getDraftList(page){
-        this.$ajax("/chapter-getdrafts",{bookid:this.$route.params.bid,startpage:page},json=>{
-            if(json.returnCode===200){
-              let allList = [];
-              json.data.forEach((item)=>{
-                if(item.resultList.length>0){
-                  allList = allList.concat(item.resultList)
-                }
-              });
-              this.draftList = allList;
-            }
+      getDraftList(){
+        FetchGetBookInfo(this.$route.params.bid,'draft').then(json=>{
+          if(json.returnCode===200){
+            let allList = [];
+            json.data.forEach((item)=>{
+              if(item.resultList.length>0){
+                allList = allList.concat(item.resultList)
+              }
+            });
+            this.draftList = allList;
+          }
         });
+        
       },
       selectIt(index){
           if(!this.draftList[index].select){
@@ -113,14 +117,14 @@
                  cancelButtonText:'否',
                  callback: action => {
                    if(action==='confirm'){
-                     this.$ajax("/chapter-deletedrafts",{
-                       chapterid:chapList.toString(),
-                       bookid:this.draftList[0].bookId
-                     },json=>{
-                       if(json.returnCode===200){
-                         this.getDraftList()
-                       }
-                     })
+                       FetchAuthorHandleBook({
+                         chapterid:chapList.toString(),
+                         bookid:this.draftList[0].bookId
+                       },'dd').then(json=>{
+                         if(json.returnCode===200){
+                           this.getDraftList()
+                         }
+                       })
                    }
                  }
                });

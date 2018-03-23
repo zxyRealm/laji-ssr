@@ -48,6 +48,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchGetUserData,FetchAuthorBookList } from '../../api'
   export default{
     props:['identity'],
     data(){
@@ -60,39 +61,31 @@
     },
     methods:{
       getShelfList(page){
-        this.ready = false
-        page = !page?1:page;
-        let preUrl;
-        if(this.activeTab==='bookshelf'){
-          preUrl = 'bookshelf-getuserbookshelf'
-        }else if(this.activeTab==='record'){
-          preUrl = 'person-UserBookReadRecord'
-        }
+        this.ready = false;
+        let id = this.$route.params.uid;
+        let type = this.activeTab === 'bookshelf'?'shelf':'reLog';
         this.shelfList = {};
         if(this.identity!==undefined){
           if(this.identity && this.activeTab==='bookshelf'){
 //          作者书籍
-            this.$ajax("/book-AuthorAllBookInfo",{authorId:this.$route.params.uid},json=>{
-              this.ready = true
+            FetchAuthorBookList(id).then(json=>{
+              this.ready = true;
               if(json.returnCode===200){
                 this.shelfList = json.data
               }else if(json.returnCode===500){
                 this.shelfList = []
               }
-            },'post','json',true)
+            });
           }else {
-            this.$ajax("/"+preUrl,{
-              userid:this.$route.params.uid,
-              startpage:page
-            },json=>{
-              this.ready = true
-              if(json.returnCode===200){
-                this.ready = true
-                this.shelfList = json.data
-              }else if(json.returnCode===500){
-                this.shelfList = []
-              }
-            },'post','json',true)
+              FetchGetUserData(page,type,id).then(json=>{
+                this.ready = true;
+                if(json.returnCode===200){
+                  this.ready = true;
+                  this.shelfList = json.data
+                }else if(json.returnCode===500){
+                  this.shelfList = []
+                }
+              });
           }
         }
       },
@@ -117,7 +110,7 @@
         this.handleState = false;
         this.getShelfList(1);
       },
-      identity:function (val) {
+      identity:function () {
         this.getShelfList(1)
       }
     },

@@ -9,6 +9,8 @@ import { Message } from 'element-ui'
 const logRequests = true || !!process.env.DEBUG_API;
 const prod = process.env.NODE_ENV == 'production'
 const api = createAPI();
+
+
 function createAPI() {
   let api = {};
   api.onServer = true;
@@ -154,7 +156,7 @@ export function FetchChapterList (bid) {
 
 // 书籍评论信息列表
 export function FetchBookCommentList (bid,page) {
-  page = page | 1;
+  page = page || 1;
   return fetch('/comm-getcomminfo',{id:bid,startPage:page,commentType:0,type:1,},'post',false)
 }
 // 热评
@@ -164,8 +166,8 @@ export function FetchBookCommentHot (bid) {
 
 // 书评回复列表
 export function FetchBookCommentReply (cid,page) {
-  page = page | 1;
-  return fetch("/comm-replyInfo",{commentid:cid,startPage:page},'post',false)
+  page = page || 1;
+  return fetch("/comm-replyInfo",{ commentid:cid,startPage:page },'post',false)
 }
 
 // 发布书评
@@ -198,7 +200,7 @@ export function FetchCommentLaud(id) {
 
 // 书籍自动订阅
 export function FetchAutoSubscribe (bid,type,select) {
-  return fetch("/userRmemberChose",{bookid:bid,type:type,isisSelect:select},'post',false)
+  return fetch("/userRmemberChose",{bookid:bid,type:type,isSelect:select},'post',false)
 }
 
 // 搜索热词
@@ -227,8 +229,8 @@ export function FetchAuthorWelfare() {
 }
 
 // 登录
-export function FetchUserLogin(data) {
-  return fetch("/person-login",data)
+export function FetchUserLogin(data,tip=true) {
+  return fetch("/person-login",data,tip)
 }
 // 校验登录或刷新用户信息
 export function FetchFreshenInfo() {
@@ -266,9 +268,12 @@ export function FetchAddBookShelf(bid,user,book) {
 
 // 吐槽列表
 export function FetchGetPrattle(id,page,type) {
-  page = page | 1;
+  page = page || 1;
   let url;
   switch (type){
+    case 'user':
+      url = '/pcomm-getParagraphcommentuid/';
+      break;
     case 'book':
       url = '/pcomm-getParagraphcommentbookid/';
       break;
@@ -365,14 +370,14 @@ export function FetchAuthorGainLog(page) {
 // 作者中心章节列表
 
 export function FetchAuthorChapterList(bid,type) {
-  type = type | 2;
+  type = type || 2;
   return fetch('/books-authorChapterList/'+ bid +'/'+ type,'get')
 }
 
 // 站内公告
 export function FetchAuthorNotice(page,mid) {
-  page = page | 1;
-  mid = mid | 2;
+  page = page || 1;
+  mid = mid || 2;
   return fetch('/sys-getNotice',{ page:page,menuId:mid },'get',false)
 }
 
@@ -380,6 +385,9 @@ export function FetchAuthorNotice(page,mid) {
 export function FetchAuthorHandleBook(data,type) {
   let url;
   switch (type){
+    case 'dd': //删除草稿
+      url = '/chapter-deletedrafts';
+      break;
     case 'cc': //章节调序
       url = '/sys-chapteOrderUpdate';
       break;
@@ -411,6 +419,10 @@ export function FetchGetBookInfo(id,type) {
   let url,data,way='post';
   data = { bookid : id };
   switch (type){
+    case 'draft':
+      url = '/chapter-getdrafts';
+      data = { bookid : id , startpage:1 };
+      break;
     case 'volume':
       url = '/books-getvolume';
       data = { bookId : id };
@@ -447,3 +459,164 @@ export function FetchCheckName(data,type) {
 }
 
 
+// 我的个人中心
+
+export function FetchGetUserData(page,type,id) {
+  page = page || 1;
+  Number(type)?(id = type,type = page):'';
+  let url,way = 'post';
+  let data = { startpage:page };
+  switch (type){
+    case 'su': //个人信息简化版
+      url = '/person-SimplifyUserInfo';
+      data = { puserid : id };
+      break;
+    case 'chat': //私聊记录
+      url = '/person-messageRecord/'+id+'/'+page;
+      data = {};
+      way = 'get';
+      break;
+    case 'bcom':
+      url = '/comm-commInfoByUserId';
+      data = { startPage:page, userid:id };
+      break;
+    case 'sign':  //签到
+      url = '/user-signin';
+      break;
+    case 'notice': //通知
+      url = '/sys-getsystemmsg';
+      break;
+    case 'com': //评论
+      url = '/comm-coverReplyInfo';
+      data = {
+        startPage:page,
+        userid:id
+      };
+      break;
+    case 'reCom': //ta的评论
+      url = '/person-commentACrep';
+      data = {
+        startPage:page,
+        userid:id
+      };
+      way = 'get';
+      break;
+    case 'follow': //关注
+      url = '/fans-Follow';
+      way = 'get';
+      id?data.puserid = id:'';
+      break;
+    case 'fans': //粉丝
+      url = '/fans-myFans';
+      way = 'get';
+      break;
+    case 'reAtt': //ta的关注
+      url = '/fans-userFollow';
+      way = 'get';
+      data.puserid = id;
+      break;
+    case 'reFan': //ta的粉丝
+      url = '/fans-userFans';
+      way = 'get';
+      data.puserid = id;
+      break;
+    case 'letter': //粉丝
+      url = '/person-message';
+      way = 'get';
+      break;
+    case 'shelf': //书架
+      url = '/bookshelf-getuserbookshelf';
+      data.userid = id;
+      break;
+    case 'reLog': //阅读记录
+      url = '/person-UserBookReadRecord';
+      data.userid = id;
+      break;
+    default: //签到状态
+      url = '/user-signinstate';
+      data = {};
+      way = 'get';
+  }
+  console.log(url,way);
+  return fetch(url,data,way,false)
+}
+
+export function FetchHandleUserInfo(id,type) {
+  let url;
+  let data = { id : id };
+  switch (type){
+    case 'sl': //发送私信
+      url = '/person-sendmessage';
+      data = id;
+      break;
+    case 'pal': //吐槽点赞
+      url = '/paragraphcomment-GiveThumbs';
+      data = { paragraphcommentid:id };
+      break;
+    case 'bal': //书评点赞
+      url = '/comm-GiveThumbs';
+      data = { commentId:id };
+      break;
+    case 'dcr': //删除书评回复
+      url = '/comm-deletereplyInfo';
+      data = { commentid:id };
+      break;
+    case 'dc': //删除书评
+      url = '/comm-delcomminfo';
+      data = { id:id,type:0 };
+      break;
+    case 'dg': //删除吐槽
+      url = '/pcomm-delParagraphcomment';
+      break;
+    case 'ds': //删除书架
+      url = '/bookshelf-deluserbookshelf';
+      break;
+    default: //删除阅读记录
+      url = '/person-delBookReadRecord';
+  }
+  return fetch(url,data)
+}
+
+// 我的钱包
+export function FetchMineWallet(type,page,id) {
+  let url,data = { startpage:page,userid:id };
+  switch (type){
+    case 'Annuum': //小米椒记录
+      url = '/userRecommendTicketRecord';
+      break;
+    case 'Reward': //辣椒打赏记录
+      url = '/spicyirewardticketlogByUserId';
+      break;
+    case 'Pepper': //金椒记录
+      url = '/userGoldenTicketRecord';
+      break;
+    case 'Consume': //订阅记录
+      url = '/userSubscriptionRecord';
+      break;
+    default: //充值记录
+      url = '/user-RechargeRecord';
+  }
+  return fetch(url,data,'post',false)
+}
+
+// 关注、取消关注
+export function FetchUpdateInfo(type,uid,aid,aname) {
+  let url,data;
+  switch (type){
+    case 'add':
+      url = '/fans-addFans';
+      data = {
+        token:uid,
+        followUserName:aname,
+        followId:aid
+      };
+      break;
+    default:
+      url = '/fans-CancelFollow';
+      data = {
+        followId:aid,
+        userid:uid
+      };
+  }
+  return fetch(url,data)
+}

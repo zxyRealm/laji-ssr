@@ -48,6 +48,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchGetUserData } from '../../api'
     export default{
       data(){
         return {
@@ -59,13 +60,11 @@
           this.getFansList(page)
         },
         getFansList(page){
-          this.$ajax("/fans-myFans",{
-            startpage:page
-          },json=>{
-            if(json.returnCode===200){
-              this.fansList = json.data
-            }
-          },'get')
+            FetchGetUserData(page,'fans').then(json=>{
+              if(json.returnCode===200){
+                this.fansList = json.data
+              }
+            })
         }
       },
       mounted(){

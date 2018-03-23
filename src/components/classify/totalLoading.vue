@@ -122,7 +122,7 @@
     }
 </script>
 <style lang="stylus" type="text/stylus" rel="stylesheet/stylus">
- @import "../../assets/css/common.styl"
+
 .stack-list-wrapper
   padding-right 35px
   .total-list

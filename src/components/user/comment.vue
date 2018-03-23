@@ -17,6 +17,7 @@
 
 <script type="text/ecmascript-6">
   import Comment from '../comment/zxy-comment.vue'
+  import { FetchGetUserData,FetchGetPrattle,FetchHandleUserInfo } from '../../api'
     export default{
       components:{
         'zxy-comment':Comment
@@ -30,40 +31,26 @@
       methods:{
 //          获取我的书评列表
          getCommentBook(page){
-             this.$ajax('/comm-commInfoByUserId',{
-               userid:this.$cookie('user_id'),
-               startPage:page
-             },json=>{
-                 if(json.returnCode===200){
-                     this.commentBook = json.data
-                 }
+             FetchGetUserData(page,'bcom',this.$cookie("user_id")).then(json=>{
+               if(json.returnCode===200){
+                 this.commentBook = json.data
+               }
              })
          },
 //        获取我的吐槽列表
         getCommentChapter(page){
-           this.$ajax('/pcomm-getParagraphcommentuid/'+this.$cookie('user_id')+'/'+page,'',json=>{
-             if(json.returnCode===200){
-                 this.commentChapter = json.data
-             }
-           },'get')
+             FetchGetPrattle(this.$cookie('user_id'),page,'user').then(json=>{
+                 if(json.returnCode===200){
+                    this.commentChapter = json.data
+                 }
+             })
         },
         handleComment(index,type){
             if(this.$route.name==='commentBook'){
              if(type==='delete'){
 //               书评、回复删除
-                let url,data;
-                if(this.commentBook.list[index].commentType){
-                  url = '/comm-deletereplyInfo';
-                  data = {
-                    commentid:this.commentBook.list[index].id
-                  }
-                }else {
-                  url =  '/comm-delcomminfo';
-                  data = {
-                    id:this.commentBook.list[index].id,
-                    type:0
-                  }
-                }
+                let t;
+                t = this.commentBook.list[index].commentType?'dcr':'dc';
                this.$alert('', '确定删除吗？(⋟﹏⋞)', {
                  confirmButtonText: '是',
                  showCancelButton:true,
@@ -71,7 +58,7 @@
                  cancelButtonText:'否',
                  callback: action => {
                    if(action==='confirm'){
-                     this.$ajax(url,data,json=>{
+                     FetchHandleUserInfo(this.commentBook.list[index].id,t).then(json=>{
                        if(json.returnCode===200){
                          this.$message('删除成功');
                          this.getCommentBook(this.$route.params.page)
@@ -83,14 +70,12 @@
               }else if(type==='page1'){
                   this.$router.push({params:{page:index}});
               }else if(type==='zan'){
-               this.$ajax("/comm-GiveThumbs",{
-                 commentId:this.commentBook.list[index].id
-               },json => {
-                 if(json.returnCode===200){
-                   this.$message(this.commentBook.list[index].isthumbs?'取消成功':'点赞成功');
-                   this.getCommentBook(this.commentBook.pageNum)
-                 }
-               })
+                  FetchHandleUserInfo(this.commentBook.list[index].id,'bal').then(json=>{
+                    if(json.returnCode===200){
+                      this.$message(this.commentBook.list[index].isthumbs?'取消成功':'点赞成功');
+                      this.getCommentBook(this.commentBook.pageNum)
+                    }
+                  })
              }
             }else if(this.$route.name==='commentChapter'){
                if(type==='delete'){
@@ -102,7 +87,7 @@
                    cancelButtonText:'否',
                    callback: action => {
                      if(action==='confirm'){
-                       this.$ajax('/pcomm-delParagraphcomment',{id:this.commentChapter.list[index].id},json=>{
+                       FetchHandleUserInfo(this.commentChapter.list[index].id,'dg').then(json=>{
                          if(json.returnCode===200){
                            this.$message('删除成功');
                            this.getCommentChapter(this.commentChapter.pageNum)
@@ -115,14 +100,12 @@
                }else if(type==='page1'){
                  this.getCommentChapter(index)
                }else if(type==='zan'){
-                 this.$ajax("/paragraphcomment-GiveThumbs",{
-                   paragraphcommentid:this.commentChapter.list[index].id
-                 },json => {
-                   if(json.returnCode===200){
-                      this.$message(this.commentChapter.list[index].isthumbs?'取消成功':'点赞成功');
-                      this.getCommentChapter(this.commentChapter.pageNum)
-                   }
-                 })
+                   FetchHandleUserInfo(this.commentChapter.list[index].id,'pal').then(json=>{
+                       if(json.returnCode===200){
+                         this.$message(this.commentChapter.list[index].isthumbs?'取消成功':'点赞成功');
+                         this.getCommentChapter(this.commentChapter.pageNum)
+                       }
+                   });
                }
             }
         }

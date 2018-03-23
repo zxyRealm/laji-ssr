@@ -7,12 +7,13 @@
 </template>
 <style lang="stylus">
   @import './assets/css/reset.styl'
+  @import "./assets/css/common.styl"
 </style>
 
 <script type="text/ecmascript-6">
   import header from './components/header/header.vue'
   import footer from './components/footer/footer.vue'
-  import { FetchCheckLogin } from './api'
+  import { FetchFreshenInfo } from './api'
   export default {
     name: 'app',
     components: {
@@ -29,7 +30,7 @@
     },
     methods:{
       getUserInfo(){
-        this.$ajax("/person-info",'',json => {
+        FetchFreshenInfo().then(json=>{
           if(json.returnCode===200){
             this.$updateCount();
             this.$cookie('user_id',json.data.userId);
@@ -38,7 +39,7 @@
             this.$cookie('user_id','',-1);
             this.$store.state.userInfo = {}
           }
-        },'post','json','custom')
+        });
       },
       resize(val){
         if(val>1024 && val<1440){

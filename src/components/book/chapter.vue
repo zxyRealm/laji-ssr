@@ -103,79 +103,79 @@
           <div :style="{top:barStyle.top}" class="read-side-bar-box">
               <div class="read-side-bar read-side-bar-left">
                 <!--章节目录-->
-                <!--<el-popover-->
-                  <!--ref="popover1"-->
-                  <!--placement="right-start"-->
-                  <!--width="600"-->
-                  <!--popper-class="boxShadow"-->
-                  <!--v-model="visible"-->
-                  <!--trigger="click">-->
-                  <!--<div class="catalog-child">-->
-                    <!--<h3 class="title">目录</h3>-->
-                    <!--<div class="collapse-wrap scrollBar">-->
-                      <!--<template v-if="chapterList.list" >-->
-                        <!--<el-collapse v-model="activeNames">-->
-                            <!--<el-collapse-item v-for="(item,$index) in chapterList.list" :key="$index" :name="$index">-->
-                                <!--<template slot="title">{{item.volumeName}}</template>-->
-                                <!--<div v-for="(item2,$index2) in item.resultList" class="collapse-item-link txt-overflow v-middle">-->
-                                  <!--<router-link :to="'/chapter/'+item2.id" @click='visible=false' class="txt-overflow v-item" target="_blank" >{{item2.chapterTitle}}</router-link>-->
-                                  <!--<i v-if="item2.chapterIsvip" class="zdy-icon__vip"></i>-->
-                                <!--</div>-->
-                            <!--</el-collapse-item>-->
-                        <!--</el-collapse>-->
-                      <!--</template>-->
-                    <!--</div>-->
-                  <!--</div>-->
-                <!--</el-popover>-->
-                <!--v-popover:popover1 -->
-                <el-button class="btn clr9" :style="{backgroundColor:intercalate[setData.theme].bgColor,borderColor:intercalate[setData.theme].brColor}">
+                <el-popover
+                  ref="popover1"
+                  placement="right-start"
+                  width="600"
+                  popper-class="boxShadow"
+                  v-model="visible"
+                  trigger="click">
+                  <div class="catalog-child">
+                    <h3 class="title">目录</h3>
+                    <div class="collapse-wrap scrollBar">
+                      <template v-if="chapterList.list" >
+                        <el-collapse v-model="chapterList.activeNames">
+                            <el-collapse-item v-for="(item,$index) in chapterList.list" :key="$index" :name="item.volumeId">
+                                <template slot="title">{{item.volumeName}}</template>
+                                <div v-for="(item2,$index2) in item.resultList" class="collapse-item-link txt-overflow v-middle">
+                                  <router-link :to="'/chapter/'+item2.id" @click='visible=false' class="txt-overflow v-item" target="_blank" >{{item2.chapterTitle}}</router-link>
+                                  <i v-if="item2.chapterIsvip" class="zdy-icon__vip"></i>
+                                </div>
+                            </el-collapse-item>
+                        </el-collapse>
+                      </template>
+                    </div>
+                  </div>
+                </el-popover>
+               
+                <el-button class="btn clr9" v-popover:popover1  :style="{backgroundColor:intercalate[setData.theme].bgColor,borderColor:intercalate[setData.theme].brColor}">
                   <div class="catalog">
                     <i></i><p>目录</p>
                   </div>
                 </el-button>
                 <!--页面设置-->
-                <!--<el-popover-->
-                  <!--ref="popover2"-->
-                  <!--placement="right-start"-->
-                  <!--width="400"-->
-                  <!--trigger="click">-->
-                  <!--<div class="setup-wrap">-->
-                    <!--&lt;!&ndash;<h3 class="title">设置</h3>&ndash;&gt;-->
-                    <!--<p class="sw-title">主题设置</p>-->
-                    <!--<el-row class="theme">-->
-                        <!--<el-radio-group size="small" v-model="setData.theme">-->
-                          <!--<el-radio-button :label="0" :style="{backgroundColor: intercalate[0].bgColor}">{{null}}</el-radio-button>-->
-                          <!--<el-radio-button :label="1" :style="{backgroundColor: intercalate[1].bgColor}">{{null}}</el-radio-button>-->
-                          <!--<el-radio-button :label="2" :style="{backgroundColor: intercalate[2].bgColor}">{{null}}</el-radio-button>-->
-                          <!--<el-radio-button :label="3" :style="{backgroundColor: intercalate[3].bgColor}">{{null}}</el-radio-button>-->
-                        <!--</el-radio-group>-->
-                    <!--</el-row>-->
-                    <!--<p class="sw-title">字体大小</p>-->
-                    <!--<el-row class="font-size">-->
-                      <!--<el-input-number :step="2" :min="14" :max="42" size="small" v-model="setData.size"></el-input-number>-->
-                    <!--</el-row>-->
-                    <!--<p class="sw-title">正文字体</p>-->
-                    <!--<el-row class="font-family">-->
-                      <!--<el-radio-group size="small" v-model="setData.family">-->
-                        <!--<el-radio-button label="Microsoft YaHei">微软雅黑</el-radio-button>-->
-                        <!--<el-radio-button label="SimSun">宋体</el-radio-button>-->
-                        <!--<el-radio-button label="KaiTi">楷体</el-radio-button>-->
+                <el-popover
+                  ref="popover2"
+                  placement="right-start"
+                  width="400"
+                  trigger="click">
+                  <div class="setup-wrap">
+                    <!--<h3 class="title">设置</h3>-->
+                    <p class="sw-title">主题设置</p>
+                    <el-row class="theme">
+                        <el-radio-group size="small" v-model="setData.theme">
+                          <el-radio-button :label="0" :style="{backgroundColor: intercalate[0].bgColor}">&nbsp;</el-radio-button>
+                          <el-radio-button :label="1" :style="{backgroundColor: intercalate[1].bgColor}">&nbsp;</el-radio-button>
+                          <el-radio-button :label="2" :style="{backgroundColor: intercalate[2].bgColor}">&nbsp;</el-radio-button>
+                          <el-radio-button :label="3" :style="{backgroundColor: intercalate[3].bgColor}">&nbsp;</el-radio-button>
+                        </el-radio-group>
+                    </el-row>
+                    <p class="sw-title">字体大小</p>
+                    <el-row class="font-size">
+                      <el-input-number :step="2" :min="14" :max="42" size="small" v-model="setData.size"></el-input-number>
+                    </el-row>
+                    <p class="sw-title">正文字体</p>
+                    <el-row class="font-family">
+                      <el-radio-group size="small" v-model="setData.family">
+                        <el-radio-button label="Microsoft YaHei">微软雅黑</el-radio-button>
+                        <el-radio-button label="SimSun">宋体</el-radio-button>
+                        <el-radio-button label="KaiTi">楷体</el-radio-button>
 
-                      <!--</el-radio-group>-->
-                    <!--</el-row>-->
-                    <!--<p class="sw-title">自动订阅</p>-->
-                    <!--<el-row class="subscribe">-->
-                      <!--<el-switch-->
-                        <!--@change="getAutoState"-->
-                        <!--v-model="automaticTake"-->
-                        <!--active-color="#13ce66"-->
-                        <!--inative-color="#ff4949">-->
-                      <!--</el-switch>-->
-                    <!--</el-row>-->
-                  <!--</div>-->
-                <!--</el-popover>-->
-                <!--v-popover:popover2 -->
-                <el-button class="btn clr9" :style="{backgroundColor:intercalate[setData.theme].bgColor,borderColor:intercalate[setData.theme].brColor}">
+                      </el-radio-group>
+                    </el-row>
+                    <p class="sw-title">自动订阅</p>
+                    <el-row class="subscribe">
+                      <el-switch
+                        @change="getAutoState"
+                        v-model="automaticTake"
+                        active-color="#13ce66"
+                        inative-color="#ff4949">
+                      </el-switch>
+                    </el-row>
+                  </div>
+                </el-popover>
+               
+                <el-button class="btn clr9"  v-popover:popover2  :style="{backgroundColor:intercalate[setData.theme].bgColor,borderColor:intercalate[setData.theme].brColor}">
                   <div class="setUp">
                     <i></i><p>设置</p>
                   </div>
@@ -203,7 +203,6 @@
                   <div class="bdsharebuttonbox" data-tag="share_1">
                     <a class="bds_tsina" data-cmd="tsina"></a>
                     <a class="bds_qzone" data-cmd="qzone"></a>
-                    <!--<a class="bds_tieba" data-cmd="tieba"></a>-->
                     <a class="bds_sqq" data-cmd="sqq"></a>
                     <a class="bds_weixin" data-cmd="weixin"></a>
                   </div>
@@ -272,10 +271,10 @@
     </div>
 </template>
 <script type="text/ecmascript-6">
-import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,FetchGetPrattle,FetchAddRecords,FetchSubscribeChapter } from '../../api'
+import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,FetchGetPrattle,FetchAddRecords,FetchSubscribeChapter,FetchHandleUserInfo } from '../../api'
  import Badge from '../custom/badge.vue'
  import BadgeItem from '../custom/badge-item.vue'
- import { mapState, mapActions } from 'vuex'
+ import { mapState, mapActions,mapGetters } from 'vuex'
  let ERR_OK = 200;
  let ERR_NO = 400;
     export default{
@@ -351,7 +350,6 @@ import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,F
             },
             countList:[],
             bookInfo:{},
-            chapterList:{},
             chapterInfo:{},
             commentList:{
               page:'1',
@@ -455,25 +453,7 @@ import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,F
         },
 
         getChapterList(){
-            this.$store.dispatch('FETCH_CHAPTER_LIST',{ bid:this.chapterInfo.bookId })
-//            this.$ajax("/books-volumeChapterList/"+this.chapterInfo.bookId,'',json => {
-//              let oldArr = [];
-//              let newArr = [];
-//              if(json.returnCode===200){
-//                let data = json.data.chapterInfo;
-//                let start = 0;
-//                data.map(item => {
-//                  if(item.resultList.length>0){
-//                    oldArr.push(item);
-//                    this.activeNames.push(start++);
-//                    newArr = newArr.concat(item.resultList);
-//                  }
-//                });
-//                this.$set(this.chapterList,'list',oldArr);
-//                this.$set(this.chapterList,'newList',newArr);
-//                this.reckonPreNext();
-//              }
-//            },'get')
+            this.$store.dispatch('FETCH_CHAPTER_LIST',{ bid:this.chapterInfo.bookId,type:'read'})
         },
 //        计算上一章和下一章ID
         reckonPreNext(){
@@ -520,31 +500,10 @@ import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,F
                 this.getPaComment(index,1);
               }
             })
-//            if(this.$trim(this.FormReply.content).length>0){
-//              if(this.$regEmoji(this.FormReply.content)){
-//                this.$message({message:"内容不可包含emoji表情图",type:'warning'});
-//                return false
-//              }
-//               this.$ajax("/pcomm-addParagraphcomment",{
-//                 pid:this.chapterInfo.chapterData[index].id,
-//                 commentContext:this.FormReply.content,
-//                 bookId:this.chapterInfo.bookId,
-//                 bookName:this.bookInfo.bookName,
-//                 chapterId:this.chapterInfo.id,
-//                 chapterName:this.chapterInfo.chapterTitle,
-//                 userName:this.$store.state.userInfo.pseudonym
-//               },json => {
-//                 else if(json.returnCode===ERR_NO){
-//                   this.$router.push('/login');
-//                 }
-//               })
-//            }
         },
 //        点赞
-        addThumbs(index,val){
-          this.$ajax("/paragraphcomment-GiveThumbs",{
-            paragraphcommentid:this.chapterComment.list[index].id
-          },json => {
+        addThumbs(index){
+          FetchHandleUserInfo(this.chapterComment.list[index].id,'pal').then(json=>{
             if(json.returnCode===ERR_OK){
               if(!this.chapterComment.list[index].isthumbs){
                 this.$message({message:"点赞成功",duration:1500});
@@ -556,7 +515,7 @@ import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,F
                 this.chapterComment.list[index].thumbsCount = this.chapterComment.list[index].thumbsCount-1
               }
             }
-          })
+          });
         },
         //  评论翻页
         prePage(index){
@@ -803,7 +762,6 @@ import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,F
           },
           deep:true
         },
-
         'chapterInfo.bookId':function (val) {
           if(val){
             this.getChapterList();
@@ -818,6 +776,10 @@ import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,F
           this.getChapterInfo(this.$route.params.cid);
           this.reckonPreNext();
           this.chapterComment ={}
+        },
+        chapterList:function (val) {
+//          console.log(val)
+          this.reckonPreNext()
         }
       },
       mounted(){
@@ -870,13 +832,19 @@ import { FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,FetchAddPrattle,F
             boxShadow:'0 1px 3px '+base.bxShadow
           };
           return style
-        }
+        },
+//        chapterList:function () {
+//          return this.$store.state.chapterList?this.$store.state.chapterList:{}
+//        },
+        ...mapGetters([
+            'chapterList'
+        ])
       }
     }
 
 </script>
 <style lang="stylus" type="text/stylus" rel="stylesheet/stylus">
-@import "../../assets/css/common.styl"
+
 .chapter-detail
   .el-breadcrumb__item:last-child
     .el-breadcrumb__inner

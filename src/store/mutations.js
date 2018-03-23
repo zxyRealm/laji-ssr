@@ -88,7 +88,6 @@ export default {
     }
   },
   SET_AUTHOR_CHAPTER_LIST(state,data){
-    state.authorChapterList = data | [];
-    console.log('设置后',state.authorChapterList)
+    state.authorChapterList = data || [];
   }
 }

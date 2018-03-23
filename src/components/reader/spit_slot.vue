@@ -13,6 +13,7 @@
 
 <script type="text/ecmascript-6">
   import Comment from '../comment/zxy-comment.vue'
+  import { FetchGetPrattle,FetchHandleUserInfo } from '../../api'
     export default{
       components:{
         'zxy-comment':Comment
@@ -24,24 +25,24 @@
       },
       methods:{
         getSpitList(){
-          this.$ajax("/pcomm-getParagraphcommentuid/"+this.$route.params.uid+'/'+this.$route.params.page,'',json=>{
-            if(json.returnCode===200){
-               this.spitList = json.data
-            }
-          },'get')
+            let val = this.$route.params;
+            FetchGetPrattle(val.uid,val.page,'user').then(json=>{
+              if(json.returnCode===200){
+                this.spitList = json.data
+              }
+            }) ;
         },
         handleComment(index,type){
             if(type==='page1'){
                 this.$router.push({params:{page:index}})
             }else if(type==='zan'){
-              this.$ajax("/paragraphcomment-GiveThumbs",{
-                paragraphcommentid:this.spitList.list[index].id
-              },json => {
-                if(json.returnCode===200){
-                  this.$message(this.spitList.list[index].isthumbs?'取消成功':'点赞成功');
-                  this.getSpitList(this.spitList.pageNum)
-                }
-              })
+                FetchHandleUserInfo(this.spitList.list[index].id,'pal').then(json=>{
+                  if(json.returnCode===200){
+                    this.$message(this.spitList.list[index].isthumbs?'取消成功':'点赞成功');
+                    this.getSpitList(this.spitList.pageNum)
+                  }
+                })
+//
             }
         }
       },

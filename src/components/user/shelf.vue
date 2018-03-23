@@ -67,6 +67,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchGetUserData,FetchHandleUserInfo } from '../../api'
     export default{
       data(){
             return{
@@ -77,49 +78,33 @@
         },
       methods:{
         getShelfList(page){
-          page = !page?1:page;
-          let preUrl;
-          if(this.activeTab==='bookshelf'){
-            preUrl = '/bookshelf-getuserbookshelf'
-          }else if(this.activeTab==='record'){
-            preUrl = '/person-UserBookReadRecord'
-          }
-          this.$ajax(preUrl,{
-            userid:this.$cookie('user_id'),
-            startpage:page
-          },json=>{
-             if(json.returnCode===200){
-               this.shelfList = json.data
-             }else if(json.returnCode===500){
-               this.$set(this.shelfList,'list',[])
-             }
-          },'post','json',true)
+          let type = this.activeTab==='bookshelf'?'shelf':'reLog';
+          FetchGetUserData(page,type,this.$cookie('user_id')).then(json=>{
+            if(json.returnCode===200){
+              this.shelfList = json.data
+            }else if(json.returnCode===500){
+              this.$set(this.shelfList,'list',[])
+            }
+          });
         },
         deleteChecked(){
-            let Darr = [];
-            let urlLink;
+            let Darr = [],type;
             if(this.shelfList.list){
               this.shelfList.list.map((item)=>{
                   if(item.select){
                     Darr.push(item.id)
                   }
               });
-              if(this.activeTab==='bookshelf'){
-                urlLink = '/bookshelf-deluserbookshelf';
-              }else if(this.activeTab==='record'){
-                urlLink = '/person-delBookReadRecord'
-              }
+              type = this.activeTab === 'bookshelf'?'ds':'dr';
               if(Darr.length>0){
-                this.$ajax(urlLink,{
-                  id:Darr.toString()
-                },json=>{
-                  if(json.returnCode===200){
-                    this.$message("删除成功");
-                    this.getShelfList(this.shelfList.pageNum)
-                  }else{
-                    this.$message(json.msg)
-                  }
-                });
+                  FetchHandleUserInfo(Darr.toString(),type).then(json=>{
+                    if(json.returnCode===200){
+                      this.$message("删除成功");
+                      this.getShelfList(this.shelfList.pageNum)
+                    }
+                  });
+              }else {
+                  this.$message({ message:'请选取删除书籍',type:'warning'})
               }
               
             }

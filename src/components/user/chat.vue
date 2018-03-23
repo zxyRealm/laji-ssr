@@ -76,6 +76,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchGetUserData,FetchHandleUserInfo } from '../../api'
     export default{
       data(){
         return{
@@ -87,43 +88,39 @@
       },
       methods:{
         getUserInfo(){
-          this.$ajax("/person-SimplifyUserInfo",{puserid:this.$route.params.rid},json=>{
-            if(json.returnCode===200){
-              this.baseInfo = json.data;
-              this.$ajax("/person-messageRecord/"+this.$route.params.rid+'/'+this.$route.params.page,'',res=>{
-                if(res.returnCode===200){
-                  this.chatList = res.data
-                }
-              },'get')
-            }
-          })
+            FetchGetUserData('su',this.$route.params.rid).then(json=>{
+              if(json.returnCode===200){
+                this.baseInfo = json.data;
+                this.getChatList();
+              }
+            })
         },
         getChatList(){
-          this.$ajax("/person-messageRecord/"+this.$route.params.rid+'/'+this.$route.params.page,'',res=>{
-            if(res.returnCode===200){
-              this.chatList = res.data
-            }
-          },'get')
+            FetchGetUserData(this.$route.params.page,'chat',this.$route.params.rid).then(res=>{
+              if(res.returnCode===200){
+                this.chatList = res.data
+              }
+            })
         },
         send(){
           let txt = this.$trim(this.sendMsg);
           if(txt.length>0 && txt.length<=100){
-            this.$ajax("/person-sendmessage",{
-              messageContent:this.sendMsg,
-              userName:this.$store.state.userInfo.pseudonym,
-              sendUserId:this.baseInfo.userId,
-              sendName:this.baseInfo.pseudonym
-            },json=>{
-              this.sendMsg = '';
-              if(json.returnCode===200){
-                this.$message('发送成功');
-                if(this.$route.params.page!=1){
-                    this.$router.push({params:{page:1}})
-                }else {
-                  this.getChatList()
-                }
-              }
-            })
+             FetchHandleUserInfo({
+               messageContent:this.sendMsg,
+               userName:this.$store.state.userInfo.pseudonym,
+               sendUserId:this.baseInfo.userId,
+               sendName:this.baseInfo.pseudonym
+             },'sl').then(json=>{
+               this.sendMsg = '';
+               if(json.returnCode===200){
+                 this.$message('发送成功');
+                 if(Number(this.$route.params.page)!==1){
+                   this.$router.push({params:{page:1}})
+                 }else {
+                   this.getChatList()
+                 }
+               }
+             })
           }else if(txt.length>100){
             this.$message({message:"您输入的内容超过长度限制！",type:'warning'})
           }else {

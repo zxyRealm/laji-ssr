@@ -48,6 +48,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchGetUserData } from '../../api'
   export default{
     data(){
       return {
@@ -56,14 +57,11 @@
     },
     methods:{
       getAttentionList(page){
-        this.$ajax("/fans-userFollow",{
-          puserid:this.$route.params.uid,
-          startpage:page
-        },json=>{
+        FetchGetUserData(1,'reAtt',this.$route.params.uid).then(json=>{
           if(json.returnCode===200){
             this.attentionList = json.data
           }
-        },'get')
+        })
       },
       handleCurrentChange(page){
           this.getAttentionList(page)

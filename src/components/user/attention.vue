@@ -49,6 +49,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchGetUserData } from '../../api'
     export default{
         data(){
           return {
@@ -60,16 +61,14 @@
           this.getAttentionList(page)
         },
         getAttentionList(page){
-          this.$ajax("/fans-Follow", {
-            startpage: page
-          },json => {
+          FetchGetUserData(page,'follow').then(json=>{
             if (json.returnCode === 200) {
               json.data.list.map((item) => {
                 item.isfollow = true
               });
               this.attentionList = json.data
             }
-          },'get')
+          });
         }
       },
       mounted(){

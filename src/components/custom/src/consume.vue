@@ -107,7 +107,6 @@
             <!--发布书评-->
 
             <form class="comment-box" v-if="type==='comment'">
-
               <div class="textarea-wrap">
                 <textarea name="" v-model="messageContent"></textarea>
                 <span class="num">{{messageContent.length}}/200</span>

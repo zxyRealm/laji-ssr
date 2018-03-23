@@ -12,6 +12,7 @@
 
 <script type="text/ecmascript-6">
   import Comment from '../comment/zxy-comment.vue'
+  import { FetchGetUserData } from '../../api'
     export default{
       components:{
         "zxy-comment":Comment
@@ -24,14 +25,11 @@
       methods:{
         //        获取评论信息列表
         getUserComment(page){
-          this.$ajax("/person-commentACrep",{
-            startPage:page,
-            userid:this.$route.params.uid
-          },json=>{
+          FetchGetUserData(page,'reCom',this.$route.params.uid).then(json=>{
             if(json.returnCode===200){
               this.userCommentList = json.data
             }
-          },'get')
+          })
         },
         handleCommentData(index,type){
           if(type==='reply'){

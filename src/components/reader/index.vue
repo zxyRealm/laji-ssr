@@ -44,7 +44,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-  
+  import { FetchGetUserData } from '../../api'
   export default{
     data(){
         return{
@@ -53,13 +53,11 @@
     },
     methods: {
       getReaderInfo(){
-        this.$ajax("/person-SimplifyUserInfo",{
-          puserid:this.$route.params.uid
-        },json=>{
-          if(json.returnCode===200){
-            this.readerInfo = json.data
-          }
-        })
+          FetchGetUserData('su',this.$route.params.uid).then(json=>{
+            if(json.returnCode===200){
+              this.readerInfo = json.data
+            }
+          })
       }
     },
     mounted(){

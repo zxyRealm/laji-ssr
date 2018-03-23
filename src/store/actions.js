@@ -79,7 +79,7 @@ export default {
        };
        const s = document.createElement('script');
        s.type = 'text/javascript';
-       s.id = 'baidu__share'
+       s.id = 'baidu__share';
        s.src = 'http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion=' + ~(-new Date() / 36e5);
        document.body.appendChild(s);
        data.data.bookListInfo.bookIntroduction = data.data.bookListInfo.bookIntroduction.replace(/\s*\n+\s*/g,"<br>　　");
@@ -90,33 +90,47 @@ export default {
   },
 
   // 章节列表
-  FETCH_CHAPTER_LIST:({commit},{bid})=>{
+  FETCH_CHAPTER_LIST:({commit},{bid,type})=>{
     return FetchChapterList(bid).then(data=>{
-      let arr=[],list,active = [];
+      let arr=[],list,active = [],obj = {},newArr=[];
+      list = data.data.chapterInfo;
       if(data.returnCode===200){
-        list = data.data.chapterInfo;
-        list.forEach((item)=>{
-          if(item.resultList.length>0){
-            let counts = 0;
-            active.push(item.volumeId);
-            item.length = item.resultList.length;
-            item.resultList.forEach((item2)=>{
-              counts += item2.chapterLength
-            });
-            item.activeList = active;
-            item.counts = counts;
-            arr.push(item)
-          }
-        })
-
+        if(type==='read'){
+           let names = [];
+           list.map(item => {
+             if(item.resultList.length>0){
+               arr.push(item);
+               names.push(item.volumeId);
+               newArr = newArr.concat(item.resultList);
+             }
+           });
+           obj.activeNames = names;
+           obj.list = arr;
+           obj.newList= newArr;
+        }else {
+          list.forEach((item)=>{
+            if(item.resultList.length>0){
+              let counts = 0;
+              active.push(item.volumeId);
+              item.length = item.resultList.length;
+              item.resultList.forEach((item2)=>{
+                counts += item2.chapterLength
+              });
+              item.activeList = active;
+              item.counts = counts;
+              arr.push(item)
+            }
+          });
+          obj = arr
+        }
       }
-      commit("SET_CHAPTER_LIST",arr)
+      commit("SET_CHAPTER_LIST",obj)
     })
   },
 
   //书籍评论
   FETCH_COMMENT_LIST:({commit},{bid,page})=>{
-    page = Number(page) || 1
+    page = Number(page) || 1;
     switch (page){
       case 1:{
         FetchBookCommentHot(bid).then(data1=>{
@@ -229,7 +243,6 @@ export default {
   FETCH_AUTHOR_CHAPTER_LIST:({commit},id)=>{
     return FetchAuthorChapterList(id).then(res=>{
       let arr = [];
-      console.log(res.data)
       if(res.returnCode===200){
         res.data.reverse().forEach((item)=>{
           if(item.resultList.length>0){
@@ -237,7 +250,6 @@ export default {
           }
         });
       }
-      console.log('格式化',arr)
       commit('SET_AUTHOR_CHAPTER_LIST',arr)
     })
   }

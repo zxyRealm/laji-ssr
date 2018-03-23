@@ -28,7 +28,7 @@
               <th width="80">状态</th>
             </tr>
             <tr v-if="!ChapterList">
-              <td>暂无章节</td>
+              <td colspan="5">暂无章节</td>
             </tr>
           </thead>
           <draggable v-model="ChapterList" :options="{draggable:'.drag-item'}" element="tbody" :move="dragMove" @start="dragStart" @update="dragEnd">

@@ -47,6 +47,7 @@
 
 <script type="text/ecmascript-6">
   import $ from 'jquery';
+//  import '../../assets/js/jquery.min.js'
 //  import '../../assets/js/jquery.Jcrop.js'
   import '../../assets/css/jquery.Jcrop.min.css'
   export default{
@@ -344,6 +345,9 @@
           })
         }
       }
+    },
+    mounted(){
+    
     }
   }
 

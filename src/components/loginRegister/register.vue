@@ -48,6 +48,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchUserRegister,FetchUserLogin } from '../../api'
   export default{
     data() {
       let validateName =(rule,value,callback) => {
@@ -145,45 +146,53 @@
           if (valid) {
               let subData = JSON.parse(JSON.stringify(this.registerList));
               subData.userPassword = this.$md5(subData.userPassword);
-              this.$ajax("/person-regInfo",
-                subData,(json) => {
+            FetchUserRegister(subData).then(json=>{
+              if(json.returnCode===200){
+                this.$message({message:"注册成功，2秒后自动登录",type:'success',duration:2000});
+                FetchUserLogin({
+                  userName:this.registerList.userPhone,
+                  userPassword:subData.userPassword,
+                  isSave:0,
+                  terminal:4
+                },false).then(json=>{
                   if(json.returnCode===200){
-                    this.$message({message:"注册成功，2秒后自动登录",type:'success',duration:2000});
-                    this.$ajax('/person-login',{
-                      userName:this.registerList.userPhone,
-                      userPassword:subData.userPassword,
-                      isSave:0,
-                      terminal:4
-                    },json=>{
-                       if(json.returnCode===200){
-                         this.$store.state.userInfo = json.data;
-                         this.$cookie('user_id',json.data.userId);
-                         setTimeout(() => {
-                           if(this.$route.query.redirect!==undefined && decodeURIComponent(decodeURIComponent(this.$route.query.redirect))!=='/login'){
-                             this.$router.push({path:this.$route.query.redirect})
-                           }else {
-                             this.$router.push({path:'/index'})
-                           }
-                         },1000)
-                       }else {
-                         let count = 2;
-                         this.$message("自动登录失败，2秒后返回重新登录");
-                         let timer = setInterval(()=>{
-                           count-= 0.2;
-                           if(count<0){
-                             clearInterval(timer);
-                             let href = this.$route.query.redirect?'/login?redirect='+this.$route.query.redirect:'/login?redirect=/index';
-                             this.$router.push(href)
-                           }
-                         },200);
-                       }
-                    },'post','json',true)
+                    this.$store.state.userInfo = json.data;
+                    this.$cookie('user_id',json.data.userId);
+                    setTimeout(() => {
+                      if(this.$route.query.redirect!==undefined && decodeURIComponent(decodeURIComponent(this.$route.query.redirect))!=='/login'){
+                        this.$router.push({path:this.$route.query.redirect})
+                      }else {
+                        this.$router.push({path:'/index'})
+                      }
+                    },1000)
                   }else {
-                    if(json.msg==='验证码错误'){
-                      this.$message.error('验证码错误，请重新获取')
-                    }
+                    let count = 2;
+                    this.$message("自动登录失败，2秒后返回重新登录");
+                    let timer = setInterval(()=>{
+                      count-= 0.2;
+                      if(count<0){
+                        clearInterval(timer);
+                        let href = this.$route.query.redirect?'/login?redirect='+this.$route.query.redirect:'/login?redirect=/index';
+                        this.$router.push(href)
+                      }
+                    },200);
                   }
-              });
+                });
+//                this.$ajax('/person-login',{
+//
+//                },json=>{
+//
+//                },'post','json',true)
+              }else {
+                if(json.msg==='验证码错误'){
+                  this.$message.error('验证码错误，请重新获取')
+                }
+              }
+            });
+//              this.$ajax("/person-regInfo",
+//                subData,(json) => {
+//
+//              });
           } else {
             this.$message('请检查所填信息是否正确！');
             return false;

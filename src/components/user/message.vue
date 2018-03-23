@@ -100,6 +100,7 @@
 
 <script type="text/ecmascript-6">
   import Comment from '../comment/zxy-comment.vue'
+  import { FetchGetUserData } from '../../api'
     export default{
       components:{
           "zxy-comment":Comment
@@ -139,26 +140,23 @@
         },
 //        获取评论信息列表
         getUserComment(page){
-          this.$ajax("/comm-coverReplyInfo",{
-            startPage:page,
-            userid:this.$cookie('user_id')
-          },json=>{
-            if(json.returnCode===200){
-              this.userCommentList = json.data;
-              this.$updateCount()
-            }
-          })
+            FetchGetUserData(page,'com',this.$cookie("user_id")).then(json=>{
+              if(json.returnCode===200){
+                this.userCommentList = json.data;
+                this.$updateCount()
+              }
+            })
+
         },
 //        获取私信列表
         getLetterList(page){
-          this.$ajax("/person-message",{
-            startpage:page
-          },json=>{
-            if(json.returnCode===200){
-              this.letterList = json.data;
-              this.$updateCount()
-            }
-          },'get')
+            FetchGetUserData(page,'letter').then(json=>{
+              if(json.returnCode===200){
+                this.letterList = json.data;
+                this.$updateCount()
+              }
+            })
+         
         },
 //        显示回复弹窗
         showReply(index){
@@ -187,17 +185,16 @@
             this.$router.push({path:'/reader/'+obj.sendUserId})
           }else if(current.indexOf('chat')>-1){
               this.$router.push({path:'/user/message/letter/'+obj.userId});
-//              sessionStorage.setItem('send_info',JSON.stringify({avatar:obj.userHeadPortraitURL,sendName:obj.userName,sendId:obj.userId}))
           }
         },
 
 //        通知列表
         getNoticeList(page){
-          this.$ajax("/sys-getsystemmsg",{startpage:page},json=>{
-            if(json.returnCode===200){
-              this.noticeList = json.data
-            }
-          })
+            FetchGetUserData(page,'notice').then(json=>{
+              if(json.returnCode===200){
+                this.noticeList = json.data
+              }
+            })
         },
 //        举报用户
         complain(){

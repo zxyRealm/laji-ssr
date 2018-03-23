@@ -197,7 +197,7 @@ export default{
 
 </script>
 <style lang="stylus" type="text/stylus" rel="stylesheet/stylus">
-@import "../../assets/css/common.styl"
+
 .pay-confirm-box
   .el-dialog
     margin-top -124px

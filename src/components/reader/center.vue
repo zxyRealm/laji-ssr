@@ -134,6 +134,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchGetUserData,FetchGetPrattle,FetchAuthorBookList } from '../../api'
   export default{
     props:['identity'],
     data() {
@@ -149,57 +150,51 @@
       //        获取评论信息列表
       getDataList(){
 //      书评
-        this.$ajax("/comm-commInfoByUserId",{
-          startPage:1,
-          userid:this.$route.params.uid
-        },json=>{
+        let id = this.$route.params.uid;
+        FetchGetUserData(1,'bcom',id).then(json=>{
           if(json.returnCode===200){
             this.commentList = json.data
           }
         });
+
 //        吐槽
-        this.$ajax("/pcomm-getParagraphcommentuid/"+this.$route.params.uid+'/1','',json=>{
+        FetchGetPrattle(id,1,'user').then(json=>{
           if(json.returnCode===200){
             this.spitList = json.data
           }
-        },'get');
+        });
+
 
 //        用户粉丝列表
-        this.$ajax("/fans-userFans",{
-          puserid:this.$route.params.uid,
-          startpage:1
-        },json=>{
+        FetchGetUserData(1,'reFan',id).then(json=>{
           if(json.returnCode===200){
             this.fansList = json.data
           }
-        },'get');
+        });
+        
 
 //        用户关注列表
-        this.$ajax("/fans-userFollow",{
-          puserid:this.$route.params.uid,
-          startpage:1
-        },json=>{
+        FetchGetUserData(1,'reAtt',id).then(json=>{
           if(json.returnCode===200){
             this.attentionList = json.data
           }
-        },'get')
+        });
+
       },
       getBookList(){
+         let id = this.$route.params.uid;
         if(this.identity===1){
 //            作者书籍
-          this.$ajax("/book-AuthorAllBookInfo",{authorId:this.$route.params.uid},json=>{
+          FetchAuthorBookList(id).then(json=>{
             if(json.returnCode===200){
               this.recordList = json.data
             }else if(json.returnCode===500){
               this.recordList = []
             }
-          },'post','json',true)
+          })
         }else if(this.identity===0) {
           //        阅读记录
-          this.$ajax("/person-UserBookReadRecord",{
-            userid:this.$route.params.uid,
-            startpage:1
-          },json=>{
+          FetchGetUserData(1,'reLog',id).then(json=>{
             if(json.returnCode===200){
               this.recordList = json.data.list
             }

@@ -26,12 +26,14 @@
             <div v-show="$route.name==='walletCharge'" class="table-wrap">
               <template v-if="recordList && recordList.list">
                 <table v-if="recordList.list.length>0" class="record-table">
-                  <tr>
-                    <th width="160">时间</th>
-                    <th>充值途径</th>
-                    <th>金额</th>
-                    <th>状态</th>
-                  </tr>
+                  <thead>
+                    <tr>
+                      <th width="160">时间</th>
+                      <th>充值途径</th>
+                      <th>金额</th>
+                      <th>状态</th>
+                    </tr>
+                  </thead>
                   <template v-for="(item,index) in recordList.list">
                     <tr >
                       <td>{{item.dateTimes | time('long')}}</td>
@@ -93,11 +95,14 @@
             <div v-show="$route.name==='walletReward'" class="table-wrap">
               <template v-if="recordList && recordList.list">
                 <table v-if="recordList.list.length>0"  class="record-table">
-                  <tr>
-                    <th width="160">时间</th>
-                    <th width="250">作品名称</th>
-                    <th width="160">数量</th>
-                  </tr>
+                  <thead>
+                    <tr>
+                      <th width="160">时间</th>
+                      <th width="250">作品名称</th>
+                      <th width="160">数量</th>
+                    </tr>
+                  </thead>
+                 
                   <template v-for="(item,index) in recordList.list">
                     <tr >
                       <td>{{item.giveDateTime | time('long')}}</td>
@@ -118,12 +123,15 @@
             <div v-show="$route.name==='walletAnnuum' || $route.name === 'walletPepper'" class="table-wrap">
               <template v-if="recordList && recordList.list">
                 <table v-if="recordList.list.length>0"  class="record-table">
-                  <tr>
-                    <th width="160">投喂时间</th>
-                    <th width="250">作品名称</th>
-                    <th width="160">投喂数量</th>
-                    <th>状态</th>
-                  </tr>
+                  <thead>
+                    <tr>
+                      <th width="160">投喂时间</th>
+                      <th width="250">作品名称</th>
+                      <th width="160">投喂数量</th>
+                      <th>状态</th>
+                    </tr>
+                  </thead>
+                 
                   <template v-for="(item,index) in recordList.list">
                     <tr >
                       <td>{{ item.giveDateTime | time('long')}}</td>
@@ -157,6 +165,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { FetchMineWallet } from '../../api'
     export default{
       data() {
         return {
@@ -169,30 +178,38 @@
           this.$router.push({params:{page:page}})
         },
         getRecordList(){
-            let url,name = this.$route.name,page = this.$route.params.page,formData = {page:page};
-            if(name==='walletCharge'){
-              url = '/user-RechargeRecord'
-            }else if(name==='walletConsume'){
-              url = '/userSubscriptionRecord'
-            }else if(name==='walletPepper'){
-              url = '/userGoldenTicketRecord'
-            }else if(name==='walletReward'){
-              url = '/spicyirewardticketlogByUserId'
-            }else if(name==='walletAnnuum'){
-              url = '/userRecommendTicketRecord'
-            }
-            if(name!=='walletCharge'){
-                formData = {
-                    startpage:page,
-                    userid:this.$cookie('user_id')
-                }
-            }
-            this.recordList = {};
-            this.$ajax(url,formData,json=>{
-                if(json.returnCode===200 || !json.data){
-                  this.recordList = json.data;
-                }
-            },'post','json',true)
+            let url,name = this.$route.name,page = this.$route.params.page;
+            let type = this.$route.name.replace('wallet','');
+            
+            FetchMineWallet(type,page,this.$cookie('user_id')).then(json=>{
+              if(json.returnCode===200 || !json.data){
+                this.recordList = json.data;
+              }
+            });
+            console.log(type);
+//            if(name==='walletCharge'){
+//              url = '/user-RechargeRecord'
+//            }else if(name==='walletConsume'){
+//              url = '/userSubscriptionRecord'
+//            }else if(name==='walletPepper'){
+//              url = '/userGoldenTicketRecord'
+//            }else if(name==='walletReward'){
+//              url = '/spicyirewardticketlogByUserId'
+//            }else if(name==='walletAnnuum'){
+//              url = '/userRecommendTicketRecord'
+//            }
+//            if(name!=='walletCharge'){
+//                formData = {
+//                    startpage:page,
+//                    userid:this.$cookie('user_id')
+//                }
+//            }
+////            this.recordList = {};
+//            this.$ajax(url,formData,json=>{
+//                if(json.returnCode===200 || !json.data){
+//                  this.recordList = json.data;
+//                }
+//            },'post','json',true)
 
         }
       },

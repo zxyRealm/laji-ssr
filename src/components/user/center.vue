@@ -189,6 +189,7 @@
 
 <script type="text/ecmascript-6">
   import Comment from '../comment/zxy-comment.vue'
+  import { FetchGetUserData } from '../../api'
   export default{
       components:{
           'zxy-comment':Comment
@@ -236,72 +237,60 @@
           },1000);
         },
         getDataList(){
-          let preUrl2 = 'person-UserBookReadRecord';
-//          关注列表
-          this.$ajax("/fans-Follow",{
-            startpage:1
-          },json=>{
-            if(json.returnCode===200 || !json.data){
-              this.attentionList = json.data
-            }
-          },'get');
-//          粉丝列表
-          this.$ajax("/fans-myFans",{
-                startpage:1
-              },json=>{
+            FetchGetUserData(1,'follow').then(json=>{
+              if(json.returnCode===200 || !json.data){
+                this.attentionList = json.data
+              }
+            });
+  
+          FetchGetUserData(1,'fans').then(json=>{
             if(json.returnCode===200 || !json.data){
               this.fansList = json.data
             }
-          },'get');
-//        阅读记录
-          this.$ajax("/"+preUrl2,{
-            userid:this.$cookie('user_id'),
-            startpage:1
-          },json=>{
-              this.recordList = json.data
           });
-
-//          私信
-            this.$ajax("/person-message?startpage=1",'',json=>{
-              if(json.returnCode===200 || !json.data){
-                 this.letterList = json.data
-              }
-            },'get');
-
-//          评论
-            this.$ajax("/comm-coverReplyInfo",{userid:this.$cookie('user_id'),startPage:1},json=>{
-              if(json.returnCode===200){
-                this.commentList = json.data
-              }
-            });
-//          通知
-            this.$ajax("/sys-getsystemmsg",{startpage:1},json=>{
-              if(json.returnCode===200){
-                this.infoList = json.data
-              }
-            })
+  
+          FetchGetUserData(1,'reLog',this.$cookie('user_id')).then(json=>{
+            this.recordList = json.data
+          });
+  
+          FetchGetUserData(1,'com',this.$cookie('user_id')).then(json=>{
+            if(json.returnCode===200){
+              this.commentList = json.data
+            }
+          });
+  
+          FetchGetUserData(1,'notice').then(json=>{
+            if(json.returnCode===200){
+              this.infoList = json.data
+            }
+          });
+          FetchGetUserData(1,'letter').then(json=>{
+            if(json.returnCode===200 || !json.data){
+              this.letterList = json.data
+            }
+          })
         },
 //        获取签到状态
         getSignState(){
-          this.$ajax("/user-signinstate",'',json=>{
-            if(json.returnCode===200){
-                this.signState = true
-            }else {
-                this.signState = false
-            }
-          },'get','json',true)
+            FetchGetUserData().then(json=>{
+              if(json.returnCode===200){
+                  this.signState = true
+              }else {
+                  this.signState = false
+              }
+            });
         },
 //        用户签到
         addSignState(){
           if(!this.signState){
-            this.$ajax("/user-signin",'',json=>{
-              if(json.returnCode===200){
-                this.signState = true;
-                this.dialogVisible = true;
-                this.timer();
-                this.$freshen();
-              }
-            })
+              FetchGetUserData('sign').then(json=>{
+                if(json.returnCode===200){
+                  this.signState = true;
+                  this.dialogVisible = true;
+                  this.timer();
+                  this.$freshen();
+                }
+              })
           }else {
             this.$message({message:'已签到！'})
           }

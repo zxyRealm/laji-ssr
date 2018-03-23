@@ -49,11 +49,9 @@
 
       </div>
     </div>
-
 </template>
 
 <script type="text/ecmascript-6">
-  
   import Cropper from '../common/img_upload.vue'
     export default{
       components:{

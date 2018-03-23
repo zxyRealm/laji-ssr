@@ -4,7 +4,7 @@
 let ERR_OK = 200;
 let ERR_NO = 400;
 import Axios from 'axios'
-import { aycn } from '../../api'
+import { aycn,FetchUpdateInfo } from '../../api'
 exports.install = function (Vue, options) {
   // 异步请求统一设置
   Vue.prototype.$ajax = function (url, data, type ,tip=true) {
@@ -23,7 +23,7 @@ exports.install = function (Vue, options) {
         this.$message('取消成功')
       }
     })
-  }
+  };
   // 添加关注
   Vue.prototype.$addAttention = function (index,type){
     if(!this.$store.state.userInfo.userId){this.$router.push('/login');return false}
@@ -49,7 +49,7 @@ exports.install = function (Vue, options) {
         followId:this.readerInfo.userId
       }
     }
-    this.$ajax("/fans-addFans", data,(json)=>{
+    FetchUpdateInfo('add',data.token,data.followId,data.followUserName).then(json=>{
       if(json.returnCode===200){
         this.$message("关注成功");
         if(index>=0){
@@ -61,10 +61,9 @@ exports.install = function (Vue, options) {
         }else{
           this.readerInfo.isfollow = true
         }
-      }else {
-        this.$message(json.msg)
       }
-    })
+    });
+
   };
   // 取消关注
   Vue.prototype.$cancelAttention = function(index,type){
@@ -75,7 +74,6 @@ exports.install = function (Vue, options) {
       if(type==='fans'){
         id = this.fansList.list[index].userId
       }else if(type==='ate') {
-        console.log(this.$route.name);
         id = this.attentionList.list[index].followId
       }
       data = {
@@ -95,7 +93,7 @@ exports.install = function (Vue, options) {
       cancelButtonText:'否',
       callback: action => {
         if(action==='confirm'){
-          this.$ajax("/fans-CancelFollow",data,json=>{
+          FetchUpdateInfo('cancel',data.userid,data.followId).then(json=>{
             if(json.returnCode===200){
               this.$message("取消关注");
               if(index>=0){
@@ -107,8 +105,6 @@ exports.install = function (Vue, options) {
               }else {
                 this.readerInfo.isfollow = false
               }
-            }else{
-              this.$message(json.msg)
             }
           })
         }
@@ -119,10 +115,8 @@ exports.install = function (Vue, options) {
   Vue.prototype.$formTime = function (date,type,separator) {
     separator = separator===undefined?"-":separator;
     let time = new Date(date) || new Date();
-    let now = new Date(date).getFullYear() || new Date().getFullYear();
-    let days = 0;
-    let sumTime,Time,T;
-    T = time
+    let Time,T;
+    T = time;
     let year = T.getFullYear();
     let mon  = T.getMonth()+1<10?'0'+(T.getMonth()+1):T.getMonth()+1;
     let Date1 = T.getDate()<10?'0' + T.getDate():T.getDate();
@@ -198,43 +192,43 @@ exports.install = function (Vue, options) {
   };
   // cookies 设置、获取、删除
   Vue.prototype.$cookie = (key,value,expiredays,path,domain)=>{
-    if(typeof value !== "undefined"){//write
-      let cookieValue = key + "=" + encodeURIComponent(value)
-      if(expiredays){
-        let exdate = new Date();
-        exdate.setDate(exdate.getDate()+expiredays);
-        cookieValue += ";expires="+exdate.toGMTString()
-      }
 
-      cookieValue += ";path=" + (path?path:'/')
-      if(domain){
-        cookieValue += ";domain=" + domain
-      }
-
-      document.cookie = cookieValue;
-    }else{//read
-      if (document.cookie.length>0) {
-        var cookie = {}, all = document.cookie, list, item, index;
-        if (all === '') {
-          return cookie;
-        }
-        list = all.split('; ');
-        for (var i = 0, len = list.length; i < len; i++) {
-          item = list[i];
-          index = item.indexOf('=');
-          var cookieNow;
-          try {
-            cookieNow = decodeURIComponent(item.substring(index + 1));
-          } catch (e) {
-            cookieNow = item.substring(index + 1);
-          }
-          cookie[item.substring(0, index)] = cookieNow;
-        }
-        return cookie[key];
-      }else {
-        return null
-      }
-    }
+    // if(!document){ return false }
+    // if(typeof value !== "undefined"){//write
+    //   let cookieValue = key + "=" + encodeURIComponent(value);
+    //   if(expiredays){
+    //     let exdate = new Date();
+    //     exdate.setDate(exdate.getDate()+expiredays);
+    //     cookieValue += ";expires="+exdate.toGMTString()
+    //   }
+    //   cookieValue += ";path=" + (path?path:'/');
+    //   if(domain){
+    //     cookieValue += ";domain=" + domain
+    //   }
+    //   document.cookie = cookieValue;
+    // }else{//read
+    //   if ( document.cookie.length>0) {
+    //     var cookie = {}, all =  document.cookie, list, item, index;
+    //     if (all === '') {
+    //       return cookie;
+    //     }
+    //     list = all.split('; ');
+    //     for (var i = 0, len = list.length; i < len; i++) {
+    //       item = list[i];
+    //       index = item.indexOf('=');
+    //       var cookieNow;
+    //       try {
+    //         cookieNow = decodeURIComponent(item.substring(index + 1));
+    //       } catch (e) {
+    //         cookieNow = item.substring(index + 1);
+    //       }
+    //       cookie[item.substring(0, index)] = cookieNow;
+    //     }
+    //     return cookie[key];
+    //   }else {
+    //     return null
+    //   }
+    // }
   };
   // 用户点赞
   Vue.prototype.$userLaud = (id,type)=>{

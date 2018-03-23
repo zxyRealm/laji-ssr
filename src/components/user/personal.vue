@@ -69,7 +69,7 @@
             }
           };
           var validateAutograph = (rule,value,callback) => {
-              if(value.length<=20){
+              if(value && value.length<=20){
                 if(this.$regEmoji(value)){
                      callback(new Error("不可包含emoji表情图"))
                 }else {
@@ -94,7 +94,6 @@
                 ],
                 userAutograph:[
                   { validator: validateAutograph, trigger: 'change' }
-//                  { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
                 ]
               },
               showList:{

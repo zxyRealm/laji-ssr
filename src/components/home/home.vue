@@ -577,7 +577,7 @@ export default{
 }
 </script>
 <style lang="stylus" type="text/stylus" rel="stylesheet/stylus">
-@import "../../assets/css/common.styl"
+
   
   font-color = #FB5E6F
   btn-color =  #F77583

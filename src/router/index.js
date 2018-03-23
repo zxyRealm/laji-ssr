@@ -7,55 +7,58 @@ import Router from 'vue-router'
 import Axios from 'axios'
 import VueAxios from 'vue-axios'
 const Home = () => import("../components/home/home.vue");
-import authorIndex from '../components/author/index.vue'
-import Detail from '../components/book/detail.vue'
-import Rank from '../components/ranking/rank.vue'
-import rankLoading from '../components/ranking/rankLoading.vue'
-import Total from '../components/classify/total.vue'
-import Welfare from '../components/author/welfare.vue'
-import Charge from '../components/charge/index.vue'
-import Error from '../components/error/404.vue'
-import Search from '../components/classify/search.vue'
-import Chapter from '../components/book/chapter.vue'
-import ChapterList from '../components/book/chapter_list.vue'
-import Login from '../components/loginRegister/login.vue'
-import getBackPassword from '../components/loginRegister/getBackPassword.vue'
-import totalLoading from  '../components/classify/totalLoading.vue'
-import authorCenter from '../components/author/center.vue'
-import Register from '../components/loginRegister/register.vue'
-import addBook from '../components/author/addBook.vue'
-import addChapter from '../components/author/addChapter.vue'
-import editChapter from '../components/author/eidtChapter.vue'
-import authorChapterList from '../components/author/chapterList.vue'
-import draftList from '../components/author/draftList.vue'
-import Income from '../components/author/income.vue'
-import authorMessage from '../components/author/message.vue'
-import authorNotice from '../components/author/notice.vue'
-import authorApply from '../components/author/apply.vue'
-import authorTidings from '../components/author/tidings.vue'
+const authorIndex =() => import('../components/author/index.vue');
+const Detail =() => import('../components/book/detail.vue');
+const Rank =() => import('../components/ranking/rank.vue');
+const rankLoading =() => import('../components/ranking/rankLoading.vue');
+const Total =() => import('../components/classify/total.vue');
+const Welfare =() => import('../components/author/welfare.vue');
+const Charge  =() => import('../components/charge/index.vue');
+const Error =() => import('../components/error/404.vue');
+const Search =() => import('../components/classify/search.vue');
+const Chapter =() => import('../components/book/chapter.vue');
+const ChapterList =() => import('../components/book/chapter_list.vue');
+const Login =() => import('../components/loginRegister/login.vue');
+const getBackPassword =() => import('../components/loginRegister/getBackPassword.vue');
+const totalLoading =() => import('../components/classify/totalLoading.vue');
 
-import userIndex from '../components/user/index.vue'
-import userCenter from '../components/user/center.vue'
-import userMessage from '../components/user/message.vue'
-import userComment from '../components/user/comment.vue'
-import userChat from '../components/user/chat.vue'
-import userFans from '../components/user/fans.vue'
-import userShelf from '../components/user/shelf.vue'
-import userAttention from '../components/user/attention.vue'
-import userRecord from '../components/user/record.vue'
-import userWallt from '../components/user/wallet.vue'
-import userPersonal from '../components/user/personal.vue'
 
-import commonNews from '../components/common/news.vue'
-import Download from '../components/common/download.vue'
+const authorCenter =() => import('../components/author/center.vue');
+const Register =() => import('../components/loginRegister/register.vue');
+const addBook =() => import('../components/author/addBook.vue');
+const addChapter =() => import('../components/author/addChapter.vue');
+const editChapter =() => import('../components/author/eidtChapter.vue');
+const authorChapterList =() => import('../components/author/chapterList.vue');
+const draftList =() => import('../components/author/draftList.vue');
+const Income =() => import('../components/author/income.vue');
+const authorMessage =() => import('../components/author/message.vue');
+const authorNotice =() => import('../components/author/notice.vue');
+const authorApply =() => import('../components/author/apply.vue');
+const authorTidings =() => import('../components/author/tidings.vue');
 
-import readerIndex from '../components/reader/index.vue'
-import readerFans from '../components/reader/fans.vue'
-import readerCenter from '../components/reader/center.vue'
-import readerAttention from '../components/reader/attention.vue'
-import readerShelf from '../components/reader/bookshelf.vue'
-import readerSpit from '../components/reader/spit_slot.vue'
-import readerReview from '../components/reader/book_review.vue'
+
+const userIndex =() => import('../components/user/index.vue');
+const userCenter =() => import('../components/user/center.vue');
+const userMessage =() => import('../components/user/message.vue');
+const userComment =() => import('../components/user/comment.vue');
+const userChat =() => import('../components/user/chat.vue');
+const userFans =() => import('../components/user/fans.vue');
+const userShelf =() => import('../components/user/shelf.vue');
+const userAttention =() => import('../components/user/attention.vue');
+const userWallet =() => import('../components/user/wallet.vue');
+const userPersonal =() => import('../components/user/personal.vue');
+const commonNews =() => import('../components/common/news.vue');
+const Download =() => import('../components/common/download.vue');
+
+
+const readerIndex =() => import('../components/reader/index.vue');
+const readerFans =() => import('../components/reader/fans.vue');
+const readerCenter =() => import('../components/reader/center.vue');
+const readerAttention =() => import('../components/reader/attention.vue');
+
+const readerShelf =() => import('../components/reader/bookshelf.vue');
+const readerSpit =() => import('../components/reader/spit_slot.vue');
+const readerReview =() => import('../components/reader/book_review.vue');
 
 
 // Vue.prototype.$ajax= Axios;
@@ -166,23 +169,23 @@ const routes = [
       },
       // 充值记录
       {
-        path:'/user/wallet/charge/:page', name:"walletCharge", component:userWallt
+        path:'/user/wallet/charge/:page', name:"walletCharge", component:userWallet
       },
       // 消费记录
       {
-        path:'/user/wallet/consume/:page', name:"walletConsume", meta: {requireAuth: true,topName:"User"}, component:userWallt
+        path:'/user/wallet/consume/:page', name:"walletConsume", meta: {requireAuth: true,topName:"User"}, component:userWallet
       },
       // 金椒记录
       {
-        path:'/user/wallet/pepper/:page', name:"walletPepper", meta: {requireAuth: true,topName:"User"}, component:userWallt
+        path:'/user/wallet/pepper/:page', name:"walletPepper", meta: {requireAuth: true,topName:"User"}, component:userWallet
       },
       // 打赏记录
       {
-        path:'/user/wallet/reward/:page', name:"walletReward", meta: {requireAuth: true,topName:"User"}, component:userWallt
+        path:'/user/wallet/reward/:page', name:"walletReward", meta: {requireAuth: true,topName:"User"}, component:userWallet
       },
       // 小米椒记录
       {
-        path:'/user/wallet/annuum/:page', name:"walletAnnuum", meta: {requireAuth: true,topName:"User"}, component:userWallt
+        path:'/user/wallet/annuum/:page', name:"walletAnnuum", meta: {requireAuth: true,topName:"User"}, component:userWallet
       },
       {
         path:'/user/comment', redirect:'/user/comment/book/1'
@@ -259,112 +262,6 @@ const routes = [
   { path:'/download/app', name:'download', component:Download },
   { path: '/', redirect:'/index' },
 ];
-// 全局导航钩子
-// router.beforeEach((to, from, next) => {
-//   let uid = Number(router.app.$cookie('user_id'));
-//   if(to.name==='Login' && uid){
-//     next({
-//       path: '/',
-//     });
-//     return false
-//   }
-//   if(uid && Number(to.params.uid)===uid){
-//     if(to.name==='Reader'){
-//       next({
-//         path:'/user/index'
-//       })
-//     }else if(to.name==='bookShelf'){
-//       next({
-//         path:'/user/shelf'
-//       })
-//     }else if(to.name==='bookReview'){
-//       next({
-//         path:'/user/comment/book/1'
-//       })
-//     }else if(to.name==='spitSlot'){
-//       next({
-//         path:'/user/comment/chapter'
-//       })
-//     }else if(to.name==='Attention'){
-//       next({
-//         path:'/user/attention'
-//       })
-//     }else if(to.name==='Fans'){
-//       next({
-//         path:'/user/fans'
-//       })
-//     }
-//   }
-//   // 判断该路由是否需要登录权限
-//   if (to.meta.requireAuth) {
-//     if(uid){
-//       Axios.post("/person-checkLoginState").then((res)=>{
-//         if(res.data.returnCode===200){
-//           if(to.path.indexOf('/author')>-1){
-//             if(res.data.data===1 && to.name!=='authorApply'){
-//               next({
-//                 path:"/author/apply"
-//               })
-//             }else {
-//               if(res.data.data===2 &&!from.name&&to.name==='authorApply'){
-//                 next({
-//                   path:'/author/writing/index'
-//                 })
-//               }else {
-//                 next()
-//               }
-//             }
-//           }else {
-//             next()
-//           }
-//         }else{
-//           router.app.$options.store.state.userInfo = {};
-//           next({
-//             path: '/login',
-//             query: {redirect: to.fullPath}
-//           })
-//         }
-//       }).catch((err)=>{
-//         console.log(err)
-//       });
-//     }else {
-//       router.app.$options.store.state.userInfo = {};
-//       next({
-//         path: '/login',
-//         query: {redirect: to.fullPath}
-//       })
-//     }
-//   }else if(to.fullPath==='/login'){
-//     next({
-//       path: '/login',
-//       query: {redirect: from.fullPath}
-//     })
-//   }else {
-//     next();
-//   }
-// });
-
-createRouter().afterEach(() => {
-  console.log('分享前')
-    if(typeof window!=='undefined'){
-      console.log('分享');
-
-      // window.scrollTo(0,0)
-      setTimeout(()=>{
-        var _hmt = _hmt || [];
-        (function() {
-          //每次执行前，先移除上次插入的代码
-          document.getElementById('baidu_tj') && document.getElementById('baidu_tj').remove();
-          var hm = document.createElement("script");
-          hm.src = "https://hm.baidu.com/hm.js?ae2f46c8c11aad77feae3035de5c127e";
-          hm.id = "baidu_tj";
-          var s = document.getElementsByTagName("script")[0];
-          s.parentNode.insertBefore(hm, s);
-        })();
-      },0);
-    }
-
-});
 
 
 export function createRouter () {
