@@ -188,7 +188,7 @@
                   </div>
                 </el-button>
                 <el-button class="btn" :style="{backgroundColor:intercalate[setData.theme].bgColor,borderColor:intercalate[setData.theme].brColor}">
-                  <a class="clr9" @click="addBookComment">
+                  <a class="clr9" @click="myConsume('comment')">
                     <div class="bComment">
                       <i></i><p>书评</p>
                     </div>
@@ -267,7 +267,7 @@
           </el-form>
         <img src="../../../static/img/buy_vip_icon@1_01.png" class="buy-icon" alt="">
       </el-dialog>
-
+      <my-consume></my-consume>
     </div>
 </template>
 <script type="text/ecmascript-6">
@@ -377,6 +377,7 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
 //        获取章节信息
         getChapterInfo(id){
           FetchReadChapter({chapterId:id,readType:1}).then(json=>{
+            this.$store.commit("SET_BOOK_DETAIL",{data:json.data});
             if(json.data && json.returnCode!==1000){
               let desc = json.data.bookInfo.bookName + '是辣鸡小说网作者'+json.data.bookInfo.writerName+'全力打造的一部'+json.data.bookInfo.classificationName+'小说，辣鸡小说第一时间提供'+json.data.bookInfo.bookName+'最新章节，'+json.data.bookInfo.bookName+'全文阅读请上辣鸡小说';
               this.$nextTick(function () {
@@ -409,7 +410,7 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
             if(json.returnCode===500){
               setTimeout(()=>{
                 if(this.automaticTake){
-//                  this.buyVipChapter('auto')
+                  this.buyVipChapter('auto')
                 }else {
                   this.dialogFormVisible = true;
                   this.isRead = false;
@@ -565,9 +566,9 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
 //        收藏本书/加入书架
         addBookShelf(){
             FetchAddBookShelf(
-              this.chapterInfo.bookId,
+              this.bookInfo.bookId,
               this.$store.state.userInfo.pseudonym,
-              this.chapterInfo.bookTitle
+              this.bookInfo.bookName
             ).then(json=>{
               if(json.returnCode===200){
                 this.$message(json.msg);
@@ -575,47 +576,14 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
               }
             });
         },
-//        打赏、推荐票、金票
+//        打赏、推荐票、金票、书评
         myConsume:function (type) {
+          let add = type==='comment'?this.bookInfo.bookName:'';
+          this.$store.dispatch('init',{type:type,title:add});
           if(!this.$store.state.userInfo.userId){
             this.$router.push('/login');
             return false
           }
-          let val = 0;
-          if(type==='reward'){
-            val = this.$store.state.userInfo.userMoney
-          }else if(type==='recommend'){
-            val = this.$store.state.userInfo.userRecommendTicket
-          }else if(type==='ticket'){
-            val = this.$store.state.userInfo.userGoldenTicket
-          }
-          this.$consume({
-            type:type,
-            value:val,
-            beforeClose:(action,instance,done) => {
-              if(action==='confirm'){
-                let data = {
-                  message:null,
-                  userId:this.$store.state.userInfo.userId,
-                  bookid:this.bookInfo.bookId,
-                  bookName:this.bookInfo.bookName,
-                  authorId:this.bookInfo.bookWriterId
-                };
-                if(type==='reward'){
-//                   垃圾币打赏
-                  data.message = instance.formData.content;
-                }
-                FetchUserGift(type,instance.formData.count,data).then(json=>{
-                  done();
-                  if(json.returnCode===ERR_OK){
-                    this.$message({message:json.msg,duration:2000})
-                  }
-                });
-              }else {
-                done()
-              }
-            }
-          })
         },
 //        书籍自动订阅状态设置
         getAutoState(state){
@@ -700,35 +668,6 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
             let data = {
                 title:this.bookInfo.bookName
             };
-            this.$consume({
-              type:'comment',
-              value:data,
-              beforeClose:(action,instance,done) => {
-                let len = this.$trim(instance.messageContent).length;
-                if(action==='confirm'){
-                  if(len>0 && len<200){
-                    if(this.$regEmoji(instance.messageContent)){return false}
-                    FetchAddBookComment({
-                      bookId:this.bookInfo.bookId,
-                      bookName:this.bookInfo.bookName,
-                      userName:this.$store.state.userInfo.pseudonym,
-                      commentContext:instance.messageContent
-                    }).then(json=>{
-                      if(json.returnCode===200){
-                        this.$message("发送成功！");
-                        done()
-                      }
-                    })
-                  }else if(len>200){
-                    this.$message({message:'内容长度不可超过200字！',type:'warning'})
-                  }else {
-                    this.$message({message:'请填写内容！',type:'warning'})
-                  }
-                }else {
-                  done()
-                }
-              }
-            })
         },
 //        操作提示
         handleTip() {

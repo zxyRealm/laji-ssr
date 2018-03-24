@@ -103,7 +103,7 @@
               <router-link :to="'/reader/'+item.followId" :target="'_blank'">
                 <img class="fl" :src="item.userHeadPortraitURL" :alt="item.followUserName">
               </router-link>
-              <span class="handle-btn fr" @click="$send('letter',{sendName:item.followUserName,sendUserId:item.followId})">私信</span>
+              <span class="handle-btn fr" @click="$store.dispatch('init',{type:'letter',title:item.followUserName,sid:item.followId})">私信</span>
               <p class="username txt-overflow">{{item.followUserName}}</p>
             </li>
           </template>

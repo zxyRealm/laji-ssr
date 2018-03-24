@@ -232,6 +232,10 @@ export function FetchAuthorWelfare() {
 export function FetchUserLogin(data,tip=true) {
   return fetch("/person-login",data,tip)
 }
+
+export function FetchExit() {
+  return fetch('/person-ClearUserInfo')
+}
 // 校验登录或刷新用户信息
 export function FetchFreshenInfo() {
   return fetch("/person-info",'post',false)
@@ -491,6 +495,7 @@ export function FetchGetUserData(page,type,id) {
   Number(type)?(id = type,type = page):'';
   let url,way = 'post';
   let data = { startpage:page };
+  console.log(page,type,id);
   switch (type){
     case 'su': //个人信息简化版
       url = '/person-SimplifyUserInfo';
@@ -562,7 +567,6 @@ export function FetchGetUserData(page,type,id) {
       data = {};
       way = 'get';
   }
-  console.log(url,way);
   return fetch(url,data,way,false)
 }
 

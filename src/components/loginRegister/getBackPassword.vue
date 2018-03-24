@@ -160,7 +160,7 @@
                       customClass:'confirm-msg-box',
                       cancelButtonText:'否',
                       callback: action => {
-                        this.$exit('default');
+                        this.$store.dispatch('FETCH_EXIT','default');
                         let href = this.$route.query.redirect?'/login?redirect='+this.$route.query.redirect:'/login?redirect=/index';
                         this.$router.push(href)
                       }
@@ -184,7 +184,7 @@
                       customClass:'confirm-msg-box',
                       cancelButtonText:'否',
                       callback: action => {
-                        this.$exit('default');
+                        this.$store.dispatch("FETCH_EXIT",'default');
                         let href = this.$route.query.redirect?'/login?redirect='+this.$route.query.redirect:'/login?redirect=/index';
                         this.$router.push(href)
                       }

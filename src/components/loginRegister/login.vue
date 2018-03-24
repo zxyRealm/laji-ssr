@@ -91,9 +91,6 @@
           })
         }
       },
-      mounted(){
-        this.$enableCookie();
-      }
     }
 
 </script>

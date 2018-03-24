@@ -46,8 +46,7 @@
 
 <script type="text/ecmascript-6">
   import $ from 'jquery';
-  import '../../assets/js/jquery.min.js'
-  import '../../assets/js/jquery.Jcrop.js'
+  import '../../assets/js/jquery.Jcrop.min'
   import '../../assets/css/jquery.Jcrop.min.css'
   export default{
     name:'cropper',
@@ -240,7 +239,6 @@
         let self = this;
         this.$preview = $('#preview-pane');
         this.$pimg = $('#preview-pane .preview-container img');
-        console.log($.Jcrop());
         $('#pre-picture').Jcrop({
           bgFade: true,
 //        allowSelect:false,
@@ -343,24 +341,12 @@
         if(val){
           this.$nextTick(()=>{
               setTimeout(()=>{
-                this.resetCrop(this.img_url)
-              },500)
-//
+                this.resetCrop()
+              },0)
           })
         }
       }
     },
-    mounted(){
-        this.$nextTick(()=>{
-          setTimeout(()=>{
-//            this.resetCrop(this.img_url)
-          },3000)
-//          this.resetCrop(this.img_url);
-        })
-//      require('../../assets/js/jquery.min.js');
-//      require('../../assets/js/jquery.Jcrop.js')
-
-    }
   }
 
 </script>
@@ -398,13 +384,14 @@
   .btn-check-file
     display inline-block
     line-height 1
-    padding 10px 15px
+    padding 12px 15px
     border-radius 5px
     background #00ffff
     cursor pointer
     font-size 16px
     color #fff
     border 1px solid #00ffff
+    margin-right 15px
     :hover
       border-color #00f1f1
       background #00f1f1

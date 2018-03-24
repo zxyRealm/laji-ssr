@@ -65,7 +65,7 @@
             this.timer = false
           }, 600)
         }
-      }
+      };
       this.$router.beforeEach((to,from,next)=>{
         let uid = Number(this.$cookie('user_id'));
         if(to.name==='Login' && uid){

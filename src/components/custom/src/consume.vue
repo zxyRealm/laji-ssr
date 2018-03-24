@@ -1,51 +1,49 @@
 <template>
-    <div v-if="type" class="zdy-consume-wrap" @click.self="handleClickWrap"
-      v-show="visible"
+    <div  class="zdy-consume-wrap" @click.self="handleClickWrap"
+      v-if="Consume.visible"
     >
       <div
           class="zdy-consume-box"
           :class="{
-            reward:type==='reward',
-            ticket:type==='ticket',
-            recommend:type==='recommend',
-            letter:type==='letter'
+            reward:Consume.type==='reward',
+            ticket:Consume.type==='ticket',
+            recommend:Consume.type==='recommend',
+            letter:Consume.type==='letter'
           }"
-         :style="{width:type==='comment'?480:440+'px'}">
-
+         :style="{width:Consume.type==='comment'?480:440+'px'}">
         <div
-          v-if="type!=='letter'"
+          v-if="Consume.type!=='letter'"
           class="zdy-consume-header"
-          :class="{com:type==='comment'}">
+          :class="{com:Consume.type==='comment'}">
 
-          <template v-if="type==='comment'">
-            <span class="fl">评论：{{value.title}}</span>
+          <template v-if="Consume.type==='comment'">
+            <span class="fl">评论：{{Consume.title}}</span>
           </template>
           <template v-else>
-            {{title}}
+            {{Consume.title}}
           </template>
           <i
             class="el-icon-close close"
-            :class="{right:type==='comment'}"
+            :class="{right:Consume.type==='comment'}"
             @click="close">
           </i>
         </div>
-
         <div class="zdy-consume-main" >
-            <div class="common-box-wrap" v-if="type==='ticket'|| type==='recommend'">
-              <div class="common-box-img" :class="type">
+            <div class="common-box-wrap" v-if="Consume.type==='ticket'|| Consume.type==='recommend'">
+              <div class="common-box-img" :class="Consume.type">
               </div>
               <div class="common-box-main">
                 <div class="cbm-des">
                   <p class="tip">写的真好，支持一下~</p>
                   <p class="num">
-                    {{type==='ticket'?'金椒':'小米椒'}}余额：{{value}}
+                    {{Consume.type==='ticket'?'金椒':'小米椒'}}余额：{{value}}
                   </p>
                 </div>
                 <div class="cb-count clear">
                   <span class="decrease" @click="decrease">
                     <i class="el-icon-minus"></i>
                   </span>
-                  <input type="number" v-model="formData.count"/>
+                  <input type="number" v-model="Consume.formData.count"/>
                   <span class="increase" @click="increase">
                     <i class="el-icon-plus"></i>
                   </span>
@@ -55,18 +53,18 @@
                   <span
                     class="fr zdy-consume-btn middle"
                     :class="{disable:value==0}"
-                    @click="handleAction('confirm')">投喂</span>
+                    @click="handleAction()">投喂</span>
                 </div>
               </div>
             </div>
 
             <!--发送私信-->
-            <form class="letter-box" v-if="type==='letter'">
+            <form class="letter-box" v-if="Consume.type==='letter'">
               <div class="letter-tit">
-                给 <font>{{value.sendName}}</font> 发私信：
+                给 <font>{{Consume.title}}</font> 发私信：
               </div>
               <div class="textarea-wrap">
-                <textarea name="" v-model="messageContent"></textarea>
+                <textarea name="" v-model="Consume.messageContent"></textarea>
                 <p class="tip">还可以输入<span class="count">{{length}}</span>字</p>
               </div>
               <div class="handle-area">
@@ -75,17 +73,17 @@
             </form>
 
             <!--打赏金椒-->
-            <form class="reward-box" v-if="type==='reward'">
+            <form class="reward-box" v-if="Consume.type==='reward'">
               <div class="user-data">
                 <span>您的余额：{{value}}</span>
                 <a :href="'/charge'" target="_blank" class="fr zdy-consume-btn small" @click="close">充值</a>
               </div>
               <div class="textarea-box">
-                <textarea name="" v-model="formData.content" id="" placeholder="么么哒" cols="30" rows="10"></textarea>
-                <span class="word">{{formData.content.length}}/20</span>
+                <textarea name="" v-model="Consume.formData.content" id="" placeholder="么么哒" cols="30" rows="10"></textarea>
+                <span class="word">{{Consume.formData.content.length}}/20</span>
               </div>
               <div class="radio-box">
-                <el-radio-group  v-model="formData.count">
+                <el-radio-group  v-model="Consume.formData.count">
                   <el-radio-button name="radio" label="188">188辣椒</el-radio-button>
                   <el-radio-button name="radio" label="288">288辣椒</el-radio-button>
                   <el-radio-button name="radio" label="588">588辣椒</el-radio-button>
@@ -106,10 +104,10 @@
 
             <!--发布书评-->
 
-            <form class="comment-box" v-if="type==='comment'">
+            <form class="comment-box" v-if="Consume.type==='comment'">
               <div class="textarea-wrap">
-                <textarea name="" v-model="messageContent"></textarea>
-                <span class="num">{{messageContent.length}}/200</span>
+                <textarea name="" v-model="Consume.messageContent"></textarea>
+                <span class="num">{{Consume.messageContent.length}}/200</span>
                 <!--<p class="tip">还可以输入<span class="count">{{length}}</span>字</p>-->
               </div>
               <p class="red" style="line-height: 1" :style="{visibility:tipShow}">内容不可包含emoji表情图</p>
@@ -119,69 +117,29 @@
             </form>
         </div>
         <!--私信弹窗背景图-->
-        <img v-if="type==='letter'" src="../../../../static/img/personal-letter@_01.png" class="letter-icon" alt="">
+        <img v-if="Consume.type==='letter'" src="../../../../static/img/personal-letter@_01.png" class="letter-icon" alt="">
       </div>
     </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import { mapGetters,mapActions,mapMutations,mapState } from 'vuex'
+  import { FetchAddBookComment,FetchUserGift,FetchHandleUserInfo } from '../../../api'
     export default{
+      name:'my-consume',
       props:{
-        modal:{
-          default:true
-        },
-        lockScroll: {
-          default: true
-        },
-        closeOnClickModal: {
-          default: false
-        }
+        info:{}
       },
       data(){
         return {
           tipShow:'hidden',
-          visible:false,
           closed: false,
           width:480,
           showCancel:false,
-          formData:{
-            content:'',
-            count:'188'
-          },
-          messageContent:'',
           action:'',
-          value:{
-            type:[String,Object],
-            default:''
-          },
-          type:{
-            type:[String,Object],
-            default:'标题'
-          }
         }
       },
       watch: {
-        "formData.content":function (val) {
-          if(val.length>20){
-              this.formData.content = this.formData.content.substring(0,20);
-              this.$message("最多20个字符！")
-          }
-        },
-        closed(newVal) {
-          if (newVal) {
-            this.visible = false;
-            this.$el.parentNode.removeChild(this.$el);
-          }
-        },
-        "formData.count":function(val){
-          if(this.type==='ticket' || this.type==='recommend'){
-            if(val>this.value){
-                this.formData.count = (this.value===0?1:this.value);
-            }else if(val<1){
-              this.formData.count = 1
-            }
-          }
-        },
         messageContent:function (val){
           if(this.$regEmoji(val)){
             this.tipShow = 'visible'
@@ -191,78 +149,125 @@
         }
       },
       methods: {
-        getSafeClose() {
-          const currentId = this.uid;
-          return () => {
-            this.$nextTick(() => {
-              if (currentId === this.uid) this.doClose();
-            });
-          };
-        },
-        doClose() {
-          if (!this.visible) return;
-          this.visible = false;
-          this.$el.parentNode.removeChild(this.$el);
-          this._closing = true;
-          this.onClose && this.onClose();
-          this.opened = false;
-          if (this.action) this.callback(this.action, this);
-        },
         close() {
-          this.closed = true;
-          if (typeof this.onClose === 'function') {
-            this.onClose(this);
-          }
+            this.$store.dispatch('close');
         },
-        handleAction(action){
-          if (typeof this.beforeClose === 'function') {
-            this.close = this.getSafeClose();
-            this.beforeClose(action, this, this.close);
-          } else {
-            this.doClose();
-          }
+        handleAction(){
+            let info = this.bookDetail.bookListInfo || this.bookDetail.bookInfo;
+            let data = {};
+            if(this.Consume.type==='comment'){
+              data = {
+                bookId:info.bookId,
+                bookName:info.bookName,
+                userName:this.userInfo.pseudonym,
+                commentContext:this.Consume.messageContent
+              };
+              FetchAddBookComment(data).then(json=>{
+                if(json.returnCode===200){
+                  this.Consume.messageContent = '';
+                  this.$message("发送成功！");
+                  this.close()
+                }
+              })
+            }else if(this.Consume.type==='letter'){
+              data = {
+                  userName:this.userInfo.pseudonym,
+                  messageContent:this.Consume.messageContent,
+                  sendName:this.Consume.title,
+                  sendUserId:this.Consume.sid
+              };
+              if(this.$route.name==='messageHarvest'){
+                  data.areaid = this.Consume.aid;
+                  data.type = 1
+              }
+              FetchHandleUserInfo(data,'sl').then(json=>{
+                  if(json.returnCode===200){
+                    this.Consume.messageContent = '';
+                    this.close();
+                    this.$message({message:"发送成功"});
+                  }
+              })
+            }else {
+              data = {
+                message:null,
+                bookid:info.bookId,
+                bookName:info.bookName,
+                userId:this.userInfo.userId,
+                authorId:info.bookWriterId
+              };
+              if(this.Consume.type==='reward'){data.message = this.Consume.formData.content}
+                FetchUserGift(this.Consume.type,this.Consume.formData.count,data).then(json=>{
+                  if(json.returnCode===200){
+                    this.close();
+                    this.Consume.formData.content = '';
+                    this.$message(json.msg);
+                    this.$store.dispatch("FETCH_BOOK_DETAIL",{ bid:info.bookId });
+                    this.$store.dispatch("FETCH_FRESHEN_INFO");
+                  }
+                });
+            }
         },
         decrease(){
-          this.formData.count--;
+          if(this.Consume.formData.count>1){
+            this.Consume.formData.count--;
+          }
         },
         increase(type){
+            console.log(this.Consume.formData.count);
             if(type==='all'){
-              this.formData.count = this.value
-            }else{
-              this.formData.count++;
+              this.Consume.formData.count = this.value
+            }else if(this.value>this.Consume.formData.count){
+              this.Consume.formData.count++;
             }
         },
         handleClickWrap(){
-            if(!this.closeOnClickModal){
-               this.handleAction('cancel')
+            if(this.Consume.type==='letter'){
+                this.close()
             }
+//            if(!this.closeOnClickModal){
+//               this.handleAction('cancel')
+//            }
         }
       },
       computed:{
         title(){
-            if(this.type==='reward'){
+            if(this.Consume.type==='reward'){
                 return '给作者打赏'
             }else {
                 return ""
             }
           },
         length(){
-          let len = this.$trim(this.messageContent).length;
+          let len = this.$trim(this.Consume.messageContent).length;
           if(len>100){
-            this.messageContent = this.messageContent.substring(0,100);
+            this.Consume.messageContent = this.Consume.messageContent.substring(0,100);
             return 0;
           }else {
             return 100-len
           }
 
+        },
+        ...mapState([
+            'Consume',
+            'userInfo',
+            'bookDetail'
+        ]),
+        value:function () {
+          let count = 0;
+          switch (this.Consume.type){
+            case 'reward':
+                count = this.userInfo.userMoney;
+                break;
+            case 'recommend':
+              count = this.userInfo.userRecommendTicket;
+              break;
+            default:
+              count = this.userInfo.userGoldenTicket;
+          }
+          return count;
         }
       },
       mounted() {
-        if(this.type==='reward') {
-            this.formData.count='188'
-        }else {
-            this.formData.count='1'
-        }
       }
     }
 </script>
@@ -281,6 +286,7 @@
   right:0
   text-align center
   background rgba(0,0,0,0.5)
+  z-index 999
   .zdy-consume-box
     position relative
     display: inline-block

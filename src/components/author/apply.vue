@@ -13,6 +13,7 @@
          </div>
        </div>
        <div class="apply-form-wrap">
+         <!--<area-picker></area-picker>-->
           <el-form v-show="active==1"  :model="applyInfo" :rules="rules" ref="applyForm1" label-width="104px">
             <el-form-item label="笔　　名：" prop="pseudonym">
               <el-col class="line" :span="8">
@@ -97,7 +98,7 @@
               <p class="tip">请确认邮箱地址可用，方便问题申诉！</p>
             </el-form-item>
             <el-form-item label="选取地址：" prop="userAddress">
-              <area-cascader :level="1" type="text"  placeholder="请选取地址" v-model="address"></area-cascader>
+              <!--<area-cascader v-if="ready" :level="1" type="text"  placeholder="请选取地址" v-model="address"></area-cascader>-->
               <el-col :span="8" class="mt20">
                 <el-input
                   type="textarea"
@@ -136,11 +137,13 @@
 </template>
 <script type="text/ecmascript-6">
   import Vue from 'vue'
-  import areaLinkage from 'vue-area-linkage'
-//  Vue.use(areaLinkage);
+  import areaPicker from '../../components/common/area-picker.vue'
+  import areadata from 'china-area-data'
+  import { mapState } from 'vuex'
   import { aycn } from '../../api'
   import Common from '../../assets/js/common'
-    export default({
+    export default{
+      components:{ areaPicker },
       data() {
 //          验证身份证号
         let validateID = (rule,value,callback) => {
@@ -233,6 +236,7 @@
         };
 
         return {
+            ready:false,
             address:[],
             detail:'',
             pickerOptions0:{
@@ -331,22 +335,21 @@
             }
           });
         },
-        getInfo(){
-            aycn('/person-info').then(json=>{
-              if(json.returnCode===200){
-                this.applyInfo.pseudonym = json.data.pseudonym;
-                this.applyInfo.userPhone = json.data.userPhone;
-                this.applyInfo.userAddress = '';
-              }else if(json.returnCode===400){
-                this.$router.push('/login');
-                this.$cookie("user_id",'',-1);
-              }
-            })
-        },
-
       },
       mounted(){
-        this.getInfo();
+//          console.log(areadata);
+          this.$nextTick(()=>{
+//            Vue.use(VDistpicker);
+          })
+        setTimeout(()=>{
+          this.ready = true;
+        },0)
+       
+      },
+      computed:{
+        ...mapState([
+          'userInfo'
+        ]),
       },
       watch:{
           address:function () {
@@ -356,9 +359,14 @@
               if(this.$trim(val).length && this.address[2]){
                 this.applyInfo.userAddress = this.address[0]+this.address[1]+this.address[2]+this.detail
               }
+          },
+          userInfo:function (val) {
+            this.applyInfo.pseudonym = val.pseudonym;
+            this.applyInfo.userPhone = val.userPhone;
+//            this.applyInfo.pseudonym = val.pseudonym
           }
       }
-    })
+    }
 </script>
 <style lang="stylus" type="text/stylus" rel="stylesheet/stylus">
  Bcolor = #f77583

@@ -138,7 +138,7 @@
                 </router-link>
                 <span
                   class="handle-btn fr"
-                  @click="$send('letter',{sendName:item.followUserName,sendUserId:item.followId})">
+                  @click="$store.dispatch('init',{type:'letter',title:item.followUserName,sid:item.followId})">
                   私信
                 </span>
                 <p class="username txt-overflow">{{item.followUserName}}</p>
@@ -197,7 +197,7 @@
       data() {
         return {
           autoTimer:null,
-          waiting:3,
+          waiting:5,
           dialogVisible:false,
           activeName2: 'first',
           shelfList:{},
@@ -225,7 +225,7 @@
         },
         timer(){
           this.dialogVisible = true;
-          this.waiting = 3;
+          this.waiting = 5;
           clearInterval(this.autoTimer);
           this.autoTimer = setInterval(()=>{
             this.waiting--;
@@ -233,7 +233,6 @@
               clearInterval(this.autoTimer);
               this.dialogVisible = false;
             }
-
           },1000);
         },
         getDataList(){
@@ -282,8 +281,9 @@
         },
 //        用户签到
         addSignState(){
+          this.dialogVisible = true;
           if(!this.signState){
-              FetchGetUserData('sign').then(json=>{
+              FetchGetUserData(0,'sign').then(json=>{
                 if(json.returnCode===200){
                   this.signState = true;
                   this.dialogVisible = true;

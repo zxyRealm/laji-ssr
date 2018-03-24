@@ -5,6 +5,7 @@ export default {
   indexData: (state) => (type) => {
     return state.indexInfo[type].data ? state.indexInfo[type].data : {}
   },
+  userInfo:state=>state.userInfo?state.userInfo:{},
   bookDetail: state => state.bookDetail ? state.bookDetail : {},
   bookCommentList: state => state.bookCommentList.list ? state.bookCommentList : {},
   chapterList: state => state.chapterList ? state.chapterList : [],

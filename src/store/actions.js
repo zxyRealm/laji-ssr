@@ -20,8 +20,12 @@ import {
   FetchAuthorWelfare,
   FetchFreshenInfo,
   FetchAuthorChapterList,
+  FetchExit,
 } from '../api'
-import { WEB_INDEX_INFO } from './mutations'
+import { createRouter } from '../router'
+const router = createRouter();
+import { Message,MessageBox } from 'element-ui'
+const $alert = MessageBox.alert;
 function shareInit() {
   document.getElementById('baidu__share') && document.getElementById('baidu__share').remove();
   // 强制share.js 重新执行， 当切换路由后重新回到分享页面百度分享默认不会重新执行share.js
@@ -63,7 +67,7 @@ export default {
        data.data.bookListInfo = ''
      }else if(data.returnCode===200) {
        shareInit();
-       let desc = data.data.bookListInfo.bookName + '是辣鸡小说网作者'+data.data.bookListInfo.writerName+'全力打造的一部'+data.data.bookListInfo.classificationName+'小说，辣鸡小说第一时间提供'+data.data.bookListInfo.bookName+'最新章节，'+data.data.bookListInfo.bookName+'全文阅读请上辣鸡小说'
+       let desc = data.data.bookListInfo.bookName + '是辣鸡小说网作者'+data.data.bookListInfo.writerName+'全力打造的一部'+data.data.bookListInfo.classificationName+'小说，辣鸡小说第一时间提供'+data.data.bookListInfo.bookName+'最新章节，'+data.data.bookListInfo.bookName+'全文阅读请上辣鸡小说';
        window._bd_share_config = {
          common:{
            bdText:data.data.bookListInfo.bookName+'-辣鸡小说',
@@ -88,6 +92,42 @@ export default {
       commit("SET_BOOK_DETAIL",data)
    }).then(()=>dispatch("FETCH_COMMENT_LIST",{ bid,page:1 }))
   },
+
+  FETCH_CHATER_DETAIL:({commit,dispatch},{cid})=>{
+    commit('SET_LOADING',true);
+    return FetchReadChapter({chapterId:cid,readType:1}).then(json=>{
+      if(json.data && json.returnCode!==1000){
+        let desc = json.data.bookInfo.bookName + '是辣鸡小说网作者'+json.data.bookInfo.writerName+'全力打造的一部'+json.data.bookInfo.classificationName+'小说，辣鸡小说第一时间提供'+json.data.bookInfo.bookName+'最新章节，'+json.data.bookInfo.bookName+'全文阅读请上辣鸡小说';
+        this.$nextTick(function () {
+          window._bd_share_config = {
+            common:{
+              bdText:json.data.bookInfo.bookName+'－'+json.data.chapterInfo.chapterTitle+'－辣鸡小说',
+              bdDesc:desc,
+              bdStyle:0,
+              bdPic:json.data.bookInfo.bookImage,
+              bdMini:2,
+              bdSize:24
+            },
+            share:{}
+          };
+          const s = document.createElement('script');
+          s.type = 'text/javascript';
+          s.id = 'baidu__share';
+          s.src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5);
+          document.body.appendChild(s);
+        });
+        json.data.bookInfo.rewardCount = json.data.rewardTotalNumber;
+        json.data.chapterInfo.authorWords = json.data.chapterInfo.authorWords.replace(/\s*\n+\s*/g,'<br>　　');
+        this.bookInfo = json.data.bookInfo;
+        this.countList = json.data.countInfos;
+        // let data = this.formatTxt({content:json.data.chapterInfo.chapterContent,count:this.countList});
+        json.data.chapterInfo.chapterData = data;
+        commit("SET_CHAPTER_DETAIL",json.data);
+        // this.addReadRecord();
+      }
+    })
+  },
+
 
   // 章节列表
   FETCH_CHAPTER_LIST:({commit},{bid,type})=>{
@@ -184,8 +224,6 @@ export default {
     })
   },
 
-
-
   // 书库
 
   //书籍分类
@@ -238,6 +276,43 @@ export default {
 
   // 注册
 
+
+// 退出登录
+
+  FETCH_EXIT:({commit,state},type)=>{
+    const mod = router.name==='modifyPage' || router.name==='findPage';
+    const exit =()=> FetchExit().then(res=>{
+      if(res.returnCode===200){
+        Com.cookie('user_id','',-1);
+        commit('SET_USER_INFO');
+        console.log(router);
+        if(!type){
+          if(mod){
+            Message({message:"修改成功！",type:'success'});
+            router.push("/login?redirect=/index")
+          }else {
+            Message({message:'退出成功',type:'success'});
+            router.push('/');
+          }
+        }
+      }
+    });
+    // if(mod){
+    //   return exit()
+    // }
+    return mod?exit():$alert('确认退出？', '', {
+        confirmButtonText: '确  定',
+        customClass:'issue-alert',
+        lockScroll:false,
+        type:'success',
+        callback: action => {
+          if(action==='confirm'){
+            exit();
+          }
+        }
+      });
+  },
+
   // 忘记密码
 
   FETCH_AUTHOR_CHAPTER_LIST:({commit},id)=>{
@@ -252,5 +327,5 @@ export default {
       }
       commit('SET_AUTHOR_CHAPTER_LIST',arr)
     })
-  }
+  },
 }

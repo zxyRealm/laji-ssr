@@ -1,10 +1,15 @@
 /**
  * Created by Administrator on 2017/8/31.
  */
-
 import Vue from 'vue';
-import { PopupManager } from 'element-ui/src/utils/popup';
-import { isVNode } from 'element-ui/src/utils/vdom';
+Object.prototype.hasOwnProperty = function(propertyName) {};
+let hasOwnProperty = Object.prototype.hasOwnProperty;
+function hasOwn(obj, key) {
+  return hasOwnProperty.call(obj, key);
+}
+function isVNode(node) {
+  return node !== null && typeof node === 'object' && hasOwn(node, 'componentOptions');
+}
 let ConsumeConstructor = Vue.extend(require('./src/consume.vue'));
 
 let instance;
@@ -36,7 +41,7 @@ let Consume = function(options) {
   document.body.appendChild(instance.vm.$el);
   instance.vm.visible = true;
   instance.dom = instance.vm.$el;
-  instance.dom.style.zIndex = PopupManager.nextZIndex();
+  instance.dom.style.zIndex = 99999;
   instances.push(instance);
   return instance.vm;
 };

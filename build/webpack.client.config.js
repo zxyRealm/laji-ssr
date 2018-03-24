@@ -40,7 +40,7 @@ var config = merge(base, {
     }),
     new VueSSRClientPlugin()
   ]
-})
+});
 
 if (process.env.NODE_ENV === 'production') {
   // var categories = Category.map(category => category.title).join('|');

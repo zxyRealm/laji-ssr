@@ -32,6 +32,9 @@ export default {
       Vue.set(state,'bookDetail',data)
   },
 
+  SET_CHAPTER_DETAIL(state,{data}){
+    Vue.set(state,'chapterDetail',data)
+  },
   // 书籍列表
   SET_CHAPTER_LIST(state,arr){
     Vue.set(state,'chapterList',arr)

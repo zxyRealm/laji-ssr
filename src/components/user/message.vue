@@ -166,7 +166,7 @@
         },
         reply(index){
           let data = this.letterList.list[index];
-          this.$send('letter',{sendName:data.userName,sendUserId:data.userId})
+          this.$store.dispatch('init',{type:'letter',title:data.userName,sid:data.userId});
         },
 //        私信列表
         handleClick(event,index){

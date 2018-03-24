@@ -24,7 +24,8 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.common.js',
       '@': resolve("src")
-    }
+    },
+    extensions: ['.ts','.js']
   },
   module: {
     noParse: /es6-promise\.js$/, // avoid webpack shimming process
@@ -91,7 +92,11 @@ module.exports = {
         })
       ]
     : [
-        new FriendlyErrorsPlugin()
+        new FriendlyErrorsPlugin(),
+        new webpack.ProvidePlugin({
+          jQuery:'jquery',
+          $: "jquery"
+        })
       ],
 
 };

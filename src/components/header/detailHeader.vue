@@ -73,7 +73,7 @@
                   </div>
                 </div>
                 <div class="user-dropdown">
-                  <a href="javascript:;" @click="$exit()">退出</a>
+                  <a href="javascript:;" @click="$store.dispatch('FETCH_EXIT')">退出</a>
                 </div>
               </div>
             </template>

@@ -38,6 +38,7 @@
         </div>
         <!--url 属性必需设置为本地路径 如果引用的图片资源域名不同将无法剪裁上传-->
         <pic-cropper
+          v-if="ready"
           ref="avatarUpdate"
           action="/sys-UserAvatarimgUpload"
           :visible.sync="dialogTableVisible"
@@ -46,21 +47,21 @@
           url="/static/img/defaultavatarimg.jpg"
           :aspectRatio="1/1">
         </pic-cropper>
-
+        <my-consume></my-consume>
       </div>
     </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import Cropper from '../common/img_upload.vue'
     export default{
       components:{
-        'pic-cropper':Cropper
+        'pic-cropper':()=>import("../common/img_upload.vue")
       },
       data(){
         return{
           imageUrl:'',
-          dialogTableVisible:false
+          dialogTableVisible:false,
+          ready:false
         }
       },
       methods: {
@@ -183,6 +184,9 @@
             }
           return url
         }
+      },
+      mounted(){
+          this.ready = true
       }
     }
 </script>

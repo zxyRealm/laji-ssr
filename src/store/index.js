@@ -30,6 +30,7 @@ const state = {
   bookStackHotLabel:{}, //书库热门标签
   authorWelfare:[], // 作者福利
   authorChapterList:[],
+  chapterDetail:{} //章节详情
 };
 
 export function createStore () {

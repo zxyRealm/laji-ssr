@@ -232,11 +232,7 @@ exports.install = function (Vue, options) {
       //   return null
       // }
   };
-  // 用户点赞
-  Vue.prototype.$userLaud = (id,type)=>{
-      this.$ajax('/comm-GiveThumbs',{commentId:id},json=>{
-      })
-  };
+
   Vue.prototype.$isLogin = function(){
     let state;
     this.$ajax("/person-checkLoginState",json=>{
@@ -244,47 +240,8 @@ exports.install = function (Vue, options) {
     });
   };
   // 用户发送私信
-  Vue.prototype.$send = function (type, data) {
-    if(this.$cookie('user_id')){
-      this.$consume({
-        type:type,
-        value:data,
-        beforeClose:(action,instance,done) => {
-          if(action=='confirm' && type=='letter'){
-            let len = this.$http.trim(instance.messageContent).length;
-            if(len<=100 && len>0){
-              let sub = {
-                userName:this.$store.state.userInfo.pseudonym,
-                messageContent:instance.messageContent
-              }
-              for(let k in data){
-                if(k!=='default'){
-                  sub[k] = data[k]
-                }
-              }
-              this.$ajax("/person-sendmessage",sub,json => {
-                done();
-                if(json.returnCode===ERR_OK){
-                  this.$message({message:"操作成功"});
-                  if(this.$route.name==='messageHarvest'){
-                    this.harvest(this.harvestList.pageNum)
-                  }
-                }
-              })
-            }else if(len==0) {
-              this.$message({message:'请输入内容！',type:'warning'})
-            }else {
-              this.$message({message:'字数超过限制，请精简后再发送！',type:'warning'})
-            }
-          }else {
-            done()
-          }
-        }
-      })
-    }else {
-      this.$router.push("/login")
-    }
-  };
+
+
   // 检测浏览器是否为IE
   Vue.prototype.$isIE = function () {
     if (!!window.ActiveXObject || "ActiveXObject" in window){
@@ -293,13 +250,7 @@ exports.install = function (Vue, options) {
       return false;
     }
   };
-  Vue.prototype.$enableCookie = function () {
-   if(window.navigator.cookieEnabled){
-      // console.log('可用')
-   }else {
-     // console.log("不可用")
-   }
-  };
+
   // 格式化私信、回复、书评 内容
   Vue.prototype.$formatMsg = function(val){
     let str = val;

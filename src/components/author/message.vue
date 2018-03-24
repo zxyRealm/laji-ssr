@@ -267,12 +267,8 @@
             })
         },
         handleDataHarvest(index,type){
-          this.$send('letter',{
-            type:1,
-            sendName:this.harvestList.list[index].pseudonym,
-            sendUserId:this.harvestList.list[index].userId,
-            areaid:this.harvestList.list[index].id
-          })
+            let val = this.harvestList.list[index];
+            this.$store.dispatch('init',{type:'letter',title:val.pseudonym,sid:val.userId,aid:val.id});
         }
       },
       mounted(){

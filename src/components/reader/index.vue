@@ -21,7 +21,7 @@
               <div class="handle-area">
                 <a v-if="readerInfo.isfollow" class="addAttention private" href="javascript:;" @click="$cancelAttention(-1)">已关注</a>
                 <a v-else class="addAttention" href="javascript:;" @click="$addAttention(-1)">关注</a>
-                <a class="private" href="javascript:;" @click="$send('letter',{sendName:readerInfo.pseudonym,sendUserId:readerInfo.userId})">私信</a>
+                <a class="private" href="javascript:;" @click="$store.dispatch('init',{type:'letter',title:readerInfo.pseudonym,sid:readerInfo.userId})">私信</a>
               </div>
             </div>
       
@@ -40,6 +40,7 @@
         </div>
       </template>
       <zdy-hint type="reader-not" v-else></zdy-hint>
+      <my-consume></my-consume>
     </div>
   </div>
 </template>

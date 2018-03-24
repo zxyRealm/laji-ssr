@@ -336,6 +336,7 @@
         </div>
       </template>
       <zdy-hint v-else-if="bookDetail.bookListInfo===''" type="book-not"></zdy-hint>
+      <my-consume></my-consume>
     </div>
 </template>
 
@@ -408,44 +409,10 @@
         },
 //        打赏、推荐票、金票
         myConsume:function (type) {
+          this.$store.dispatch('init',{type:type});
+            console.log(this.$store.state.Consume);
             if(!this.$store.state.userInfo.userId){this.$router.push("/login");return false}
-            let val;
-            if(type==='reward'){
-              val = this.$store.state.userInfo.userMoney
-            }else if(type==='recommend'){
-              val = this.$store.state.userInfo.userRecommendTicket
-            }else if(type==='ticket'){
-              val = this.$store.state.userInfo.userGoldenTicket
-            }
-          this.$consume({
-            type:type,
-            value:val,
-            beforeClose:(action,instance,done) => {
-              if(action==='confirm'){
-                let data = {
-                  message:null,
-                  bookid:this.bookDetail.bookListInfo.bookId,
-                  bookName:this.bookDetail.bookListInfo.bookName,
-                  userId:this.$store.state.userInfo.userId,
-                  authorId:this.bookDetail.bookListInfo.bookWriterId
-                };
-                  if(type==='reward'){
-//                   垃圾币打赏
-                    data.message = instance.formData.content;
-                  }
-                FetchUserGift(type,instance.formData.count,data).then(json=>{
-                  done();
-                  if(json.returnCode===200){
-                    this.$message(json.msg);
-                    this.getBookInfo();
-                    this.$freshen();
-                  }
-                });
-              }else{
-                done()
-              }
-            }
-          })
+//
         },
 //        点击回复
         getAnswer(index){

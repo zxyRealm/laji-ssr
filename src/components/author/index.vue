@@ -26,6 +26,7 @@
         <router-view></router-view>
       </div>
     </div>
+    <my-consume></my-consume>
   </div>
 </template>
 
