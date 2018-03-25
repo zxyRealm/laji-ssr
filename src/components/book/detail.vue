@@ -344,7 +344,7 @@
   import Vue from 'vue'
   import CarouseRoll from '../carousel/caroual_rec.vue'
   import { FetchUserGift,FetchUpdateInfo,FetchBookDetailData,FetchBookCommentReply,FetchCommentLaud,FetchReplyBookComment,FetchAddBookComment,FetchAddBookShelf } from '../../api'
-  import { mapGetters } from 'vuex'
+  import { mapGetters,mapState } from 'vuex'
   let ERR_OK = 200;
   let ERR_NO = 400;
   export default{
@@ -430,10 +430,7 @@
             this.pageHandler(1,index)
           }
         },
-//        获取书籍详情页信息
-        getBookInfo(){
-          this.$store.dispatch("FETCH_BOOK_DETAIL",{ bid:this.$route.params.bid })
-        },
+
 //        发布评论
         addComment(){
             FetchAddBookComment({
@@ -503,10 +500,39 @@
                   this.$message(json.msg)
               }
             });
-        }
+        },
+        share(data){
+//        shareInit();
+          let desc = data.data.bookListInfo.bookName + '是辣鸡小说网作者'+data.data.bookListInfo.writerName+'全力打造的一部'+data.data.bookListInfo.classificationName+'小说，辣鸡小说第一时间提供'+data.data.bookListInfo.bookName+'最新章节，'+data.data.bookListInfo.bookName+'全文阅读请上辣鸡小说';
+          window._bd_share_config = {
+            common:{
+              bdText:data.data.bookListInfo.bookName+'-辣鸡小说',
+              bdDesc:desc,
+              bdUrl:'http://www.lajixs.com/book/'+data.data.bookListInfo.bookId,
+              bdPic:data.data.bookListInfo.bookImage,
+              bdStyle:0,
+              bdSize:24
+            },
+            share : [
+              //此处放置分享按钮设置
+            ]
+          };
+          const s = document.createElement('script');
+          s.type = 'text/javascript';
+          s.id = 'baidu__share';
+          s.src = 'http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion=' + ~(-new Date() / 36e5);
+          document.body.appendChild(s);
+        },
+      },
+
+      title(data){
+          return data
+//          return this.bookDetail.bookListInfo.bookName +'－' +this.bookDetail.bookListInfo.writerName + '－辣鸡小说'
+      },
+      asyncData ({ store,route:{ params: { bid } } }) {
+        return store.dispatch('FETCH_BOOK_DETAIL',{ bid:[bid] })
       },
       mounted(){
-        this.$store.dispatch("FETCH_BOOK_DETAIL",{ bid:this.$route.params.bid });
         this.onceShow = true;
 //        let height = this.$http(window).height()-440;
 //        this.minHeight = height
@@ -514,6 +540,10 @@
       watch:{
         page:function (val,old) {
           this.pageChange = true;
+        },
+        bookDetail:function (val) {
+            console.log(val);
+          this.share(val)
         }
       },
       computed:{

@@ -6,7 +6,7 @@ const Consume = {
   state:{
     formData:{
       content:'',
-      count:'188'
+      count:188
     },
     messageContent:'',
     visible:false,
@@ -15,7 +15,6 @@ const Consume = {
   },
   actions:{
       init({commit,dispatch},data){
-          console.log(data.type,data.add,'查看看');
           switch (data.type){
             case 'reward':
               commit('setCount',188);

@@ -66,26 +66,6 @@ export default {
      if(data.returnCode===2000){
        data.data.bookListInfo = ''
      }else if(data.returnCode===200) {
-       shareInit();
-       let desc = data.data.bookListInfo.bookName + '是辣鸡小说网作者'+data.data.bookListInfo.writerName+'全力打造的一部'+data.data.bookListInfo.classificationName+'小说，辣鸡小说第一时间提供'+data.data.bookListInfo.bookName+'最新章节，'+data.data.bookListInfo.bookName+'全文阅读请上辣鸡小说';
-       window._bd_share_config = {
-         common:{
-           bdText:data.data.bookListInfo.bookName+'-辣鸡小说',
-           bdDesc:desc,
-           bdUrl:'http://www.lajixs.com/book/'+data.data.bookListInfo.bookId,
-           bdPic:data.data.bookListInfo.bookImage,
-           bdStyle:0,
-           bdSize:24
-         },
-         share : [
-           //此处放置分享按钮设置
-         ]
-       };
-       const s = document.createElement('script');
-       s.type = 'text/javascript';
-       s.id = 'baidu__share';
-       s.src = 'http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion=' + ~(-new Date() / 36e5);
-       document.body.appendChild(s);
        data.data.bookListInfo.bookIntroduction = data.data.bookListInfo.bookIntroduction.replace(/\s*\n+\s*/g,"<br>　　");
        data.data.bookListInfo.lastChapter = Com.ResetChapterTxt(data.data.lastChapterView.chapterContent)
      }

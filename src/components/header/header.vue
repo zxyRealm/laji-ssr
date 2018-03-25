@@ -35,15 +35,15 @@
         <div class="ht-inner">
           <ul class="hi-left clear">
             <li class="font0">
-              <a class="logo-icon-link" href="/">
-                <img src="./image/web-logo-icon.png" class="logo-icon" alt="logo">
-              </a>
+              <router-link class="logo-icon-link" to="/">
+                <img src="./image/web-logo-icon.png" class="logo-icon" alt="辣鸡小说">
+              </router-link>
             </li>
             <li>
               <a href="javascript:;" @click="addFavorite">收藏本站</a>
             </li>
             <li>
-              <router-link to="/download/app" target="_blank">移动端</router-link>
+              <router-link to="/download/app" alt="垃圾小说" target="_blank">移动端</router-link>
             </li>
           </ul>
           <ul class="hi-right clear ht-right-common">
@@ -86,7 +86,7 @@
               </template>
               <template v-else>
                 <router-link to="/login">登录</router-link>
-                <a>|</a>
+                <span>|</span>
                 <router-link to="/register">注册</router-link>
               </template>
             </li>

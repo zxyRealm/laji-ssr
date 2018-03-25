@@ -9,8 +9,6 @@ import { Message } from 'element-ui'
 const logRequests = true || !!process.env.DEBUG_API;
 const prod = process.env.NODE_ENV == 'production'
 const api = createAPI();
-
-
 function createAPI() {
   let api = {};
   api.onServer = true;
@@ -22,10 +20,10 @@ function createAPI() {
 }
 
 function fetchUrl (url) {
-  if(!prod){
-    url = '/api' + url
-  }
-  return url
+  // if(!prod){
+  //   url = '/api' + url
+  // }
+  return 'http://www.lajixs.com'+ url
 }
 
 function checkTxt(val,len) {

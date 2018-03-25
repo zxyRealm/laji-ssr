@@ -18,7 +18,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '../dist'),
     publicPath: '/dist/',
-    filename: '[name].[chunkhash].js'
+    filename: 'static/js/[name].[chunkhash].js'
   },
   resolve: {
     alias: {

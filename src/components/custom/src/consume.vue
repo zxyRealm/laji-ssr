@@ -84,12 +84,12 @@
               </div>
               <div class="radio-box">
                 <el-radio-group  v-model="Consume.formData.count">
-                  <el-radio-button name="radio" label="188">188辣椒</el-radio-button>
-                  <el-radio-button name="radio" label="288">288辣椒</el-radio-button>
-                  <el-radio-button name="radio" label="588">588辣椒</el-radio-button>
-                  <el-radio-button name="radio" label="888">888辣椒</el-radio-button>
-                  <el-radio-button name="radio" label="1888">1888辣椒</el-radio-button>
-                  <el-radio-button name="radio" label="8888">8888辣椒</el-radio-button>
+                  <el-radio-button name="radio" :label="188">188辣椒</el-radio-button>
+                  <el-radio-button name="radio" :label="288">288辣椒</el-radio-button>
+                  <el-radio-button name="radio" :label="588">588辣椒</el-radio-button>
+                  <el-radio-button name="radio" :label="888">888辣椒</el-radio-button>
+                  <el-radio-button name="radio" :label="1888">1888辣椒</el-radio-button>
+                  <el-radio-button name="radio" :label="8888">8888辣椒</el-radio-button>
                 </el-radio-group>
               </div>
               <div class="zdy-consume-box_btns">

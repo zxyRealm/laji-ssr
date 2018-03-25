@@ -493,7 +493,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapGetters} from 'vuex'
+import { mapGetters,mapState } from 'vuex'
 export default{
   data: function(){
     return {
@@ -554,11 +554,13 @@ export default{
       return false
     }
   },
+  title(){
+      return '辣鸡小说首页'
+  },
   asyncData ({ store }) {
-//    return store.dispatch('FETCH_INDEX_DATA')
+    return store.dispatch('FETCH_INDEX_DATA')
   },
   mounted(){
-      this.$store.dispatch('FETCH_INDEX_DATA');
       this.$nextTick(()=>{
          this.go();
       })
@@ -578,7 +580,7 @@ export default{
 </script>
 <style lang="stylus" type="text/stylus" rel="stylesheet/stylus">
 
-  
+
   font-color = #FB5E6F
   btn-color =  #F77583
 

@@ -3,7 +3,7 @@
     <div class="dHeader">
       <div class="logo fl font0">
         <router-link to="/">
-          <img src="./image/web-logo-icon@1_01.png" class="logo-icon" alt="logo">
+          <img src="./image/web-logo-icon@1_01.png" class="logo-icon" alt="辣鸡小说">
         </router-link>
       </div>
       <div class="d-more">
