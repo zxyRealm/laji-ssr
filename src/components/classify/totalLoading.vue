@@ -89,8 +89,14 @@
           });
         }
       },
+      title(){
+
+      },
+      asyncData({store,route:{ params:{ op1,op2,op3,op4,op5,page,op6 }}}){
+//          console.log(params);
+        return store.dispatch("FETCH_STACK_LIST_DATA",{ op1:[op1],op2:[op2],op3:[op3],op4:[op4],op5:[op5],page:[page],op6:[op6] });
+      },
       mounted(){
-        this.$store.dispatch("FETCH_STACK_LIST_DATA",{op1:0,op2:0,op3:0,op4:0,op5:0,page:1,op6:0});
 //        this.$router.push({ params:{ op6:0 } });
       },
       watch:{

@@ -1,6 +1,6 @@
 <template id="Detail">
     <div v-wechat-title="Title+'－辣鸡小说'" class="container clear" :style="{ minHeight:minHeight + 'px'}">
-      <template v-if="bookDetail.bookListInfo">
+      <template v-if="bookDetail && bookDetail.bookListInfo">
         <div class="subNavWrap">
           <span class="fl">当前位置：</span>
           <div class="sub-nav">
@@ -335,8 +335,8 @@
           </div>
         </div>
       </template>
-      <zdy-hint v-else-if="bookDetail.bookListInfo===''" type="book-not"></zdy-hint>
-      <my-consume></my-consume>
+      <zdy-hint v-else-if="bookDetail && bookDetail.bookListInfo===''" type="book-not"></zdy-hint>
+      <my-consume>{{initShare}}</my-consume>
     </div>
 </template>
 
@@ -501,15 +501,18 @@
               }
             });
         },
-        share(data){
-//        shareInit();
-          let desc = data.data.bookListInfo.bookName + '是辣鸡小说网作者'+data.data.bookListInfo.writerName+'全力打造的一部'+data.data.bookListInfo.classificationName+'小说，辣鸡小说第一时间提供'+data.data.bookListInfo.bookName+'最新章节，'+data.data.bookListInfo.bookName+'全文阅读请上辣鸡小说';
+        share(info){
+          // 强制share.js 重新执行， 当切换路由后重新回到分享页面百度分享默认不会重新执行share.js
+          // window._bd_share_main 记录了share.js版本导致不会重新执行
+          document.getElementById('baidu__share') && document.getElementById('baidu__share').remove();
+          window._bd_share_main?window._bd_share_main = undefined:0;
+          let desc = info.bookName + '是辣鸡小说网作者'+info.writerName+'全力打造的一部'+info.classificationName+'小说，辣鸡小说第一时间提供'+info.bookName+'最新章节，'+info.bookName+'全文阅读请上辣鸡小说';
           window._bd_share_config = {
             common:{
-              bdText:data.data.bookListInfo.bookName+'-辣鸡小说',
+              bdText:info.bookName+'-辣鸡小说',
               bdDesc:desc,
-              bdUrl:'http://www.lajixs.com/book/'+data.data.bookListInfo.bookId,
-              bdPic:data.data.bookListInfo.bookImage,
+              bdUrl:'http://www.lajixs.com/book/'+info.bookId,
+              bdPic:info.bookImage,
               bdStyle:0,
               bdSize:24
             },
@@ -524,10 +527,8 @@
           document.body.appendChild(s);
         },
       },
-
-      title(data){
-          return data
-//          return this.bookDetail.bookListInfo.bookName +'－' +this.bookDetail.bookListInfo.writerName + '－辣鸡小说'
+      title(){
+          return this.Title;
       },
       asyncData ({ store,route:{ params: { bid } } }) {
         return store.dispatch('FETCH_BOOK_DETAIL',{ bid:[bid] })
@@ -540,10 +541,6 @@
       watch:{
         page:function (val,old) {
           this.pageChange = true;
-        },
-        bookDetail:function (val) {
-            console.log(val);
-          this.share(val)
         }
       },
       computed:{
@@ -553,11 +550,16 @@
           chapterList:'chapterList',
           activeName:'activeName'
         }),
+        initShare:function () {
+          if(this.onceShow && this.bookDetail && this.bookDetail.bookListInfo){
+            this.share(this.bookDetail)
+          }
+        },
         words:function () {
           return this.reply.replace(/\s/g,'').length +'/'+this.$trim(this.commentText).length
         },
         Title:function () {
-          return this.bookDetail.bookListInfo?(this.bookDetail.bookListInfo.bookName +'－' +this.bookDetail.bookListInfo.writerName):'书籍不存在'
+          return this.bookDetail.bookListInfo?(this.bookDetail.bookListInfo.bookName +'－' +this.bookDetail.bookListInfo.writerName+'－辣鸡小说'):'书籍不存在'
         }
       }
     };

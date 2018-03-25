@@ -215,7 +215,7 @@ const routes = [
         path:'/user/message/letter/:rid/:page', name:"userChat", meta: {requireAuth: true,topName:"User"}, component:userChat
       },
       {
-        path:'/user/charge', name:"userCharge", meta: {title:'充值中心-辣鸡小说',requireAuth: true,topName:"User"}, component:Charge
+        path:'/user/charge', name:"userCharge", meta: { title:'充值中心-辣鸡小说',requireAuth: true,topName:"User"}, component:Charge
       },
       {
         path:'/user/attention', name:"userAttention", meta: {requireAuth: true,topName:"User"}, component:userAttention

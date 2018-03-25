@@ -14,6 +14,7 @@
   import header from './components/header/header.vue'
   import footer from './components/footer/footer.vue'
   import { FetchFreshenInfo,aycn } from './api'
+  import { mapState } from 'vuex'
   export default {
     name: 'app',
     components: {
@@ -67,6 +68,7 @@
         }
       };
       this.$router.beforeEach((to,from,next)=>{
+
         let uid = Number(this.$cookie('user_id'));
         if(to.name==='Login' && uid){
           next({
@@ -135,14 +137,9 @@
             this.$store.state.userInfo = {};
             next({
               path: '/login',
-              query: {redirect: to.fullPath}
+              query: { redirect: to.fullPath }
             })
           }
-        }else if(to.fullPath==='/login'){
-          next({
-            path: '/login',
-            query: {redirect: from.fullPath}
-          })
         }else {
           next();
         }
@@ -165,6 +162,11 @@
             },0);
           }
         }
+    },
+    computed:{
+        ...mapState([
+            'userInfo'
+        ])
     }
   }
 </script>

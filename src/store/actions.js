@@ -27,10 +27,8 @@ const router = createRouter();
 import { Message,MessageBox } from 'element-ui'
 const $alert = MessageBox.alert;
 function shareInit() {
-  document.getElementById('baidu__share') && document.getElementById('baidu__share').remove();
-  // 强制share.js 重新执行， 当切换路由后重新回到分享页面百度分享默认不会重新执行share.js
-  // window._bd_share_main 记录了share.js版本导致不会重新执行
-  window._bd_share_main?window._bd_share_main = undefined:0;
+
+
 }
 export default {
   // 网站首页数据
@@ -64,6 +62,7 @@ export default {
    return FetchBookDetailData(bid).then(data=>{
      commit("SET_LOADING",false);
      if(data.returnCode===2000){
+       data.data = {};
        data.data.bookListInfo = ''
      }else if(data.returnCode===200) {
        data.data.bookListInfo.bookIntroduction = data.data.bookListInfo.bookIntroduction.replace(/\s*\n+\s*/g,"<br>　　");
@@ -225,7 +224,7 @@ export default {
       commit("SET_STACK_SELL",data)
     }).then(()=>{
       // 热门标签
-      FetchBookLabel().then(data=>{
+      return FetchBookLabel().then(data=>{
         commit("SET_STACK_HOT_LABEL",data)
       })
     })

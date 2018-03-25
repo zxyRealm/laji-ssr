@@ -18,7 +18,7 @@
       </div>
       <div class="nav-right fr">
         <div class="nav-item">
-          <router-link target="_blank" to="/charge">
+          <router-link target="_blank" :to="{path:'/charge'}">
             <span>充值中心</span>
           </router-link>
         </div>
@@ -32,7 +32,13 @@
   </nav>
 </template>
 <script type="text/ecmascript-6">
+  import { mapState } from 'vuex'
   export default{
+      computed:{
+        ...mapState([
+            'userInfo'
+        ])
+      }
   }
 </script>
 <style lang="stylus" type="text/stylus" rel="stylesheet/stylus">
