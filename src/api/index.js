@@ -20,10 +20,7 @@ function createAPI() {
 }
 
 function fetchUrl (url) {
-  // if(!prod){
-  //   url = '/api' + url
-  // }
-  return 'http://www.lajixs.com'+ url
+  return '/api'+ url
 }
 
 function checkTxt(val,len) {
@@ -66,12 +63,11 @@ function fetch(child,data,type,tip=true) {
     } else {
         return new Promise((resolve, reject) => {
             if(type==='get'){
-
-              axios.get(child,{params:data}).then(res => {
+              axios.get(child,{ params:data }).then(res => {
                 const val = res.data;
+                // logRequests && console.log(`fetched ${child}.`);
                 if (val) val.__lastUpdated = Date.now();
                 cache && cache.set(child, val);
-                // logRequests && console.log(`fetched ${child}.`);
                 resolve(val);
                 if(res.data.returnCode!==200 && tip){
                   Message({message:res.data.msg,type:'warning'})
@@ -80,18 +76,19 @@ function fetch(child,data,type,tip=true) {
             }else {
               axios.post(child,data).then(res => {
                 const val = res.data;
+                // logRequests && console.log(`fetched ${child}.`);
                 if (val) val.__lastUpdated = Date.now();
                 cache && cache.set(child, val);
-                // logRequests && console.log(`fetched ${child}.`);
                 resolve(val);
                 if(res.data.returnCode!==200 && tip){
                   Message({message:res.data.msg,type:'warning'})
                 }
-              }, reject).catch(reject);
+              }, reject).catch(reject)
             }
         })
     }
 }
+
 export function aycn(url,data,type,tip) {
   return fetch(url,data,type,tip)
 }
@@ -493,7 +490,6 @@ export function FetchGetUserData(page,type,id) {
   Number(type)?(id = type,type = page):'';
   let url,way = 'post';
   let data = { startpage:page };
-  console.log(page,type,id);
   switch (type){
     case 'su': //个人信息简化版
       url = '/person-SimplifyUserInfo';

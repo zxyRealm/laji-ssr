@@ -37,10 +37,6 @@
                 <input type="radio" name="payWay" value="weixin" id="weixin" v-model="chargeForm.type" >
               </label>
             </div>
-            <!--<el-radio-group v-model="chargeForm.type" class="charge-type">-->
-              <!--<el-radio-button label="alipay">{{null}}</el-radio-button>-->
-              <!--<el-radio-button label="weixin">{{null}}</el-radio-button>-->
-            <!--</el-radio-group>-->
           </el-form-item>
 
           <el-form-item prop="number">
@@ -52,7 +48,7 @@
               <el-radio label="12">1200辣椒（12元）</el-radio>
               <el-radio label="30">3000辣椒（30元）<br><font color="red">赠送150辣椒券</font></el-radio>
               <el-radio label="50">5000辣椒（50元）<br><font color="red">赠送300辣椒券</font></el-radio>
-              <el-radio label="98">9800辣椒（980元）<br><font color="red">赠送800辣椒券</font></el-radio>
+              <el-radio label="98">9800辣椒（98元）<br><font color="red">赠送800辣椒券</font></el-radio>
               <el-radio label="198">19800辣椒（198元）<br><font color="red">赠送1800辣椒券</font></el-radio>
             </el-radio-group>
             <p class="warmTip">充值每满20元赠送1金椒</p>

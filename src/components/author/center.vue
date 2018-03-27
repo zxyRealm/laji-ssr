@@ -32,22 +32,19 @@
                   </div>
                 </td>
                 <td>
-                  <router-link
-                    class="title-link txt-overflow"
-                    target="_blank"
-                    :to="'/book/'+item.bookId">
-                    {{item.bookName}}
-                  </router-link>
+                  <a href="javascript:void(0);"
+                     class="title-link txt-overflow"
+                     @click="link(item,'book')" >{{item.bookName}}</a>
                 </td>
                 <td>{{item.bookWorldCount}}</td>
                 <td>
-                  <a v-if="!item.lastUpdateChapterId">暂无章节</a>
-                  <router-link
-                    class="txt-overflow latest" v-else
-                    :to="'/chapter/'+item.lastUpdateChapterId"
-                    target="_blank">
-                    {{item.lastUpdateChapterName}}
-                  </router-link>
+                  <!--<a v-if="!item.lastUpdateChapterId">暂无章节</a>-->
+                  <a href="javascript:void (0);"
+                     class="txt-overflow latest"
+                     @click="link(item,'chapter')"
+                  >
+                    {{item.lastUpdateChapterId?item.lastUpdateChapterName:'暂无章节'}}
+                  </a>
                   <p>{{item.lastUpdateTime | time('long')}}</p>
                 </td>
                 <td><span>连载中</span></td>
@@ -120,7 +117,17 @@
             })
           };
           apply()
-
+        },
+        link(item,type){
+            if(item.bookCheckStatus){
+              let id = (type==='book'?item.bookId:item.lastUpdateChapterId);
+              let href = "/"+type+"/"+id;
+              if(id){
+                window.open(href,'_blank')
+              }
+            }else {
+              this.$message({ message:'书籍暂未审核',type:'warning' })
+            }
         }
       },
       mounted() {

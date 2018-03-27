@@ -1,6 +1,7 @@
 .DS_Store
 node_modules/
 dist/
+.idea/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -8,4 +9,4 @@ test/unit/coverage
 test/e2e/reports
 selenium-debug.log
 !/node_modules/element-ui/packages/select/src/select-dropdown.vue
-.idea
+

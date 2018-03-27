@@ -13,7 +13,6 @@
          </div>
        </div>
        <div class="apply-form-wrap">
-         <!--<area-picker></area-picker>-->
           <el-form v-show="active==1"  :model="applyInfo" :rules="rules" ref="applyForm1" label-width="104px">
             <el-form-item label="笔　　名：" prop="pseudonym">
               <el-col class="line" :span="8">
@@ -98,15 +97,10 @@
               <p class="tip">请确认邮箱地址可用，方便问题申诉！</p>
             </el-form-item>
             <el-form-item label="选取地址：" prop="userAddress">
-              <!--<area-cascader v-if="ready" :level="1" type="text"  placeholder="请选取地址" v-model="address"></area-cascader>-->
-              <el-col :span="8" class="mt20">
-                <el-input
-                  type="textarea"
-                  placeholder="请输入详细地址"
-                  v-model="detail">
-                </el-input>
+              <el-col class="line" :span="8">
+                <area-picker v-model="applyInfo.userAddress"></area-picker>
               </el-col>
-              <el-col class="line mt20" :span="1">
+              <el-col class="line" :span="1">
                 <i class="zdy-icon__star"></i>
               </el-col>
               <p class="tip">请填写真实地址，以免寄送物品无法收取</p>
@@ -237,7 +231,7 @@
 
         return {
             ready:false,
-            address:[],
+            address:'',
             detail:'',
             pickerOptions0:{
                 disabledDate(time){
@@ -306,7 +300,6 @@
           }
         },
         apply(){
-
           this.subLoad = true;
           this.$refs['applyForm2'].validate((valid) => {
             if (valid) {
@@ -337,14 +330,11 @@
         },
       },
       mounted(){
-//          console.log(areadata);
-          this.$nextTick(()=>{
-//            Vue.use(VDistpicker);
-          })
-        setTimeout(()=>{
-          this.ready = true;
-        },0)
-       
+          if(this.userInfo.userId){
+            this.applyInfo.pseudonym = this.userInfo.pseudonym;
+            this.applyInfo.userPhone = this.userInfo.userPhone;
+          }
+        this.ready = true
       },
       computed:{
         ...mapState([
@@ -352,18 +342,13 @@
         ]),
       },
       watch:{
-          address:function () {
-            this.detail = '';
-          },
-          detail:function (val) {
-              if(this.$trim(val).length && this.address[2]){
-                this.applyInfo.userAddress = this.address[0]+this.address[1]+this.address[2]+this.detail
-              }
+          address:function (val) {
+              console.log(val);
+              this.detail = '';
           },
           userInfo:function (val) {
-            this.applyInfo.pseudonym = val.pseudonym;
-            this.applyInfo.userPhone = val.userPhone;
-//            this.applyInfo.pseudonym = val.pseudonym
+              this.applyInfo.pseudonym = val.pseudonym;
+              this.applyInfo.userPhone = val.userPhone;
           }
       }
     }
@@ -373,74 +358,73 @@
  btn-color = #f77583
 
 .area-select
-    .el-select
-      margin-left 0!important
-      margin-right 10px
-      &:nth-child(2)
-          width 130px!important
- .schedule
-    background:#fcfafb
-    height :82px
-    padding :14px 0
-    border :1px solid #f7e9f0
-    border-radius :5px
-    font-size :16px
-    text-align center
-    .el-steps
-      .el-step__head
-        height :54px
-        width :54px
+  .el-select
+    margin-left 0!important
+    margin-right 10px
+    &:nth-child(2)
+      width 130px!important
+      
+.schedule
+  background:#fcfafb
+  height :82px
+  padding :14px 0
+  border :1px solid #f7e9f0
+  border-radius :5px
+  font-size :16px
+  text-align center
+  .el-steps
+    .el-step__head
+      height :54px
+      width :54px
+      line-height :54px
+      background :#fff
+      color :#f00
+      border :1px solid #ff8383
+      .el-step__icon
+        height :100%
         line-height :54px
-        background :#fff
-        color :#f00
-        border :1px solid #ff8383
-        .el-step__icon
-          height :100%
-          line-height :54px
         .el-step__line.is-horizontal
           top: 25px
           left :54px
-    ul
+  ul
+    display :inline-block
+  li.disable
+    opacity :1
+    cursor pointer
+  li
+    float :left
+    height :54px
+    color :#fb5e6f
+    opacity :0.5
+    cursor not-allowed
+    span
       display :inline-block
-    li.disable
-      opacity :1
-      cursor pointer
-    li
-      /*display :inline-block*/
-      float :left
+      width :54px
       height :54px
-      color :#fb5e6f
-      opacity :0.5
-      cursor not-allowed
-      span
-        display :inline-block
-        width :54px
-        height :54px
-        text-align :center
-        line-height :54px
-        border-radius :50%
-        border:1px solid Bcolor
-        margin-right :20px
-      .arrow
-        width :40px
-        height :40px
-        margin :7px 20px
-        border-radius :0
-        border :none
-        background :#ffb6be
-        line-height :0
-        background :url('./images/back-icon1.png') no-repeat left center
-        background-size :cover
-        float :right
- .apply-form-wrap
-    border:1px solid #f7e9f0
-    border-radius :5px
-    margin:30px 0
-    background :#fcfafb
-    padding-top :22px
-    min-height :700px
-
+      text-align :center
+      line-height :54px
+      border-radius :50%
+      border:1px solid Bcolor
+      margin-right :20px
+    .arrow
+      width :40px
+      height :40px
+      margin :7px 20px
+      border-radius :0
+      border :none
+      background :#ffb6be
+      line-height :0
+      background :url('./images/back-icon1.png') no-repeat left center
+      background-size :cover
+      float :right
+ 
 .apply-form-wrap
+  border:1px solid #f7e9f0
+  border-radius :5px
+  margin:30px 0
+  background :#fcfafb
+  padding-top :22px
+  min-height :700px
   textarea
     resize none
   .el-form-item
@@ -479,12 +463,12 @@
   .autograph-warp
     position relative
     .counts
-        position absolute
-        line-height 1
-        bottom 5px
-        left 216px
-        color #666
-        font-size 14px
+      position absolute
+      line-height 1
+      bottom 5px
+      left 216px
+      color #666
+      font-size 14px
 .el-year-table td.current .cell:hover
 .el-month-table td.current .cell:hover
   color #fff!important

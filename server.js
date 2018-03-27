@@ -1,4 +1,4 @@
-
+const url = require('url');
 const fs = require('fs');
 const path = require('path');
 const LRU = require('lru-cache');
@@ -8,7 +8,9 @@ const compression = require('compression');
 const microcache = require('route-cache');
 const resolve = file => path.resolve(__dirname, file);
 const { createBundleRenderer } = require('vue-server-renderer');
-const proxyMiddleware = require('http-proxy-middleware');
+const proxy = require('http-proxy-middleware');
+const https = require('https');
+const httpsProxyAgent = require('https-proxy-agent');
 const isProd = process.env.NODE_ENV === 'production';
 const useMicroCache = process.env.MICRO_CACHE !== 'false';
 const serverInfo =
@@ -16,7 +18,7 @@ const serverInfo =
   `vue-server-renderer/${require('vue-server-renderer/package.json').version}`;
 
 const app = express();
-
+app.set('env','production');
 function createRenderer (bundle, options) {
   // https://github.com/vuejs/vue/blob/dev/packages/vue-server-renderer/README.md#why-use-bundlerenderer
   return createBundleRenderer(bundle, Object.assign(options, {
@@ -64,8 +66,6 @@ const serve = (path, cache) => express.static(resolve(path), {
   maxAge: cache && isProd ? 1000 * 60 * 60 * 24 * 30 : 0
 });
 
-const port = process.env.PORT || 3030;
-
 app.use(compression({ threshold: 0 }));
 app.use(favicon('./static/favicon.ico'));
 app.use('/dist', serve('./dist', true));
@@ -80,32 +80,13 @@ app.use('/service-worker.js', serve('./dist/service-worker.js'));
 // 1-second microcache.
 // https://www.nginx.com/blog/benefits-of-microcaching-nginx/
 app.use(microcache.cacheSeconds(1, req => useMicroCache && req.originalUrl));
-const proxyTable = {
-  '/api': {
-    target:'http://www.lajixs.com',
-    changeOrigin: true,
-    pathRewrite: {
-      '^http://www.lajixs.com':''
-    }
-  }
-};
-// proxy api requests
-Object.keys(proxyTable).forEach(function (context) {
-  let options = proxyTable[context];
-  if (typeof options === 'string') {
-    options = { target: options }
-  }
-  app.use(proxyMiddleware(options.filter || context, options))
-});
-if(!isProd){
-  const opn = require('opn');
-  opn(`http://localhost:${port}`)
-}
 
 function render (req, res) {
   const s = Date.now();
+
   res.setHeader("Content-Type", "text/html");
   res.setHeader("Server", serverInfo);
+
   const handleError = err => {
     if (err.url) {
       res.redirect(err.url)
@@ -116,13 +97,13 @@ function render (req, res) {
       res.status(500).send('500 | Internal Server Error');
       console.error(`error during render : ${req.url}`);
       console.error(err.stack)
+
     }
   };
 
   const context = {
     title: '辣鸡小说', // default title
-    url: req.url,
-    cookies:req.cookies
+    url: req.url
   };
   renderer.renderToString(context, (err, html) => {
     if (err) {
@@ -135,10 +116,37 @@ function render (req, res) {
   })
 }
 
-app.get('*', isProd ? render : (req, res) => {
-  readyPromise.then(() => render(req, res))
-});
 
+const Proxy = process.env.http_proxy || 'http://127.0.0.1:80/api';
+console.log('using proxy server %j', Proxy);
+
+// HTTPS endpoint for the proxy to connect to
+const endpoint = process.argv[2] || 'https://118.31.187.224:80';
+console.log('attempting to GET %j', endpoint);
+const options = url.parse(endpoint);
+
+// create an instance of the `HttpsProxyAgent` class with the proxy server information
+const agent = new httpsProxyAgent(Proxy);
+options.agent = agent;
+https.get(options,render);
+
+
+// app.use(
+//   '/api',
+//   proxy({
+//     target: "https://118.31.187.224",
+//     changeOrigin: true,
+//     pathRewrite:{
+//       "^/api":""
+//     }
+//   })
+// );
+
+// app.get('*', isProd ? render : (req, res) => {
+//   readyPromise.then(() => render(req, res))
+// });
+
+const port = process.env.PORT || 80;
 app.listen(port, () => {
   console.log(`server started at localhost:${port}`)
 });
