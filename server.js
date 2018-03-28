@@ -9,8 +9,7 @@ const microcache = require('route-cache');
 const resolve = file => path.resolve(__dirname, file);
 const { createBundleRenderer } = require('vue-server-renderer');
 const proxy = require('http-proxy-middleware');
-const https = require('https');
-const httpsProxyAgent = require('https-proxy-agent');
+// const https = require('https');
 const isProd = process.env.NODE_ENV === 'production';
 const useMicroCache = process.env.MICRO_CACHE !== 'false';
 const serverInfo =
@@ -86,7 +85,6 @@ function render (req, res) {
 
   res.setHeader("Content-Type", "text/html");
   res.setHeader("Server", serverInfo);
-
   const handleError = err => {
     if (err.url) {
       res.redirect(err.url)
@@ -116,37 +114,24 @@ function render (req, res) {
   })
 }
 
-
-const Proxy = process.env.http_proxy || 'http://127.0.0.1:80/api';
-console.log('using proxy server %j', Proxy);
-
-// HTTPS endpoint for the proxy to connect to
-const endpoint = process.argv[2] || 'https://118.31.187.224:80';
-console.log('attempting to GET %j', endpoint);
-const options = url.parse(endpoint);
-
-// create an instance of the `HttpsProxyAgent` class with the proxy server information
-const agent = new httpsProxyAgent(Proxy);
-options.agent = agent;
-https.get(options,render);
-
-
-// app.use(
-//   '/api',
-//   proxy({
-//     target: "https://118.31.187.224",
-//     changeOrigin: true,
-//     pathRewrite:{
-//       "^/api":""
-//     }
-//   })
-// );
-
-// app.get('*', isProd ? render : (req, res) => {
-//   readyPromise.then(() => render(req, res))
-// });
+app.use(
+  '/api',
+  proxy({
+    target: "http://www.lajixs.com",
+    changeOrigin: true,
+    secure:true,
+    pathRewrite:{
+      "^/api":""
+    }
+  })
+);
 
 const port = process.env.PORT || 80;
+
+app.get('*', isProd ? render : (req, res) => {
+  readyPromise.then(() => render(req, res))
+});
+
 app.listen(port, () => {
   console.log(`server started at localhost:${port}`)
 });

@@ -4,7 +4,6 @@
 import LRU from 'lru-cache'
 import Com from '../assets/js/common'
 import axios from 'axios';
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 import { Message } from 'element-ui'
 const logRequests = true || !!process.env.DEBUG_API;
 const prod = process.env.NODE_ENV == 'production'
@@ -17,10 +16,6 @@ function createAPI() {
   //   maxAge: 1000 * 60 * 2 // 2 min cache
   // });
   return api;
-}
-
-function fetchUrl (url) {
-  return '/api'+ url
 }
 
 function checkTxt(val,len) {
@@ -42,14 +37,13 @@ function checkTxt(val,len) {
 
 function fetch(child,data,type,tip=true) {
     let format = '';
-    child = fetchUrl(child);
     if(typeof data !=='string'){
-      if(type!=='get'){
-        for (let k in data){
-          format += k+'='+ data[k] +'&'
+        if(type!=='get'){
+          for (let k in data){
+            format += k+'='+ data[k] +'&'
+          }
+          data = format.slice(0,-1)
         }
-        data = format.slice(0,-1)
-      }
     }else {
       tip = type;
       type = data;
@@ -62,29 +56,26 @@ function fetch(child,data,type,tip=true) {
         return Promise.resolve(cache.get(child))
     } else {
         return new Promise((resolve, reject) => {
-            if(type==='get'){
-              axios.get(child,{ params:data }).then(res => {
-                const val = res.data;
-                // logRequests && console.log(`fetched ${child}.`);
-                if (val) val.__lastUpdated = Date.now();
-                cache && cache.set(child, val);
-                resolve(val);
-                if(res.data.returnCode!==200 && tip){
-                  Message({message:res.data.msg,type:'warning'})
-                }
-              }, reject).catch(reject);
-            }else {
-              axios.post(child,data).then(res => {
-                const val = res.data;
-                // logRequests && console.log(`fetched ${child}.`);
-                if (val) val.__lastUpdated = Date.now();
-                cache && cache.set(child, val);
-                resolve(val);
-                if(res.data.returnCode!==200 && tip){
-                  Message({message:res.data.msg,type:'warning'})
-                }
-              }, reject).catch(reject)
+          axios({
+            method:type,
+            url:child,
+            baseURL:'https://k.lajixs.com/api',
+            data:data,
+            headers:{
+              "Content-Type":"application/x-www-form-urlencoded"
+            },
+            withCredentials:true
+          }).then((res)=>{
+            const val = res.data;
+            if (val) val.__lastUpdated = Date.now();
+            cache && cache.set(child, val);
+            // logRequests && console.log(`fetched ${child}.`);
+            resolve(val);
+            if(res.data.returnCode!==200 && tip){
+              Message({message:res.data.msg,type:'warning'})
             }
+          },reject).catch(reject)
+
         })
     }
 }
