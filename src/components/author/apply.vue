@@ -343,7 +343,6 @@
       },
       watch:{
           address:function (val) {
-              console.log(val);
               this.detail = '';
           },
           userInfo:function (val) {

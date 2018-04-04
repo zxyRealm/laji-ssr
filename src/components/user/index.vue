@@ -4,7 +4,7 @@
         <div class="user-wrapper clear">
           <div class="mw-fl-content">
             <div class="mw-top-info">
-              <img class="avatar" @click="dialogTableVisible=true" :src="$store.state.userInfo.userHeadPortraitURL" :alt="$store.state.userInfo.pseudonym">
+              <img class="avatar" @click="uploadAvatar" :src="$store.state.userInfo.userHeadPortraitURL" :alt="$store.state.userInfo.pseudonym">
               <div class="person-info">
                 <p class="username">{{$store.state.userInfo.pseudonym}}
                   <i class="zdy-icon__sex" :class="{girl:$store.state.userInfo.userSex}"></i>
@@ -37,16 +37,16 @@
           </div>
         </div>
         <!--url 属性必需设置为本地路径 如果引用的图片资源域名不同将无法剪裁上传-->
-        <pic-cropper
+        <cropper
           v-if="ready"
           ref="avatarUpdate"
-          action="/sys-UserAvatarimgUpload"
+          action="https://www.lajixs.com/api/sys-UserAvatarimgUpload"
           :visible.sync="dialogTableVisible"
           @close="closeIt"
           :maxWidth="400"
           url="/static/img/defaultavatarimg.jpg"
           :aspectRatio="1/1">
-        </pic-cropper>
+        </cropper>
         <my-consume></my-consume>
       </div>
     </div>
@@ -55,7 +55,7 @@
 <script type="text/ecmascript-6">
     export default{
       components:{
-        'pic-cropper':()=>import("../common/img_upload.vue")
+        cropper:()=>import("../common/img_upload.vue")
       },
       data(){
         return{
@@ -65,6 +65,10 @@
         }
       },
       methods: {
+        uploadAvatar(){
+          this.ready = true;
+          this.dialogTableVisible = true;
+        },
         closeIt(){
             this.dialogTableVisible = false;
         },

@@ -24,7 +24,14 @@ module.exports = function setupDevServer (app, templatePath, cb) {
       ready();
       cb(bundle, {
         template,
-        clientManifest
+        clientManifest,
+        inject:false,
+        shouldPreload:(file,type)=>{
+          if(type==='script'||type==="css"){
+            console.log(file);
+            return true
+          }
+        }
       })
     }
   };

@@ -213,7 +213,6 @@
           }
         },
         increase(type){
-            console.log(this.Consume.formData.count);
             if(type==='all'){
               this.Consume.formData.count = this.value
             }else if(this.value>this.Consume.formData.count){
@@ -224,9 +223,6 @@
             if(this.Consume.type==='letter'){
                 this.close()
             }
-//            if(!this.closeOnClickModal){
-//               this.handleAction('cancel')
-//            }
         }
       },
       computed:{
@@ -267,7 +263,12 @@
           return count;
         }
       },
-      mounted() {
+      watch:{
+         "Consume.visible":function (val) {
+           if(val && !this.userInfo.userId){
+             this.$router.push({path:'/login',query:{ redirect:this.$route.path }});
+           }
+         }
       }
     }
 </script>

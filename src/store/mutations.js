@@ -57,7 +57,7 @@ export default {
 
   // 搜索热词
 
-  SET_SEARCH_HOT_WORDS(state,{data}){
+  SET_SEARCH_HOT_WORDS(state,{ data }){
     state.hotWords = data
   },
 
@@ -68,7 +68,7 @@ export default {
 
   // 书库
   SET_STACK_LIST_DATA(state,data){
-    state.stackList = data
+    state.stackList = data.data?data.data:{};
   },
   // 热门标签
   SET_STACK_HOT_LABEL(state,data){

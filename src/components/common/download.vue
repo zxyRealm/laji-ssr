@@ -22,12 +22,12 @@
           </div>
           <div class="main-box clear">
             <div class="qrcode-wrap fl">
-              <img class="qrcode" v-show="icon=='android'" src="./images/dw-android-icon.png" alt="">
+              <img class="qrcode" v-show="icon=='android'" src="/static/img/dw-android-icon.png" alt="">
               <img class="qrcode" v-show="icon=='ios'"  src="./images/download-icon@1_01.png" alt="">
               <img class="qrcode" v-show="icon!=='android'&&icon!=='ios'"  src="./images/download-icon@1_01.png" alt="">
             </div>
             <div class="down-icon clear">
-              <a class="android" href="http://www.lajixs.com/apk/app-release.apk"  @mouseenter="icon='android'" @mouseleave="icon='default'"> Android版</a>
+              <a class="android" href="/apk/app.apk"  @mouseenter="icon='android'" @mouseleave="icon='default'">Android版</a>
               <a class="ios" href="javascript:alert('暂未上线，尽请期待！');" @mouseenter="icon='ios'" @mouseleave="icon='default'">iPhone版</a>
             </div>
           </div>

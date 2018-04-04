@@ -36,23 +36,23 @@
           <ul class="hi-left clear">
             <li class="font0">
               <router-link class="logo-icon-link" to="/">
-                <img src="./image/web-logo-icon.png" class="logo-icon" alt="辣鸡小说">
+                <img src="/static/img/web-logo-icon.png" class="logo-icon" alt="辣鸡小说">
               </router-link>
             </li>
             <li>
               <a href="javascript:;" @click="addFavorite">收藏本站</a>
             </li>
             <li>
-              <router-link to="/download/app" alt="垃圾小说" target="_blank">移动端</router-link>
+              <router-link to="/download/app" alt="辣鸡小说" target="_blank">移动端</router-link>
             </li>
           </ul>
           <ul class="hi-right clear ht-right-common">
             <li class="hr-item">
-              <template v-if="$store.state.userInfo.userName!==undefined">
+              <template v-if="userInfo.userName!==undefined">
                 <div class="user-dropdown-wrap clear">
                   <div class="user-dropdown font0">
                     <router-link to="/user/index" class="img-wrap">
-                      <img class="avatar img" :src="$store.state.userInfo.userHeadPortraitURL" :alt="$store.state.userInfo.userName">
+                      <img class="avatar img" :src="userInfo.userHeadPortraitURL" :alt="userInfo.userName">
                     </router-link>
                   </div>
                   <div class="user-dropdown">
@@ -61,7 +61,7 @@
                     </router-link>
                   </div>
                   <div class="user-dropdown">
-                    <el-badge :value="$store.state.message.total" class="message-item" style="vertical-align: top;">
+                    <el-badge :value="message.total" class="message-item" style="vertical-align: top;">
                       <span class="pr10">消息</span>
                     </el-badge>
                     <div class="user-dropdown-menu" >
@@ -70,10 +70,10 @@
                           <el-badge class="dot-item">通知</el-badge>
                         </router-link>
                         <router-link class="user-dropdown-item" to="/user/message/letter">
-                          <el-badge :is-dot="$store.state.message.userMessageCount>0" class="dot-item">私信</el-badge>
+                          <el-badge :is-dot="message.userMessageCount>0" class="dot-item">私信</el-badge>
                         </router-link>
                         <router-link class="user-dropdown-item" to="/user/message/comment">
-                          <el-badge :is-dot="$store.state.message.userCommentReplyCount>0" class="dot-item">评论</el-badge>
+                          <el-badge :is-dot="message.userCommentReplyCount>0" class="dot-item">评论</el-badge>
                         </router-link>
 
                       </div>
@@ -95,7 +95,7 @@
       </div>
       <div class="search">
         <div class="s-box fr">
-          <img class="s-icon" src="../../../static/img/icon/search.png" alt="" @click="search">
+          <img class="s-icon" src="/static/img/icon/search.png" alt="" @click="search">
           <el-autocomplete
             class="header-input"
             v-model="searchTxt"
@@ -110,7 +110,7 @@
     </header>
     <vue-Nav></vue-Nav>
   </div>
-  <div v-show="showIt" @click="getBack($event)" class="backTop" :class="{scrolling:isActive}"></div>
+  <div v-show="showIt" @click="getBack($event)" class="backTop" :class="{ scrolling:isActive }"></div>
   </div>
 </template>
 
@@ -119,6 +119,7 @@ import Vue from 'vue'
 import Nav from '../nav/nav.vue'
 import Dheader from './detailHeader.vue'
 import { FetchSearchHotWords,aycn } from '../../api'
+import { mapState } from 'vuex'
 export default({
   data(){
     return {
@@ -127,7 +128,6 @@ export default({
       isActive:false,
       isClick1:false,
       isClick2:false,
-      userInfo:{},
       searchTxt:this.$route.params.keywords,
       restaurants:{},
 //      hotList:[]
@@ -161,7 +161,7 @@ export default({
       }
     },
     querySearch(queryString, cb) {
-        let restaurants = this.hotList;
+        let restaurants = this.hotWords;
         let results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
         // 调用 callback 返回建议列表的数据
         cb(results);
@@ -171,14 +171,8 @@ export default({
         return (restaurant.hotWords.indexOf(queryString.toLowerCase()) === 0);
       };
     },
-    loadAll(){
-      FetchSearchHotWords().then(json=>{
-        if(json.returnCode===200){
-          this.hotList = json.data
-        }
-      })
-    },
-    search(val){
+    
+    search(){
       let txt = this.$trim(this.searchTxt);
       if(txt){
         this.$router.push({path:'/search/'+txt+'/1'});
@@ -197,7 +191,7 @@ export default({
               this.$message("退出成功！");
               this.$cookie('user_id','',-1);
               this.$store.state.userInfo = {};
-              this.$router.push('/')
+              this.$router.push({ path:'/index' })
             }
           })
       }
@@ -219,8 +213,6 @@ export default({
   mounted(){
     this.$store.dispatch("FETCH_SEARCH_HOT_WORDS");
     this.top =   window.document.scrollTop || document.documentElement.scrollTop;
-//    this.loadAll();
-    this.userInfo = this.$store.state.userInfo;
     window.onscroll = () => {
       return (() => {
         let  height = window.innerHeight || document.body.clientHeight;
@@ -244,16 +236,18 @@ export default({
     isShow:function () {
       let arr = ['Charge','rankChild','detail','User',"Chapter",'welfare','download','search','chapterList'],state = false;
       for(let k=0,len=arr.length;k<len;k++ ){
-          if(this.$route.name==arr[k]){
+          if(this.$route.name===arr[k]){
             state = true;
             break;
           }
       }
       return state
     },
-    hotList:function () {
-      return this.$store.state.hotWords?this.$store.state.hotWords:[]
-    }
+    ...mapState({
+      userInfo:'userInfo',
+      message:'message',
+      hotWords:'hotWords'
+    })
   }
 })
 </script>
@@ -376,6 +370,7 @@ export default({
     width :100%
     height :158px
     background :#fcadb4 url("../../../static/img/login-register-bg.png") no-repeat center center
+    
 header
   position: relative;
   height:149px;

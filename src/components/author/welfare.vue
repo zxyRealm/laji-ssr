@@ -2,17 +2,15 @@
     <div class="welfare-wrapper clear" >
 
       <div :style="{height:height+'px'}">
-
         <div class="welfare-bg"></div>
         <!--<img class="welfare-bg" src="../../../static/img/welfare-bg@_1.png" alt="">-->
-        <div class="bg-color"></div>
+        <div class="bg-color" :style="{ height:bgHeight+'px' }"></div>
         <div ref="welfare" class="welfare-main">
-          <div v-for="(item,$index) in welfareList" class="welfare-item" ref="welfareItem">
+          <div v-for="(item,$index) in welfareList.data" class="welfare-item" ref="welfareItem">
             <div class="welfare-title">
               <h2 class="h-title fl">{{$index+1}}</h2>
               <p >{{item.title}}</p>
             </div>
-
             <div class="welfare-content">
               <div v-html="item.values"></div>
               <div v-html="item.content"></div>
@@ -22,7 +20,7 @@
       </div>
       <div class="side-bar">
         <ul>
-          <template v-for="(item,$index) in welfareList">
+          <template v-for="(item,$index) in welfareList.data">
             <li :class="{active:currentIndex==$index}" class="side-bar-item" @click="autoBack($index)">
               {{$index!==0?item.title:'最高两千元全勤奖励'}}
             </li>
@@ -34,26 +32,25 @@
 </template>
 
 <script type="text/ecmascript-6">
-
+import { mapState } from 'vuex'
     export default{
 
       data(){
           return {
-            height:1024, //窗体可视区域高度
-            activeIndex:0,
-            title:[
-                '更新全勤',
-                '爽文全勤',
-                '黄金级作品全勤',
-                '白银级作品全勤',
-                '金椒全勤奖',
-                '百分百上架奖励',
-                '键盘补贴'
-            ],
-            position:[],
-//            welfareList:[],
-            top:0, //当前滚动高度
-            clientHeight:0
+              height:1024, //窗体可视区域高度
+              activeIndex:0,
+              title:[
+                  '更新全勤',
+                  '爽文全勤',
+                  '黄金级作品全勤',
+                  '白银级作品全勤',
+                  '金椒全勤奖',
+                  '百分百上架奖励',
+                  '键盘补贴'
+              ],
+              position:[],
+              top:0, //当前滚动高度
+              clientHeight:0
           }
       },
       methods:{
@@ -70,37 +67,25 @@
                   clearInterval(timer);
                 }
             },5);
-          },
-        getWelfare(){
-//          this.$ajax("/sys-welfareBulletin",'',json=>{
-//            if(json.returnCode===200){
-//              json.data.forEach((item)=>{
-//                item.content = item.content.replace(/\n+/g,'<br>')
-//              });
-//              this.welfareList = json.data;
-//              this.$nextTick(()=>{
-//                this.height = this.$refs.welfare.clientHeight;
-//                let origin = 581;
-//                this.position.push(origin);
-//                this.$refs.welfareItem.map((item) => {
-//                  origin += item.clientHeight;
-//                  this.position.push(origin)
-//                });
-//              })
-//            }
-//          },'get')
-        }
+        },
+      },
+      asyncData({ store }){
+          return store.dispatch("FETCH_AUTHOR_WELFARE")
       },
       created(){
-        this.$store.dispatch("FETCH_AUTHOR_WELFARE");
+        if(!this.once){
+          this.$store.dispatch("FETCH_AUTHOR_WELFARE");
+        }
       },
       mounted(){
-
-        this.clientHeight = document.documentElement.clientHeight;
-        window.addEventListener('scroll', () => {
-          let base1 = parseInt(this.clientHeight*0.3);
-          let base2 = parseInt(this.clientHeight*0.7);
-          this.top = document.documentElement.scrollTop ||  document.body.scrollTop ;
+        this.$nextTick(()=>{
+          this.height = this.$refs.welfare.clientHeight;
+          this.clientHeight = document.documentElement.clientHeight;
+          window.addEventListener('scroll', () => {
+            let base1 = parseInt(this.clientHeight*0.3);
+            let base2 = parseInt(this.clientHeight*0.7);
+            this.top = document.documentElement.scrollTop ||  document.body.scrollTop ;
+          })
         })
       },
       computed:{
@@ -117,19 +102,18 @@
            }
          return 0
         },
-        welfareList:function () {
-          return this.$store.state.authorWelfare?this.$store.state.authorWelfare.data:[]
+        ...mapState({
+          welfareList:'authorWelfare',
+          once:'once'
+        }),
+        bgHeight:function () {
+//            this.$nextTick(()=>{
+//              console.log(this.$refs.welfare.clientHeight);
+//              return this.$refs.welfare?this.$refs.welfare.clientHeight:1000
+//            })
         }
       },
-      watch:{
-          welfareList:function (val) {
-            if(val){
-              this.$nextTick(()=>{
-                this.height = this.$refs.welfare.clientHeight;
-              });
-            }
-          }
-      }
+      
     }
 </script>
 <style lang="stylus" scoped type="text/stylus" rel="stylesheet/stylus">

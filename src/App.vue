@@ -54,6 +54,7 @@
         this.$store.dispatch("FETCH_FRESHEN_INFO")
     },
     mounted(){
+      this.$store.state.once = true;
       this.screenWidth= document.body.clientWidth;
       const width = document.body.clientWidth;
       this.resize(width);
@@ -68,11 +69,10 @@
         }
       };
       this.$router.beforeEach((to,from,next)=>{
-
         let uid = Number(this.$cookie('user_id'));
         if(to.name==='Login' && uid){
           next({
-            path: '/',
+            path: '/index',
           });
           return false
         }

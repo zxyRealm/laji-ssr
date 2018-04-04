@@ -55,7 +55,7 @@ function closeIt() {
 }
 
 function handle() {
-  console.log("点击了他");
+  // console.log("点击了他");
 }
 function  versionUnavailable() {
   var fileref = document.createElement("link");

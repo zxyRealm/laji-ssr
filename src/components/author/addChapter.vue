@@ -168,8 +168,10 @@ import { FetchGetBookInfo,FetchAuthorHandleBook ,FetchNetTime,FetchCheckName } f
         if(value){
           if(this.$regEmoji(value)){
             callback(new Error("不可包含emoji表情图"))
+          }else if(value.length>100) {
+            callback(new Error('总字数不可超过100字符'))
           }else {
-            callback()
+              callback()
           }
         }else {
           callback(new Error("请添加作者的话"));

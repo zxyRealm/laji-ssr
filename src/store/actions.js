@@ -66,10 +66,11 @@ export default {
        data.data.bookListInfo = ''
      }else if(data.returnCode===200) {
        data.data.bookListInfo.bookIntroduction = data.data.bookListInfo.bookIntroduction.replace(/\s*\n+\s*/g,"<br>　　");
-       data.data.bookListInfo.lastChapter = Com.ResetChapterTxt(data.data.lastChapterView.chapterContent)
+       data.data.bookListInfo.lastChapter = Com.ResetChapterTxt(data.data.lastChapterView.chapterContent);
+       dispatch("FETCH_COMMENT_LIST",{ bid,page:1 })
      }
       commit("SET_BOOK_DETAIL",data)
-   }).then(()=>dispatch("FETCH_COMMENT_LIST",{ bid,page:1 }))
+   })
   },
 
   FETCH_CHATER_DETAIL:({commit,dispatch},{cid})=>{
@@ -148,13 +149,13 @@ export default {
   },
 
   //书籍评论
-  FETCH_COMMENT_LIST:({commit},{bid,page})=>{
+  FETCH_COMMENT_LIST:({ commit },{ bid,page })=>{
     page = Number(page) || 1;
     switch (page){
       case 1:{
-        FetchBookCommentHot(bid).then(data1=>{
+        return FetchBookCommentHot(bid).then(data1=>{
           if(data1.returnCode===200){
-            FetchBookCommentList(bid,page).then(data2=>{
+            return FetchBookCommentList(bid,page).then(data2=>{
                 data1.data.forEach((item)=>{
                   item.isHot = true;
                   for(let k=0,len=data2.data.list.length;k<len;k++){
@@ -167,9 +168,10 @@ export default {
                 data2.data.list = data1.data.concat(data2.data.list);
                 commit("SET_BOOK_COMMENT_LIST",data2)
             })
+          }else {
+            commit("SET_BOOK_COMMENT_LIST",{})
           }
-        })
-        break
+        });
       }
       default:{
         return FetchBookCommentList(bid,page).then(data=>{
@@ -212,7 +214,7 @@ export default {
     })
   },
 
-  FETCH_STACK_LIST_DATA:({commit},v) => {
+  FETCH_STACK_LIST_DATA:({ commit },v) => {
     return FetchStackListData(v.op1,v.op2,v.op3,v.op4,v.op5,v.page,v.op6).then(data => {
       commit("SET_STACK_LIST_DATA",data)
     })
@@ -264,7 +266,6 @@ export default {
       if(res.returnCode===200){
         Com.cookie('user_id','',-1);
         commit('SET_USER_INFO');
-        console.log(router);
         if(!type){
           if(mod){
             Message({message:"修改成功！",type:'success'});

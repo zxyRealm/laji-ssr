@@ -1,5 +1,5 @@
 import { createApp } from './app'
-
+import serialize from 'serialize-javascript'
 const isDev = process.env.NODE_ENV !== 'production';
 
 // This exported function will be called by `bundleRenderer`.

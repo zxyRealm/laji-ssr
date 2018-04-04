@@ -25,7 +25,7 @@
     isCrop: true,
     /* 图片上传完成之后的回调，无论是否成功上传 */
     onComplete: function(data) {
-      console.log('upload complete!');
+      // console.log('upload complete!');
     }
   };
 
@@ -302,7 +302,7 @@
     sw = Number(sw);
     sh = Number(sh);
     if(vw <= 0 || vh <= 0) {
-      console.log('参数不能为0');
+      // console.log('参数不能为0');
       return false;
     }
     var wScale = sw / vw;

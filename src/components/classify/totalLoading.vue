@@ -1,7 +1,7 @@
 <template>
   <div class="stack-list-wrapper">
     <ul class="stack-list total-list">
-      <li v-if="stackList && stackList.list.length<1" class="error-empty">
+      <li v-if="stackList.list && stackList.list.length<1" class="error-empty">
         <p class="txt">没有相关数据</p>
       </li>
       <template v-if="stackList">
@@ -71,16 +71,19 @@
 </template>
 <script type="text/ecmascript-6">
   import { FetchAddBookShelf } from '../../api'
-  import { mapGetters } from 'vuex'
+  import { mapState} from 'vuex'
     export default{
       data() {
-        return {}
+        return {
+            first:1
+        }
       },
       methods:{
         handleCurrentChange(val){
           this.$router.push({name:'totalChild',params:{page:val}});
         },
         addBookShelf(bid,name,index){
+          this.$reLogin();
           FetchAddBookShelf(bid,this.$store.state.userInfo.pseudonym,name).then(json=>{
             if(json.returnCode===200){
               this.$message(json.msg);
@@ -90,34 +93,31 @@
         }
       },
       title(){
-
+          return '全网书籍分类-辣鸡小说'
       },
       asyncData({store,route:{ params:{ op1,op2,op3,op4,op5,page,op6 }}}){
-//          console.log(params);
         return store.dispatch("FETCH_STACK_LIST_DATA",{ op1:[op1],op2:[op2],op3:[op3],op4:[op4],op5:[op5],page:[page],op6:[op6] });
       },
       mounted(){
-//        this.$router.push({ params:{ op6:0 } });
+        if(!this.once){
+          const key = this.$route.params;
+          this.$store.dispatch("FETCH_STACK_LIST_DATA",{ op1:key.op1,op2:key.op2,op3:key.op3,op4:key.op4,op5:key.op5,page:key.page,op6:key.op6 });
+        }
       },
       watch:{
         "$route":{
           handler(val,oldVal){
             if(Number(val.params.page)===Number(oldVal.params.page) && Number(oldVal.params.page)!==1){
               this.$router.push({params:{page:1}});
-            }else {
-              let key = val.params;
-              this.$store.dispatch("FETCH_STACK_LIST_DATA",
-                {
-                    op1:key.op1,op2:key.op2,op3:key.op3,op4:key.op4,op5:key.op5,page:key.page,op6:key.op6
-                });
             }
           },
           deep:true
         }
       },
       computed:{
-        ...mapGetters([
-            "stackList"
+        ...mapState([
+            'stackList',
+           'once'
         ])
       }
     }

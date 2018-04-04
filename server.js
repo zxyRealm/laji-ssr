@@ -8,16 +8,22 @@ const compression = require('compression');
 const microcache = require('route-cache');
 const resolve = file => path.resolve(__dirname, file);
 const { createBundleRenderer } = require('vue-server-renderer');
-const proxy = require('http-proxy-middleware');
-// const https = require('https');
+const https = require('https');
 const isProd = process.env.NODE_ENV === 'production';
 const useMicroCache = process.env.MICRO_CACHE !== 'false';
 const serverInfo =
   `express/${require('express/package.json').version} ` +
   `vue-server-renderer/${require('vue-server-renderer/package.json').version}`;
 
+const key  = fs.readFileSync('./certificate/ca.key', 'utf8');
+const cert = fs.readFileSync('./certificate/private.pem', 'utf8');
+const credentials = {
+  key: key,
+  cert: cert
+};
+// process.env.NODE_ENV = 'production';
 const app = express();
-app.set('env','production');
+// app.set('env','production');
 function createRenderer (bundle, options) {
   // https://github.com/vuejs/vue/blob/dev/packages/vue-server-renderer/README.md#why-use-bundlerenderer
   return createBundleRenderer(bundle, Object.assign(options, {
@@ -47,7 +53,14 @@ if (isProd) {
   const clientManifest = require('./dist/vue-ssr-client-manifest.json');
   renderer = createRenderer(bundle, {
     template,
-    clientManifest
+    clientManifest,
+    inject:false,
+    shouldPreload:(file,type)=>{
+      if(type==='script'||type==="css"){
+        console.log(file);
+        return true
+      }
+    }
   })
 } else {
   // In development: setup the dev server with watch and hot-reload,
@@ -70,7 +83,7 @@ app.use(favicon('./static/favicon.ico'));
 app.use('/dist', serve('./dist', true));
 app.use('/static', serve('./static', true));
 // app.use('/manifest.json', serve('./manifest.json', true));
-app.use('/service-worker.js', serve('./dist/service-worker.js'));
+app.use('/service-worker.js', serve('./dist/service-worker.js',true));
 
 // since this app has no user-specific content, every page is micro-cacheable.
 // if your app involves user-specific content, you need to implement custom
@@ -86,17 +99,22 @@ function render (req, res) {
   res.setHeader("Content-Type", "text/html");
   res.setHeader("Server", serverInfo);
   const handleError = err => {
-    if (err.url) {
-      res.redirect(err.url)
-    } else if(err.code === 404) {
-      res.status(404).send('404 | Page Not Found')
-    } else {
-      // Render Error Page or Redirect
-      res.status(500).send('500 | Internal Server Error');
-      console.error(`error during render : ${req.url}`);
-      console.error(err.stack)
+    try {
+      if (err.url) {
+        res.redirect(err.url)
+      } else if(err.code === 404) {
+        res.status(404).send('404 | Page Not Found')
+      } else {
+        // Render Error Page or Redirect
+        res.status(500).send('500 | Internal Server Error');
+        console.error(`error during render : ${req.url}`);
+        console.error(err.stack)
 
+      }
+    }catch (error){
+      console.log('cache err',error)
     }
+
   };
 
   const context = {
@@ -104,34 +122,40 @@ function render (req, res) {
     url: req.url
   };
   renderer.renderToString(context, (err, html) => {
-    if (err) {
-      return handleError(err)
-    }
-    res.send(html);
-    if (!isProd) {
-      console.log(`whole request: ${Date.now() - s}ms`)
-    }
+    try {
+      if (err) {
+        return handleError(err)
+      }
+      res.send(html);
+      if (!isProd) {
+        console.log(`whole request: ${Date.now() - s}ms`)
+      }
+    }catch (error){console.log(error)}
   })
 }
 
-app.use(
-  '/api',
-  proxy({
-    target: "http://www.lajixs.com",
-    changeOrigin: true,
-    secure:true,
-    pathRewrite:{
-      "^/api":""
-    }
-  })
-);
+// app.use(
+//   '/api',
+//   proxy({
+//     target: "http://www.lajixs.com",
+//     changeOrigin: true,
+//     secure:true,
+//     pathRewrite:{
+//       "^/api":""
+//     }
+//   })
+// );
 
-const port = process.env.PORT || 80;
 
-app.get('*', isProd ? render : (req, res) => {
-  readyPromise.then(() => render(req, res))
+const SSLPORT = 80;
+
+const httpsServer = https.createServer(credentials, app);
+
+httpsServer.listen(SSLPORT, function() {
+  console.log('HTTPS Server is running on: https://localhost:%s', SSLPORT);
 });
 
-app.listen(port, () => {
-  console.log(`server started at localhost:${port}`)
-});
+app.get("*",render);
+// app.get('*', isProd ? render : (req, res) => {
+//   readyPromise.then(() => render(req, res))
+// });

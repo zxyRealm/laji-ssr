@@ -10,17 +10,17 @@
       </div>
       <div class="charge-userinfo-wrapper clear">
         <div class="user-avatar">
-          <img :src="$store.state.userInfo.userHeadPortraitURL" :alt="$store.state.userInfo.pseudonym">
-          <i v-if="$store.state.userInfo.vipGrade" class="zdy-icon__user_vip"></i>
+          <img :src="userInfo.userHeadPortraitURL" :alt="userInfo.pseudonym">
+          <i v-if="userInfo.vipGrade" class="zdy-icon__user_vip"></i>
         </div>
         <div class="user-info v-middle">
           <p>
-            <span class="v-item">昵称：{{$store.state.userInfo.pseudonym}}</span>
-            <i :class="$store.state.userInfo.userSex?'girl':null" class="zdy-icon__sex v-item"></i>
-            <zdy-icon__user_level :grade="$store.state.userInfo.userGrade"></zdy-icon__user_level>
+            <span class="v-item">昵称：{{userInfo.pseudonym}}</span>
+            <i :class="userInfo.userSex?'girl':null" class="zdy-icon__sex v-item"></i>
+            <zdy-icon__user_level :grade="userInfo.userGrade"></zdy-icon__user_level>
           </p>
-          <p>账号：{{$store.state.userInfo.userName}}</p>
-          <p>账号余额：{{$store.state.userInfo.userMoney}}</p>
+          <p>账号：{{userInfo.userName}}</p>
+          <p>账号余额：{{userInfo.userMoney}}</p>
         </div>
       </div>
       <div class="charge-form-wrapper">
@@ -64,7 +64,7 @@
         <div class="charge-shade-content">
           <div class="qrcode-wrap">
             <canvas id="WxpayCanvas" width="260" height="260"></canvas>
-            <img src="../../../static/img/wxpay_intro@1_01.png" class="intro-box" alt="">
+            <img src="/static/img/wxpay_intro@1_01.png" class="intro-box" alt="">
           </div>
 
           <p class="charge-tip" v-if="tipInfo"><i class="el-icon-check charge-tip-icon"></i>{{tipInfo}}</p>
@@ -103,28 +103,28 @@
 <script type="text/ecmascript-6">
 import QRcode from 'qrcode'
 import { FetchWebPay } from '../../api'
+import { mapState } from 'vuex'
 export default{
-
-    data(){
-        return {
-            dialogVisible:false,
-            chargeForm:{
-                type:'alipay',
-                number:'30'
-            },
-            rule:{
-                type:[
-                  {require:true,message:'请选取支付方式',trigger:'blur'}
-                ],
-                number:[
-                  {require:true,message:'请选取充值金额',trigger:'blur'}
-                ]
-            },
-            isWeiXin:false,
-            tipInfo:'',
-            alipayHref:''
-        }
-    },
+  data(){
+      return {
+          dialogVisible:false,
+          chargeForm:{
+              type:'alipay',
+              number:'30'
+          },
+          rule:{
+              type:[
+                {require:true,message:'请选取支付方式',trigger:'blur'}
+              ],
+              number:[
+                {require:true,message:'请选取充值金额',trigger:'blur'}
+              ]
+          },
+          isWeiXin:false,
+          tipInfo:'',
+          alipayHref:''
+      }
+  },
   methods:{
     submitForm(formName){
       this.$refs[formName].validate((valid) => {
@@ -178,6 +178,9 @@ export default{
         });
     }
   },
+  mounted(){
+      console.log(this.userInfo.userId)
+  },
   watch:{
     'isWeiXin':function () {
       if(this.isWeiXin){
@@ -188,6 +191,11 @@ export default{
         document.body.style.overflow = null;
       }
     }
+  },
+  computed:{
+      ...mapState([
+          'userInfo'
+      ])
   }
 }
 

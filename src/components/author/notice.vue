@@ -17,7 +17,7 @@
       </div>
       <div class="web-affiche clear bsw">
         <template v-if="noticeList.list">
-          <zdy-hint v-if="!noticeList.list.length"></zdy-hint>
+          <zdy-hint v-if="!noticeList.list.length || !noticeList.list"></zdy-hint>
           <div class="affiche-item clear" v-else v-for="(item,index) in noticeList.list">
             <router-link :to="'/news/'+item.id">
               <img class="nt-img" :src="item.minimg" :alt="item.title">
@@ -54,9 +54,9 @@
       methods:{
         getNoticeList(page){
           FetchAuthorNotice(page).then(json=>{
-            if(json.returnCode){
-              this.noticeList = json.data
-            }
+            
+            this.noticeList = json.data?json.data:{}
+            
           })
         },
         handleCurrentChange(page){

@@ -3,12 +3,12 @@
     <div class="dHeader">
       <div class="logo fl font0">
         <router-link to="/">
-          <img src="./image/web-logo-icon@1_01.png" class="logo-icon" alt="辣鸡小说">
+          <img src="/static/img/web-logo-icon@1_01.png" class="logo-icon" alt="辣鸡小说">
         </router-link>
       </div>
       <div class="d-more">
         <a href="javascript:;" class="logo-link" @click="addFavorite">收藏本站</a>
-        <router-link to="/download/app" target="_blank" class="logo-link" >移动端</router-link>
+        <router-link to="/download/app" alt="辣鸡小说" target="_blank" class="logo-link" >移动端</router-link>
       </div>
       <div  class="dh-nav-left fl">
         <ul class="nav-list clear">
@@ -84,19 +84,20 @@
           </li>
         </ul>
       </div>
+      
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import { aycn } from '../../api'
+  import { mapState } from 'vuex'
     export default{
       data(){
           return {
             isClick1:false,
             isClick2:false,
             searchTxt:'',
-            userInfo:{},
             show:false
           }
       },
@@ -108,7 +109,7 @@
                 this.$message("退出成功！");
                 this.$cookie('user_id','',-1);
                 this.$store.state.userInfo = {};
-                this.$router.push('/')
+                this.$router.push('/index')
               }
             });
           }else if(commend==='center'){ //个人中心
@@ -144,38 +145,28 @@
         search(){
           let self = this;
           if(!this.$refs.searchInput.style.width){
-            this.show = true
+            this.show = true;
             self.$refs.searchInput.style.width = "120px";
             self.$refs.searchForm.style.border = '1px solid #fb707f'
           }else{
             if(!this.searchTxt){
-              this.show = false
+              this.show = false;
               self.$refs.searchInput.style.width = '';
               self.$refs.searchForm.style.border = 'none'
             }else{
-              this.show = true
+              this.show = true;
               this.$router.push('/search/'+this.searchTxt);
             }
           }
         }
       },
       mounted(){
-        this.userInfo = this.$store.state.userInfo;
-        document.addEventListener('click',(e)=>{
-          if(e.target.className.indexOf('user-dropdown-item')>-1){
-            this.isClick1 = false;
-            this.isClick2 = false;
-          }
-        })
-      },
-
-      watch:{
-          "$route":{
-            handler(){
-              this.userInfo = this.$store.state.userInfo
-            },
-            deep:true
-          }
+//        document.addEventListener('click',(e)=>{
+//          if(e.target.className.indexOf('user-dropdown-item')>-1){
+//            this.isClick1 = false;
+//            this.isClick2 = false;
+//          }
+//        })
       },
       computed:{
         def:function () {
@@ -187,7 +178,10 @@
             }
           });
           return state
-        }
+        },
+        ...mapState({
+          userInfo:'userInfo'
+        })
       }
     }
 </script>

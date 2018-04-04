@@ -98,7 +98,8 @@
         canvasOption:{},
         icon_url:'',
         pre_width:0,
-        zoom:1
+        zoom:1,
+        ready:false
       }
     },
     methods:{
@@ -193,6 +194,8 @@
               type : "POST",
               data : formData,
               dataType:"text",
+              xhrFields: {withCredentials: true},
+              crossDomain: true,
               processData : false,         // 告诉jQuery不要去处理发送的数据
               contentType : false,        // 告诉jQuery不要去设置Content-Type请求头
               success:(data)=>{
@@ -339,11 +342,9 @@
     watch:{
       visible:function (val) {
         if(val){
-          this.$nextTick(()=>{
-              setTimeout(()=>{
-                this.resetCrop()
-              },0)
-          })
+            this.$nextTick(()=>{
+              this.resetCrop()
+            })
         }
       }
     },

@@ -10,6 +10,7 @@ import modules from './modules/index'
 Vue.use(Vuex);
 
 const state = {
+  once:false,
   loading:false,  //数据请求状态
   userInfo:{}, //用户信息
   message:{}, //用户未读消息数目
@@ -24,7 +25,7 @@ const state = {
   chapterList:[], //章节列表，
   bookCommentList:{}, //书籍评论列表
   bookDetail:{},
-  hotWords:{}, //搜索热词
+  hotWords:[], //搜索热词
   bookClassName:{}, //书籍分类
   bookStackSell:{}, // 书库畅销榜
   bookStackHotLabel:{}, //书库热门标签

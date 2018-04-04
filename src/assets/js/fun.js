@@ -3,12 +3,58 @@
  */
 let ERR_OK = 200;
 let ERR_NO = 400;
-import Axios from 'axios'
+import axios from 'axios'
 import { aycn,FetchUpdateInfo } from '../../api'
 exports.install = function (Vue, options) {
   // 异步请求统一设置
   Vue.prototype.$ajax = function (url, data, type ,tip=true) {
-    return aycn(url,data,type,tip);
+    return (url,data,type,tip=true) => {
+      let format = '';
+      if(typeof data !=='string'){
+        if(type!=='get'){
+          for (let k in data){
+            format += k+'='+ data[k] +'&'
+          }
+          data = format.slice(0,-1)
+        }
+      }else {
+        tip = type;
+        type = data;
+        data = {}
+      }
+      // logRequests && console.log(`fetching ${child}...`);
+      const cache = api.cachedItems;
+      if (cache && cache.has(child)) {
+        // logRequests && console.log(`cache hit for ${child}.`);
+        return Promise.resolve(cache.get(child))
+      } else {
+        return new Promise((resolve, reject) => {
+          axios({
+            method:type,
+            url:child,
+            baseURL:'http://www.lajixs.com',
+            data:data,
+            headers:{
+              "Content-Type":"application/x-www-form-urlencoded"
+            },
+            withCredentials:true
+          }).then((res)=>{
+            const val = res.data;
+            if (val) val.__lastUpdated = Date.now();
+            cache && cache.set(child, val);
+            // logRequests && console.log(`fetched ${child}.`);
+            resolve(val);
+            if(res.data.returnCode!==200 && tip){
+              Message({message:res.data.msg,type:'warning'})
+            }else if(res.returnCode===400){
+              router.push('/login')
+            }
+          },reject).catch(reject)
+
+        })
+      }
+    }
+
   };
 
   // 校验文本内容是否包含emoji 表情
@@ -241,6 +287,24 @@ exports.install = function (Vue, options) {
   };
   // 用户发送私信
 
+  Vue.prototype.$reLogin = function (url) {
+
+    let href = url || this.$route.path;
+    if(!url){
+      this.$router.push({
+        path:'/login',
+        query:{ redirect: href }
+      });
+    }
+    if(this.$store.state.userInfo.userId){
+       return href;
+    }else {
+      return {
+        path:'/login',
+        query:{ redirect: href }
+      }
+    }
+  };
 
   // 检测浏览器是否为IE
   Vue.prototype.$isIE = function () {

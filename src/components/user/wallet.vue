@@ -175,13 +175,11 @@
       },
       methods: {
         handleCurrentChange(page){
-          this.$router.push({params:{page:page}})
+          this.$router.push({ params:{ page: page }})
         },
         getRecordList(){
-            let page = this.$route.params.page;
             let type = this.$route.name.replace('wallet','');
-
-            FetchMineWallet(type,page,this.$cookie('user_id')).then(json=>{
+            FetchMineWallet(type,this.page,this.$cookie('user_id')).then(json=>{
               if(json.returnCode===200 || !json.data){
                 this.recordList = json.data;
               }
@@ -189,7 +187,7 @@
         }
       },
       mounted(){
-          this.getRecordList()
+        this.getRecordList()
       },
       watch:{
         "$route":function (val,oldVal) {
@@ -200,8 +198,13 @@
         }
       },
       computed:{
-        page:function () {
-            return parseInt(this.$route.params.page)
+        page:{
+          get: function () {
+            return parseInt(this.$route.params.page);
+          },
+          set: function () {
+              return parseInt(this.$route.params.page);
+          }
         }
       },
       filters:{

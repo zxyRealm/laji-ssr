@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import 'es6-promise/auto'
-import 'babel-polyfill'
+// import 'babel-polyfill'
+import serialize from 'serialize-javascript'
 import { createApp } from './app'
-// import ProgressBar from './components/ProgressBar.vue'
 
 // global progress bar
 // const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount();
@@ -28,7 +28,7 @@ const { app, router, store } = createApp();
 // prime the store with server-initialized state.
 // the state is determined during SSR and inlined in the page markup.
 if (window.__INITIAL_STATE__) {
-  store.replaceState(window.__INITIAL_STATE__)
+  // store.replaceState(window.__INITIAL_STATE__)
 }
 
 // wait until router has resolved all async before hooks
@@ -39,7 +39,6 @@ router.onReady(() => {
   // the data that we already have. Using router.beforeResolve() so that all
   // async components are resolved.
   router.beforeResolve((to, from, next) => {
-
     const matched = router.getMatchedComponents(to);
     const prevMatched = router.getMatchedComponents(from);
     let diffed = false;
@@ -50,21 +49,26 @@ router.onReady(() => {
     if (!asyncDataHooks.length) {
       return next()
     }
-
-    // bar.start();
     Promise.all(asyncDataHooks.map(hook => hook({ store, route: to })))
       .then(() => {
-        // bar.finish()
         next()
       })
       .catch(next)
   });
-
   // actually mount to DOM
   app.$mount('#app')
 });
 
 // service worker
-if ('https:' === location.protocol && navigator.serviceWorker) {
-  navigator.serviceWorker.register('/service-worker.js')
-}
+// if ('serviceWorker' in navigator) {
+//     navigator.serviceWorker.register('/dist/service-worker.js').then(function(registration) {
+//     // Registration was successful
+//     console.log('ServiceWorker registration successful with scope: ',    registration.scope);
+//   }).catch(function(err) {
+//     // registration failed :(
+//     console.error('ServiceWorker registration failed: ', err);
+//   });
+// }
+// if ('https:' === location.protocol && navigator.serviceWorker) {
+//   navigator.serviceWorker.register('/service-worker.js')
+// }

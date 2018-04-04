@@ -129,6 +129,8 @@
         if(value){
           if(this.$regEmoji(value)){
             callback(new Error("不可包含emoji表情图"))
+          }else if(value.length>100) {
+            callback(new Error('总字数不可超过100字符'))
           }else {
             callback()
           }
@@ -255,7 +257,7 @@
           } else {
             this.$nextTick(()=>{
               this.$loading().close()
-            })
+            });
 //            this.isLoading = false;
             this.$message({message:'请完善信息后提交！',type:'warning',duration:0});
             return false;

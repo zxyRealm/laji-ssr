@@ -50,7 +50,7 @@ module.exports = {
         test: /\.(png|jpg|gif|svg)$/,
         loader: 'url-loader',
         options: {
-          limit: 10000,
+          limit: 5000,
           name:utils.assetsPath('img/[name].[ext]?[hash]')
         }
       },
@@ -89,6 +89,10 @@ module.exports = {
         new webpack.optimize.ModuleConcatenationPlugin(),
         new ExtractTextPlugin({
           filename: 'common.[chunkhash].css'
+        }),
+        new webpack.ProvidePlugin({
+          jQuery:'jquery',
+          $: "jquery"
         })
       ]
     : [

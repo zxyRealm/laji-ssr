@@ -102,10 +102,10 @@
         </el-form-item>
       </el-form>
 
-      <pic-cropper
+      <cropper
         v-if="ready"
         ref="bookCoverUpdate"
-        action="/sys-BookCoverAvatarimgUpload"
+        action="https://www.lajixs.com/api/sys-BookCoverAvatarimgUpload"
         :visible.sync="dialogTableVisible"
         :sync="true"
         @syncUrl="setCover"
@@ -114,15 +114,16 @@
         :data="{ bookid:bookId }"
         url="/static/img/defaultcoverimg.jpg"
         :aspectRatio="3/4">
-      </pic-cropper>
+      </cropper>
     </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import Vue from 'vue'
   import { FetchGetBookInfo,FetchAuthorHandleBook,FetchCheckName } from '../../api'
   export default{
     components:{
-        'pic-cropper':()=>import("../common/img_upload.vue")
+      cropper:()=>import('../common/img_upload.vue')
     },
     data(){
       let checkName = (rule, value, callback) => {
@@ -305,12 +306,13 @@
           }
         });
       },
-
       setCover(url){
           this.bookInfo.bookImage = url
       },
       updateCover(e){
-        this.dialogTableVisible = true
+        this.ready = true;
+        this.dialogTableVisible = true;
+        console.log('点击生效')
       },
       closeIt(){
          this.dialogTableVisible = false
@@ -319,6 +321,7 @@
     mounted(){
       this.$route.params.bid?this.bookId=this.$route.params.bid:'';
       this.getLabel();
+      
       this.ready = true
     },
     computed:{

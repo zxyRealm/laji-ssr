@@ -25,14 +25,7 @@
           </ul>
         </div>
       </div>
-      <div class="declare">
-        <div class="ft-title">
-          版权声明
-        </div>
-        <div class="de-content">
-          辣鸡小说提供玄幻小说，武侠小说，言情小说，网游小说等作品欣赏，做最优秀的小说阅读网。本站为开放式小说阅读网，所有注册会员均可上传自己喜爱的好看的小说，言情小说，本站所有小说章节均由网友上传，如果其中侵犯了您的版权，请登录会员首页，在意见栏通知我们，我们将在24小时内删除该作品。
-        </div>
-      </div>
+      
       <ul class="help">
         <!--<li><a href="javascript:;">关于辣鸡</a>|</li>-->
         <!--<li><a href="javascript:;">联系我们</a>|</li>-->

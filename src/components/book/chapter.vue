@@ -380,6 +380,16 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
             this.$store.commit("SET_BOOK_DETAIL",{data:json.data});
             if(json.data && json.returnCode!==1000){
               let desc = json.data.bookInfo.bookName + '是辣鸡小说网作者'+json.data.bookInfo.writerName+'全力打造的一部'+json.data.bookInfo.classificationName+'小说，辣鸡小说第一时间提供'+json.data.bookInfo.bookName+'最新章节，'+json.data.bookInfo.bookName+'全文阅读请上辣鸡小说';
+    
+              json.data.bookInfo.rewardCount = json.data.rewardTotalNumber;
+              json.data.chapterInfo.authorWords = json.data.chapterInfo.authorWords.replace(/\s*\n+\s*/g,'<br>　　');
+              this.bookInfo = json.data.bookInfo;
+              this.countList = json.data.countInfos;
+              let data = this.formatTxt({content:json.data.chapterInfo.chapterContent,count:this.countList});
+              json.data.chapterInfo.chapterData = data;
+              this.chapterInfo = json.data.chapterInfo;
+              this.addReadRecord();
+    
               this.$nextTick(function () {
                 window._bd_share_config = {
                   common:{
@@ -395,19 +405,14 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
                 const s = document.createElement('script');
                 s.type = 'text/javascript';
                 s.id = 'baidu__share';
-                s.src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5);
+                s.src = 'http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion=' + ~(-new Date() / 36e5);
                 document.body.appendChild(s);
               });
-              json.data.bookInfo.rewardCount = json.data.rewardTotalNumber;
-              json.data.chapterInfo.authorWords = json.data.chapterInfo.authorWords.replace(/\s*\n+\s*/g,'<br>　　');
-              this.bookInfo = json.data.bookInfo;
-              this.countList = json.data.countInfos;
-              let data = this.formatTxt({content:json.data.chapterInfo.chapterContent,count:this.countList});
-              json.data.chapterInfo.chapterData = data;
-              this.chapterInfo = json.data.chapterInfo;
-              this.addReadRecord();
             }
-            if(json.returnCode===500){
+            
+            if(json.returnCode===400){
+                this.$router.push({path:'/login',query:{ redirect:this.$route.path }})
+            }else if(json.returnCode===500){
               setTimeout(()=>{
                 if(this.automaticTake){
                   this.buyVipChapter('auto')
@@ -415,6 +420,7 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
                   this.dialogFormVisible = true;
                   this.isRead = false;
                 }
+                console.log(this.automaticTake)
               },500);
             }else {
               this.dialogFormVisible = false;
@@ -565,6 +571,11 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
         },
 //        收藏本书/加入书架
         addBookShelf(){
+            if(!this.$cookie('user_id')){this.$router.push({
+              path:'/login',
+              query: { redirect: this.$route.path } });
+              return false
+            }
             FetchAddBookShelf(
               this.bookInfo.bookId,
               this.$store.state.userInfo.pseudonym,
@@ -578,6 +589,10 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
         },
 //        打赏、推荐票、金票、书评
         myConsume:function (type) {
+          if(!this.$cookie('user_id')){
+            this.$router.push({path:'/login',query:{ redirect:this.$route.path }});
+            return false
+          }
           let add = type==='comment'?this.bookInfo.bookName:'';
           this.$store.dispatch('init',{type:type,title:add});
           if(!this.$store.state.userInfo.userId){
@@ -589,6 +604,7 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
         getAutoState(state){
 //         初始获取自动订阅状态
           let key = this.$cookie('user_id');
+          if(!key && state!==undefined){ this.$reLogin();return false}
           let loading;
 //            更新订阅状态
           if(state!==undefined && key){
@@ -664,11 +680,7 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
           });
         },
 //        发布书评
-        addBookComment(){
-            let data = {
-                title:this.bookInfo.bookName
-            };
-        },
+
 //        操作提示
         handleTip() {
           this.$notify({

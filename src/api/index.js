@@ -2,19 +2,24 @@
 // import {createAPI} from './create-api-client';
 // import Category from '../config/category';
 import LRU from 'lru-cache'
+import qs from 'querystring'
 import Com from '../assets/js/common'
+import { createRouter } from '../router'
+import { createStore } from '../store'
 import axios from 'axios';
+import '../assets/js/fun'
 import { Message } from 'element-ui'
 const logRequests = true || !!process.env.DEBUG_API;
-const prod = process.env.NODE_ENV == 'production'
 const api = createAPI();
+// const router = createRouter();
+// const store = createStore();
 function createAPI() {
   let api = {};
   api.onServer = true;
-  // api.cachedItems = LRU({
-  //   max: 1000,
-  //   maxAge: 1000 * 60 * 2 // 2 min cache
-  // });
+  api.cachedItems = LRU({
+    max: 1000,
+    maxAge: 1000 * 60 * 5 // 2 min cache
+  });
   return api;
 }
 
@@ -37,38 +42,59 @@ function checkTxt(val,len) {
 
 function fetch(child,data,type,tip=true) {
     let format = '';
+    let isCache = false;
+    const cacheList = [
+      '/indexdataload',
+      '/sys-hotwords',
+      '/getMaxNewChapterVOList',
+      '/stacks-hotLable',
+      '/sysgetNoticeById',
+      '/sys-welfareBulletin',
+      '/stacks-changxiaobang',
+      '/ranking-classification'
+    ];
+    for(let n=0,len=cacheList.length;n<len;n++){
+      if(child===cacheList[n]){
+        isCache = true
+      }
+    }
+
+    const config = {
+      url:child,
+      baseURL:'https://www.lajixs.com/api',
+      transformRequest: [function (data) {
+        return qs.stringify(data);
+      }],
+      headers:{
+        "Content-Type":"application/x-www-form-urlencoded"
+      },
+      withCredentials:true
+    };
     if(typeof data !=='string'){
-        if(type!=='get'){
-          for (let k in data){
-            format += k+'='+ data[k] +'&'
-          }
-          data = format.slice(0,-1)
-        }
+      if(type==='get'){
+        config.params = data
+      }else {
+        config.data = data
+      }
     }else {
       tip = type;
       type = data;
-      data = {}
     }
+    if(typeof type!=='string'){ type = 'post' }
+    config.method = type;
     // logRequests && console.log(`fetching ${child}...`);
     const cache = api.cachedItems;
-    if (cache && cache.has(child)) {
+    if (cache && cache.has(child) && isCache) {
         // logRequests && console.log(`cache hit for ${child}.`);
         return Promise.resolve(cache.get(child))
     } else {
         return new Promise((resolve, reject) => {
-          axios({
-            method:type,
-            url:child,
-            baseURL:'https://k.lajixs.com/api',
-            data:data,
-            headers:{
-              "Content-Type":"application/x-www-form-urlencoded"
-            },
-            withCredentials:true
-          }).then((res)=>{
+          axios(config).then((res)=>{
             const val = res.data;
             if (val) val.__lastUpdated = Date.now();
-            cache && cache.set(child, val);
+            if(isCache){
+              cache && cache.set(child, val);
+            }
             // logRequests && console.log(`fetched ${child}.`);
             resolve(val);
             if(res.data.returnCode!==200 && tip){
@@ -83,6 +109,7 @@ function fetch(child,data,type,tip=true) {
 export function aycn(url,data,type,tip) {
   return fetch(url,data,type,tip)
 }
+
 
 // 获取网络时间
 
@@ -216,7 +243,7 @@ export function FetchAuthorWelfare() {
 
 // 登录
 export function FetchUserLogin(data,tip=true) {
-  return fetch("/person-login",data,tip)
+  return fetch("/person-login",data,'post',tip)
 }
 
 export function FetchExit() {
@@ -249,7 +276,7 @@ export function FetchAddBookShelf(bid,user,book) {
       userName:user,
       bookName:book})
   }else {
-    return Promise.resolve({returnCode:400})
+    return Promise.resolve({ returnCode:400 })
   }
 }
 
@@ -609,6 +636,7 @@ export function FetchMineWallet(type,page,id) {
       break;
     default: //充值记录
       url = '/user-RechargeRecord';
+      data.page = page;
   }
   return fetch(url,data,'post',false)
 }
@@ -651,4 +679,10 @@ export function FetchUserGift(type,count,data) {
       data.recommendTicketCount = count;
   }
   return fetch(url,data)
+}
+
+
+// 网站公告
+export function FetchWebNotice(id) {
+  return fetch('/sysgetNoticeById',{ noticeid:id },'get')
 }

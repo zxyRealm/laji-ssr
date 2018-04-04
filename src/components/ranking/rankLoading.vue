@@ -142,6 +142,7 @@
           });
         },
         addBookShelf(bid,name,index){
+            this.$reLogin();
             FetchAddBookShelf(bid,this.$store.state.userInfo.pseudonym,name).then(json=>{
               if(json.returnCode===200){
                 this.$message(json.msg);
@@ -167,8 +168,16 @@
           }
       },
       computed:{
-          page:function () {
-            return Number(this.$route.params.page)
+//          page:function () {
+//            return Number(this.$route.params.page)
+//          },
+          page:{
+              get:function () {
+                return Number(this.$route.params.page)
+              },
+              set:function () {
+                return Number(this.$route.params.page)
+              }
           }
       }
     }

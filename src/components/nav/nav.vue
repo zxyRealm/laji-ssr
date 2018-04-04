@@ -18,7 +18,7 @@
       </div>
       <div class="nav-right fr">
         <div class="nav-item">
-          <router-link target="_blank" :to="{path:'/charge'}">
+          <router-link target="_blank" :to="$reLogin('/charge')">
             <span>充值中心</span>
           </router-link>
         </div>

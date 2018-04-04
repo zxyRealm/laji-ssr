@@ -409,10 +409,7 @@
         },
 //        打赏、推荐票、金票
         myConsume:function (type) {
-          this.$store.dispatch('init',{type:type});
-            console.log(this.$store.state.Consume);
-            if(!this.$store.state.userInfo.userId){this.$router.push("/login");return false}
-//
+          this.$store.dispatch('init',{ type:type });
         },
 //        点击回复
         getAnswer(index){
@@ -433,6 +430,10 @@
 
 //        发布评论
         addComment(){
+            if(!this.$cookie('user_id')){
+              this.$router.push({path:'/login',query:{ redirect:this.$route.path }});
+              return false
+            }
             FetchAddBookComment({
               bookId:this.bookDetail.bookListInfo.bookId,
               bookName:this.bookDetail.bookListInfo.bookName,
@@ -448,6 +449,10 @@
         },
 //        回复评论
         addReplyComment(id,index){
+            if(!this.$cookie('user_id')){
+              this.$router.push({path:'/login',query:{ redirect:this.$route.path }});
+              return false
+            }
             FetchReplyBookComment({
               bookid:this.bookDetail.bookListInfo.bookId,
               bookName:this.bookDetail.bookListInfo.bookName,
@@ -466,7 +471,11 @@
         },
 //        评论点赞
         addLaud(index){
-            FetchCommentLaud(this.commentList.list[index].id).then(json=>{
+          if(!this.$cookie('user_id')){
+            this.$router.push({path:'/login',query:{ redirect:this.$route.path }});
+            return false
+          }
+          FetchCommentLaud(this.commentList.list[index].id).then(json=>{
                 if(json.returnCode===ERR_OK){
                     this.$message(this.commentList.list[index].isthumbs?'取消成功':'点赞成功');
                     if(this.page===1){
@@ -485,6 +494,10 @@
         },
 //        关注用户
         addAttention(id,name){
+          if(!this.$cookie('user_id')){
+            this.$router.push({path:'/login',query:{ redirect:this.$route.path }});
+            return false
+          }
           FetchUpdateInfo('add',this.$cookie('user_id'),id,name).then(json=>{
             if(json.returnCode===ERR_OK){
               this.$message("关注成功");
@@ -494,12 +507,16 @@
         },
 //        加入书架
         addBookshelf(){
-            FetchAddBookShelf(this.bookDetail.bookListInfo.bookId,this.$store.state.userInfo.pseudonym,this.bookDetail.bookListInfo.bookName).then(json=>{
-              if(json.returnCode===200){
-                  this.bookDetail.bookListInfo.collectionStatus = (this.bookDetail.bookListInfo.collectionStatus?0:1);
-                  this.$message(json.msg)
-              }
-            });
+          if(!this.$cookie('user_id')){
+            this.$router.push({path:'/login',query:{ redirect:this.$route.path }});
+            return false
+          }
+          FetchAddBookShelf(this.bookDetail.bookListInfo.bookId,this.$store.state.userInfo.pseudonym,this.bookDetail.bookListInfo.bookName).then(json=>{
+            if(json.returnCode===200){
+                this.bookDetail.bookListInfo.collectionStatus = (this.bookDetail.bookListInfo.collectionStatus?0:1);
+                this.$message(json.msg)
+            }
+          });
         },
         share(info){
           // 强制share.js 重新执行， 当切换路由后重新回到分享页面百度分享默认不会重新执行share.js
@@ -511,7 +528,6 @@
             common:{
               bdText:info.bookName+'-辣鸡小说',
               bdDesc:desc,
-              bdUrl:'http://www.lajixs.com/book/'+info.bookId,
               bdPic:info.bookImage,
               bdStyle:0,
               bdSize:24
@@ -520,6 +536,7 @@
               //此处放置分享按钮设置
             ]
           };
+          
           const s = document.createElement('script');
           s.type = 'text/javascript';
           s.id = 'baidu__share';
@@ -535,8 +552,9 @@
       },
       mounted(){
         this.onceShow = true;
-//        let height = this.$http(window).height()-440;
-//        this.minHeight = height
+        if(!this.once){
+          this.$store.dispatch('FETCH_BOOK_DETAIL',{ bid:this.$route.params.bid })
+        }
       },
       watch:{
         page:function (val,old) {
@@ -548,11 +566,16 @@
           bookDetail:'bookDetail',
           commentList:'bookCommentList',
           chapterList:'chapterList',
-          activeName:'activeName'
+          activeName:'activeName',
         }),
+        ...mapState([
+          'once'
+        ]),
         initShare:function () {
           if(this.onceShow && this.bookDetail && this.bookDetail.bookListInfo){
-            this.share(this.bookDetail)
+              this.$nextTick(()=>{
+                this.share(this.bookDetail.bookListInfo)
+              })
           }
         },
         words:function () {
