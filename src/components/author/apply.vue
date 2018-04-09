@@ -198,7 +198,7 @@
           if(!value){
             callback(new Error('请填写您的手机号'));
           }else {
-            if (!(/^1[34578]\d{9}$/.test(value))){
+            if (!this.$regMob(value)){
               callback(new Error('请输入合法的手机号码'));
             } else {
               callback();
@@ -316,7 +316,7 @@
                     cancelButtonText:'否',
                     callback: (action) => {
                       this.$router.push('/author/writing/index');
-                      this.$freshen()
+                      this.$store.dispatch("FETCH_FRESHEN_INFO")
                     }
                   });
                 }

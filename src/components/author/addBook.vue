@@ -312,7 +312,6 @@
       updateCover(e){
         this.ready = true;
         this.dialogTableVisible = true;
-        console.log('点击生效')
       },
       closeIt(){
          this.dialogTableVisible = false

@@ -294,7 +294,7 @@
         &:nth-child(3)
           background-image :url("../../assets/image/icon/pepper@x1_2.png")
         &:last-child
-          background-image :url("../../../static/img/icon/reading-ticket@2_01.png")
+          background-image :url("/static/img/icon/reading-ticket@2_01.png")
           margin-right 0
   .consume-wrapper
     .el-tabs__header

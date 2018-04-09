@@ -288,7 +288,7 @@
                   this.signState = true;
                   this.dialogVisible = true;
                   this.timer();
-                  this.$freshen();
+                  this.$store.dispatch("FETCH_FRESHEN_INFO");
                 }
               })
           }else {
@@ -380,7 +380,7 @@
         &.chilli
           background-image url('../..//assets/image/icon/pepper@x1_2.png')
         &.ticket
-          background-image url('../../../static/img/icon/reading-ticket.png')
+          background-image url('/static/img/icon/reading-ticket.png')
           padding-left 30px
  /*我的阅读记录 */
   .mine-record

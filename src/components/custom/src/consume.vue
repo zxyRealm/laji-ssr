@@ -117,7 +117,7 @@
             </form>
         </div>
         <!--私信弹窗背景图-->
-        <img v-if="Consume.type==='letter'" src="../../../../static/img/personal-letter@_01.png" class="letter-icon" alt="">
+        <img v-if="Consume.type==='letter'" src="/static/img/personal-letter@_01.png" class="letter-icon" alt="">
       </div>
     </div>
 </template>
@@ -467,18 +467,18 @@
         border :2px solid #efefef
         padding-top :80px
         box-shadow :none
-        background:#fbf3f3  url("../../../../static/img/coin-188.png") no-repeat center
+        background:#fbf3f3  url("/static/img/coin-188.png") no-repeat center
         /*background-size:cover*/
     .el-radio-button:nth-child(2) .el-radio-button__inner
-      background-image  url("../../../../static/img/coin-288.png")
+      background-image  url("/static/img/coin-288.png")
     .el-radio-button:nth-child(3) .el-radio-button__inner
-      background-image  url("../../../../static/img/coin-588.png")
+      background-image  url("/static/img/coin-588.png")
     .el-radio-button:nth-child(4) .el-radio-button__inner
-      background-image  url("../../../../static/img/coin-888.png")
+      background-image  url("/static/img/coin-888.png")
     .el-radio-button:nth-child(5) .el-radio-button__inner
-      background-image  url("../../../../static/img/coin-1888.png")
+      background-image  url("/static/img/coin-1888.png")
     .el-radio-button:nth-child(6) .el-radio-button__inner
-      background-image  url("../../../../static/img/coin-8888.png")
+      background-image  url("/static/img/coin-8888.png")
   .common-box-wrap
     overflow hidden
     padding 0 15px 0 20px
@@ -489,9 +489,9 @@
       background-repeat no-repeat
       background-size contain
       &.ticket
-        background-image :url("../../../../static/img/icon-ticket.png")
+        background-image :url("/static/img/icon-ticket.png")
       &.recommend
-        background-image :url("../../../../static/img/icon-recommend.png")
+        background-image :url("/static/img/icon-recommend.png")
       /*border-bottom:1px solid #f77583*/
       p.info
         padding-left :100px

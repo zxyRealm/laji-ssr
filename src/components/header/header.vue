@@ -269,7 +269,7 @@ export default({
     .el-icon-search
       left:0!important
       width 32px
-      background: url("../../../static/img/icon/search.png") no-repeat center center;
+      background: url("/static/img/icon/search.png") no-repeat center center;
       background-size contain
       &:before
         content ''
@@ -369,12 +369,12 @@ export default({
   .lr-main-bg
     width :100%
     height :158px
-    background :#fcadb4 url("../../../static/img/login-register-bg.png") no-repeat center center
+    background :#fcadb4 url("/static/img/login-register-bg.png") no-repeat center center
     
 header
   position: relative;
   height:149px;
-  background: url("../../../static/img/web_top.png") no-repeat center center;
+  background: url("/static/img/web_top.png") no-repeat center center;
   background-size auto 100%
   .top
     position relative
@@ -454,7 +454,7 @@ header
       height:100%;
       float: left;
       width:49px;
-      background: url("../../../static/img/icon/search.png") no-repeat center center;
+      background: url("/static/img/icon/search.png") no-repeat center center;
     .sb-right
       overflow: hidden;
       height:100%;

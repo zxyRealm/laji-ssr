@@ -39,25 +39,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import dHeader from '../header/detailHeader.vue'
-  import Pages from '../pages/page.vue'
     export default{
-     
-      components:{
-        'vue-page': Pages
-      },
       data() {
         return {
-          page: 1,
-          pageSize: 10,
-          total: 132,
-          maxPage: 5
         }
       },
       methods: {
-        pageHandler: function (page) {
-          this.page = page
-        }
       },
     }
 </script>

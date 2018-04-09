@@ -21,15 +21,13 @@ import {
   FetchFreshenInfo,
   FetchAuthorChapterList,
   FetchExit,
+  FetchUserMessage,
 } from '../api'
 import { createRouter } from '../router'
 const router = createRouter();
 import { Message,MessageBox } from 'element-ui'
 const $alert = MessageBox.alert;
-function shareInit() {
 
-
-}
 export default {
   // 网站首页数据
   FETCH_INDEX_DATA:({commit})=>{
@@ -190,7 +188,7 @@ export default {
   },
 
   // 书评回复
-  FETCH_COMMENT_REPLY:({commit,state},{index,page})=>{
+  FETCH_COMMENT_REPLY:({ commit,state },{index,page})=>{
     const basic = state.bookCommentList.data.list[index];
     page = page || 1;
     return FetchBookCommentReply(basic.id,page).then(data=>{
@@ -199,7 +197,7 @@ export default {
   },
 
   // 搜索热词
-  FETCH_SEARCH_HOT_WORDS:({commit})=>{
+  FETCH_SEARCH_HOT_WORDS:({ commit })=>{
     return FetchSearchHotWords().then(data=>{
       commit("SET_SEARCH_HOT_WORDS",data)
     })
@@ -208,7 +206,7 @@ export default {
   // 书库
 
   //书籍分类
-  FETCH_BOOK_CLASS_NAME:({commit})=>{
+  FETCH_BOOK_CLASS_NAME:({ commit })=>{
     return FetchBookClassName().then(data=>{
       commit("SET_BOOK_CLASS_NAME",data)
     })
@@ -220,7 +218,7 @@ export default {
     })
   },
 
-  FETCH_BOOK_RANK_COMMON:({commit})=>{
+  FETCH_BOOK_RANK_COMMON:({ commit })=>{
     // 畅销榜
     return FetchBookRankSell().then(data=>{
       commit("SET_STACK_SELL",data)
@@ -233,7 +231,7 @@ export default {
   },
 
   // 作者福利
-  FETCH_AUTHOR_WELFARE:({commit})=>{
+  FETCH_AUTHOR_WELFARE:({ commit })=>{
     return FetchAuthorWelfare().then(data=>{
       data.data.forEach((item)=>{
         item.content = item.content.replace(/\n+/g,'<br>')
@@ -244,17 +242,30 @@ export default {
 
   // 更新用户信息
 
-  FETCH_FRESHEN_INFO:({commit})=>{
+  FETCH_FRESHEN_INFO:({ commit,dispatch })=>{
     return FetchFreshenInfo().then(res=>{
       if(res.returnCode===200){
         Com.cookie('user_id',res.data.userId);
+        dispatch("FETCH_USER_MESSAGE")
       }else {
         Com.cookie('user_id','',-1);
       }
-      commit("SET_USER_INFO",res.data)
+      commit("SET_USER_INFO",res.data);
     })
   },
 
+
+FETCH_USER_MESSAGE:({ commit })=>{
+    return FetchUserMessage().then(res=>{
+      let data = {};
+      if(res.returnCode===200){
+        res.data.total = res.data.userMessageCount + res.data.userCommentReplyCount;
+        res.data.total = res.data.total>99?'99+':res.data.total;
+        data = res.data
+      }
+      commit("SET_USER_MESSAGE",data)
+    })
+},
   // 注册
 
 
@@ -268,18 +279,15 @@ export default {
         commit('SET_USER_INFO');
         if(!type){
           if(mod){
-            Message({message:"修改成功！",type:'success'});
-            router.push("/login?redirect=/index")
+            Message({ message:"修改成功！",type:'success' });
+            window.location.replace('/login?redirect=/index')
           }else {
-            Message({message:'退出成功',type:'success'});
-            router.push('/');
+            Message({ message:'退出成功',type:'success' });
+            window.location.replace('/')
           }
         }
       }
     });
-    // if(mod){
-    //   return exit()
-    // }
     return mod?exit():$alert('确认退出？', '', {
         confirmButtonText: '确  定',
         customClass:'issue-alert',

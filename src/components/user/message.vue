@@ -11,18 +11,18 @@
 
       <div class="af-tabs-nav user-message-nav">
         <router-link to="/user/message/notice">
-          <el-badge :value="$store.state.message.userCommentCount" class="tabs-item">
+          <el-badge :value="message.userCommentCount" class="tabs-item">
             通知
             <!--<el-button >通知</el-button>-->
           </el-badge>
         </router-link>
         <router-link to="/user/message/letter">
-          <el-badge :value="$store.state.message.userMessageCount" class="tabs-item">
+          <el-badge :value="message.userMessageCount" class="tabs-item">
             私信
           </el-badge>
         </router-link>
         <router-link to="/user/message/comment">
-          <el-badge :value="$store.state.message.userCommentReplyCount" class="tabs-item">
+          <el-badge :value="message.userCommentReplyCount" class="tabs-item">
             评论
           </el-badge>
         </router-link>
@@ -93,7 +93,7 @@
             <el-button class="fr" type="primary" @click="replyLetter('privateForm')">发  送</el-button>
           </div>
         </el-form>
-        <img src="../../../static/img/personal-letter@_01.png" class="personal-letter-bg" alt="">
+        <img src="/static/img/personal-letter@_01.png" class="personal-letter-bg" alt="">
       </el-dialog>
     </div>
 </template>
@@ -101,6 +101,7 @@
 <script type="text/ecmascript-6">
   import Comment from '../comment/zxy-comment.vue'
   import { FetchGetUserData,aycn } from '../../api'
+  import { mapState } from 'vuex'
     export default{
       components:{
           "zxy-comment":Comment
@@ -143,7 +144,7 @@
             FetchGetUserData(page,'com',this.$cookie("user_id")).then(json=>{
               if(json.returnCode===200){
                 this.userCommentList = json.data;
-                this.$updateCount()
+                this.$store.dispatch("FETCH_USER_MESSAGE");
               }
             })
 
@@ -153,7 +154,7 @@
             FetchGetUserData(page,'letter').then(json=>{
               if(json.returnCode===200){
                 this.letterList = json.data;
-                this.$updateCount()
+                this.$store.dispatch("FETCH_USER_MESSAGE");
               }
             })
 
@@ -264,6 +265,11 @@
               this.getLetterList(1)
             }
           }
+      },
+      computed:{
+          ...mapState([
+              'message'
+          ])
       }
     }
 </script>

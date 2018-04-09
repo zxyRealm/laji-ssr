@@ -218,7 +218,7 @@
 .no-book
   position relative
   height 320px
-  background url('../../../static/img/no-book-bg@1_01.png') no-repeat center top
+  background url('/static/img/no-book-bg@1_01.png') no-repeat center top
   .txt
     position absolute
     bottom 0

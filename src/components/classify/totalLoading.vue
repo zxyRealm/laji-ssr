@@ -4,8 +4,7 @@
       <li v-if="stackList.list && stackList.list.length<1" class="error-empty">
         <p class="txt">没有相关数据</p>
       </li>
-      <template v-if="stackList">
-        <li v-for="(item,$index) in stackList.list" class="clear stack-item">
+      <li v-for="(item,$index) in stackList.list" class="clear stack-item">
         <router-link :to="'/book/'+item.bookId" >
           <img class="book-cover" :src="item.bookImage" alt="">
           <i v-if="item.bookAuthorization==2||item.bookAuthorization==3" class="zdy-icon__sign">签约</i>
@@ -55,32 +54,28 @@
           </div>
         </div>
       </li>
-      </template>
     </ul>
-    <template v-if="stackList">
-      <el-pagination
-        v-if="stackList.total>stackList.pageSize"
-        @current-change="handleCurrentChange"
-        :current-page.sync="stackList.pageNum"
-        :page-size="stackList.pageSize"
-        layout="prev, pager, next, jumper"
-        :total="stackList.total">
-      </el-pagination>
-    </template>
+    <el-pagination
+      v-if="stackList.total>stackList.pageSize"
+      @current-change="handleCurrentChange"
+      :current-page.sync="stackList.pageNum"
+      :page-size="stackList.pageSize"
+      layout="prev, pager, next, jumper"
+      :total="stackList.total">
+    </el-pagination>
   </div>
 </template>
 <script type="text/ecmascript-6">
   import { FetchAddBookShelf } from '../../api'
-  import { mapState} from 'vuex'
+  import { mapState } from 'vuex'
     export default{
       data() {
         return {
-            first:1
         }
       },
       methods:{
         handleCurrentChange(val){
-          this.$router.push({name:'totalChild',params:{page:val}});
+          this.$router.push({ name:'totalChild',params:{ page:val }});
         },
         addBookShelf(bid,name,index){
           this.$reLogin();
@@ -95,7 +90,7 @@
       title(){
           return '全网书籍分类-辣鸡小说'
       },
-      asyncData({store,route:{ params:{ op1,op2,op3,op4,op5,page,op6 }}}){
+      asyncData({ store,route:{ params:{ op1,op2,op3,op4,op5,page,op6 }}}){
         return store.dispatch("FETCH_STACK_LIST_DATA",{ op1:[op1],op2:[op2],op3:[op3],op4:[op4],op5:[op5],page:[page],op6:[op6] });
       },
       mounted(){
@@ -108,7 +103,7 @@
         "$route":{
           handler(val,oldVal){
             if(Number(val.params.page)===Number(oldVal.params.page) && Number(oldVal.params.page)!==1){
-              this.$router.push({params:{page:1}});
+              this.$router.push({ params:{ page:1 }});
             }
           },
           deep:true

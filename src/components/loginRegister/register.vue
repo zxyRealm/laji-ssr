@@ -73,7 +73,7 @@
         if (!value) {
           return callback(new Error('手机号不能为空'));
         }else {
-          if (!(/^1[34578]\d{9}$/.test(value))){
+          if (!this.$regMob(value)){
             callback(new Error('请输入合法的手机号码'));
           } else {
             callback();

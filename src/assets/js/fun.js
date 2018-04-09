@@ -63,13 +63,12 @@ exports.install = function (Vue, options) {
     return regx.test(val)
   };
 
-  Vue.prototype.$cancelSave = function(bid){
-    this.$ajax("/bookshelf-delteuserbookshelfById",{ bookid:bid },json=>{
-      if(json.returnCode===200){
-        this.$message('取消成功')
-      }
-    })
+  // 校验手机号是否合法
+  Vue.prototype.$regMob = function (val) {
+    let regx = /^134[0-8]\d{7}$|^13[^4]\d{8}$|^14[5-9]\d{8}$|^15[^4]\d{8}$|^16[6]\d{8}$|^17[0-8]\d{8}$|^18[\d]{9}$|^19[8,9]\d{8}$/;
+    return regx.test(val)
   };
+
   // 添加关注
   Vue.prototype.$addAttention = function (index,type){
     if(!this.$store.state.userInfo.userId){this.$router.push('/login');return false}
@@ -180,62 +179,7 @@ exports.install = function (Vue, options) {
     }
     return Time
   };
-  // 个人信息刷新
-  Vue.prototype.$freshen = function () {
-    this.$ajax("/person-info",'',json=>{
-      if(json.returnCode===ERR_OK){
-        this.$store.state.userInfo = json.data
-      }else if(json.returnCode===ERR_NO){
-        this.$router.push('/login')
-      }
-    })
-  };
-  // 更新用户信息通知
-  Vue.prototype.$updateCount = function () {
-    this.$ajax("/person-messageCount",'',json=>{
-      if(json.returnCode===200){
-        json.data.total = json.data.userMessageCount + json.data.userCommentReplyCount;
-        json.data.total = json.data.total>99?'99+':json.data.total;
-        this.$store.state.message = json.data
-      }
 
-    },'post','json',true)
-  };
-  // 退出登录
-  Vue.prototype.$exit = function (type) {
-    let method = () =>{
-      this.$ajax("/person-ClearUserInfo",'',json=>{
-        if(json.returnCode===ERR_OK){
-          this.$cookie('user_id','',-1);
-          this.$store.state.userInfo = {};
-          if(!type){
-            if(this.$route.name==='modifyPage' || this.$route.name==='findPage'){
-              this.$message("修改成功！");
-              this.$router.push("/login?redirect=/index")
-            }else {
-              this.$message("退出成功！");
-              this.$router.push('/');
-            }
-          }
-        }
-      });
-    };
-    if(type!=='modifyPage' && this.$route.name!=='findPage'){
-      this.$alert('确认退出？', '', {
-        confirmButtonText: '确  定',
-        customClass:'issue-alert',
-        lockScroll:false,
-        type:'success',
-        callback: action => {
-          if(action==='confirm'){
-            method();
-          }
-        }
-      });
-    }else {
-      method()
-    }
-  };
   // cookies 设置、获取、删除
   Vue.prototype.$cookie = (key,value,expiredays,path,domain)=>{
       // try{
@@ -279,12 +223,6 @@ exports.install = function (Vue, options) {
       // }
   };
 
-  Vue.prototype.$isLogin = function(){
-    let state;
-    this.$ajax("/person-checkLoginState",json=>{
-      state = json
-    });
-  };
   // 用户发送私信
 
   Vue.prototype.$reLogin = function (url) {
@@ -332,7 +270,7 @@ exports.install = function (Vue, options) {
       spinner: 'el-icon-loading',
       background: 'rgba(0, 0, 0, 0.7)'
     });
-  }
+  };
 
   // 格式化章节内容
   Vue.prototype.$resetChapterTxt = (txt) =>{

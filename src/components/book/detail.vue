@@ -39,7 +39,7 @@
                 <div class="bi-center">
                   <p >
                     <span>点击：{{bookDetail.bookdate?bookDetail.bookdate.bookClickCount:0 | number}}</span>
-                    <span>书评：{{commentList.total?commentList.total:0}}</span>
+                    <span>书评：{{bookCommentList.total?bookCommentList.total:0}}</span>
                     <span>吐槽：{{bookDetail.bookdate?bookDetail.bookdate.tucaoIndex:0}}</span>
                   </p>
                   <p >
@@ -135,7 +135,7 @@
                 </div>
             </div>
             <div class="review-list">
-              <div v-if="commentList.list && commentList.list.length>6" :class="$store.state.userInfo.userName?'reply':'reply no-login'">
+              <div v-if="bookCommentList.list && bookCommentList.list.length>6" :class="$store.state.userInfo.userName?'reply':'reply no-login'">
                 <div class="avatar-wrap">
                   <a class="avatar" href="javascript:;">
                     <img :src="$store.state.userInfo.userName?$store.state.userInfo.userHeadPortraitURL:'http://useravatarimg.oss-cn-hangzhou.aliyuncs.com/UserAvatar/userDefaultHandImg2.jpg'" :alt="$store.state.userInfo.userName">
@@ -157,8 +157,8 @@
                   </div>
                 </div>
               </div>
-              <ul v-if="commentList.list" class="review-ul">
-                <li v-for="(item,$index) in commentList.list" class="review-item">
+              <ul v-if="bookCommentList.list" class="review-ul">
+                <li v-for="(item,$index) in bookCommentList.list" class="review-item">
                   <div class="avatar-wrap">
                     <router-link class="avatar" :to="'/reader/'+item.userId">
                       <img :src="item.userHeadPortraitURL" :alt="item.userName">
@@ -243,13 +243,13 @@
                   </div>
                 </li>
               </ul>
-              <div v-if="commentList.total>commentList.pageSize" style="padding-left:90px;overflow: hidden;">
+              <div v-if="bookCommentList.total>bookCommentList.pageSize" style="padding-left:90px;overflow: hidden;">
                 <el-pagination
                   @current-change="handleCurrentChange"
                   :current-page.sync="page"
-                  :page-size="commentList.pageSize"
+                  :page-size="bookCommentList.pageSize"
                   layout="prev, pager, next, jumper"
-                  :total="commentList.total">
+                  :total="bookCommentList.total">
                 </el-pagination>
               </div>
               <div :class="$store.state.userInfo.userName?'reply':'reply no-login'" class="mt20">
@@ -393,9 +393,9 @@
         },
 //        书评回复列表
         pageHandler(page,index) {
-            FetchBookCommentReply(this.commentList.list[index].id,page).then(res=>{
+            FetchBookCommentReply(this.bookCommentList.list[index].id,page).then(res=>{
                 if(res.returnCode===ERR_OK){
-                  this.$set(this.commentList.list[index],'childList',res.data)
+                  this.$set(this.bookCommentList.list[index],'childList',res.data)
                 }
             });
         },
@@ -414,16 +414,16 @@
 //        点击回复
         getAnswer(index){
           let self = this;
-          if(!this.commentList.list[index].answer){
+          if(!this.bookCommentList.list[index].answer){
             this.answerTxt = '';
-            this.commentList.list.map(function (item) {
+            this.bookCommentList.list.map(function (item) {
               self.$set(item,'answer',false)
             });
-            this.commentList.list[index].answer = true
+            this.bookCommentList.list[index].answer = true
           }else {
-            this.commentList.list[index].answer = false
+            this.bookCommentList.list[index].answer = false
           }
-          if(this.commentList.list[index].answer){
+          if(this.bookCommentList.list[index].answer){
             this.pageHandler(1,index)
           }
         },
@@ -459,13 +459,13 @@
               commentId:id,
               userName:this.$store.state.userInfo.pseudonym,
               replyCommentsContent:this.answerTxt,
-              puserId:this.commentList.list[index].userId
+              puserId:this.bookCommentList.list[index].userId
             }).then(json=>{
                 if(json.returnCode===ERR_OK){
                   this.$message("评论成功！");
                   this.answerTxt = '';
                   this.pageHandler(1,index);
-                  this.commentList.list[index].replyCount++
+                  this.bookCommentList.list[index].replyCount++
                 }
             });
         },
@@ -475,19 +475,19 @@
             this.$router.push({path:'/login',query:{ redirect:this.$route.path }});
             return false
           }
-          FetchCommentLaud(this.commentList.list[index].id).then(json=>{
+          FetchCommentLaud(this.bookCommentList.list[index].id).then(json=>{
                 if(json.returnCode===ERR_OK){
-                    this.$message(this.commentList.list[index].isthumbs?'取消成功':'点赞成功');
+                    this.$message(this.bookCommentList.list[index].isthumbs?'取消成功':'点赞成功');
                     if(this.page===1){
-                        this.commentList.list.forEach((item)=>{
-                            if(item.id===this.commentList.list[index].id){
+                        this.bookCommentList.list.forEach((item)=>{
+                            if(item.id===this.bookCommentList.list[index].id){
                               item.isthumbs = item.isthumbs?0:1;
                               item.isthumbs?item.thumbsCount++:item.thumbsCount--
                             }
                         });
                     }else {
-                        this.commentList.list[index].isthumbs = this.commentList.list[index].isthumbs?0:1;
-                        this.commentList.list[index].isthumbs?this.commentList.list[index].thumbsCount++:this.commentList.list[index].thumbsCount--
+                        this.bookCommentList.list[index].isthumbs = this.bookCommentList.list[index].isthumbs?0:1;
+                        this.bookCommentList.list[index].isthumbs?this.bookCommentList.list[index].thumbsCount++:this.bookCommentList.list[index].thumbsCount--
                     }
                 }
             });
@@ -562,13 +562,11 @@
         }
       },
       computed:{
-        ...mapGetters({
-          bookDetail:'bookDetail',
-          commentList:'bookCommentList',
-          chapterList:'chapterList',
-          activeName:'activeName',
-        }),
         ...mapState([
+          'bookDetail',
+          'chapterList',
+          'bookCommentList',
+          'activeName',
           'once'
         ]),
         initShare:function () {
@@ -884,7 +882,7 @@
     font-size:14px
     margin:12px auto
     text-indent :20px
-    background :url("../../../static/img/icon/class.png") no-repeat 20px center
+    background :url("/static/img/icon/class.png") no-repeat 20px center
   /*作者相关信息 end*/
 
   /* 最新章节及全部章节列表  start */
@@ -1129,18 +1127,18 @@
         border :1px solid #efefef
         padding-top :80px
         box-shadow :none
-        background:#fbf3f3  url("../../../static/img/coin-188.png") no-repeat left top
+        background:#fbf3f3  url("/static/img/coin-188.png") no-repeat left top
         background-size:cover
     .el-row:nth-child(1) .el-radio-button:nth-child(2) .el-radio-button__inner
-        background-image  url("../../../static/img/coin-288.png")
+        background-image  url("/static/img/coin-288.png")
     .el-row:nth-child(1) .el-radio-button:nth-child(3) .el-radio-button__inner
-      background-image  url("../../../static/img/coin-588.png")
+      background-image  url("/static/img/coin-588.png")
     .el-row:nth-child(2) .el-radio-button:nth-child(1) .el-radio-button__inner
-      background-image  url("../../../static/img/coin-888.png")
+      background-image  url("/static/img/coin-888.png")
     .el-row:nth-child(2) .el-radio-button:nth-child(2) .el-radio-button__inner
-      background-image  url("../../../static/img/coin-1888.png")
+      background-image  url("/static/img/coin-1888.png")
     .el-row:nth-child(2) .el-radio-button:nth-child(3) .el-radio-button__inner
-      background-image  url("../../../static/img/coin-8888.png")
+      background-image  url("/static/img/coin-8888.png")
 </style>
 
 

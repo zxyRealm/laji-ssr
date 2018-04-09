@@ -12,9 +12,10 @@ function resolve (dir) {
 }
 
 module.exports = {
-  devtool: isProd
-    ? false
-    : '#cheap-module-source-map',
+  devtool: false,
+  // devtool: isProd
+  //   ? false
+  //   : '#cheap-module-source-map',
   output: {
     path: path.resolve(__dirname, '../dist'),
     publicPath: '/dist/',
@@ -23,7 +24,8 @@ module.exports = {
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.common.js',
-      '@': resolve("src")
+      '@': resolve("src"),
+      'static':resolve("static")
     },
     extensions: ['.ts','.js']
   },

@@ -15,7 +15,7 @@
           <template v-if="dataList.list.length>0">
             <li v-for="(item,index) in dataList.list" class="clear rc-item">
               <div class="code clear">
-                <img v-if="$route.params.page==1 && index<3" :src="'../../../static/img/icon/rank-icon@1_0'+(index+1)+'.png'" class="rank-top"/>
+                <img v-if="$route.params.page==1 && index<3" :src="'/static/img/icon/rank-icon@1_0'+(index+1)+'.png'" class="rank-top"/>
                 <span v-else>{{(($route.params.page-1)*dataList.pageSize)+(index+1)}}</span>
               </div>
               <router-link :to="'/book/'+item.bookId">
@@ -92,7 +92,7 @@
       },
       methods:{
         handleCurrentChange(val){
-          this.$router.push({params:{page:val}})
+          this.$router.push({ params:{ page:val }})
         },
         getRank(){
               let self = this,type;
@@ -159,7 +159,7 @@
           "$route":{
             handler(val,oldVal){
               if(Number(val.params.page)===Number(oldVal.params.page) && Number(oldVal.params.page)!==1){
-                this.$router.push({params:{page:1}});
+                this.$router.push({ params:{ page:1 }});
               }else {
                 this.getRank()
               }
@@ -168,9 +168,6 @@
           }
       },
       computed:{
-//          page:function () {
-//            return Number(this.$route.params.page)
-//          },
           page:{
               get:function () {
                 return Number(this.$route.params.page)

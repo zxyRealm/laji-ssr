@@ -137,7 +137,7 @@
   .rxx-badge-child-wrap
     padding-top:16px
     width :894px
-    background:url("../../../static/img/read-reply-bg.png") no-repeat right -10px
+    background:url("/static/img/read-reply-bg.png") no-repeat right -10px
     background-size :100%
     .rxx-badge-child
       position relative

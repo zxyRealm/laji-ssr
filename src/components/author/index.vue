@@ -124,7 +124,7 @@
         width 100%
         line-height 300px
         text-align center
-        background url("../../../static/img/first-created@1_01.png") no-repeat center center
+        background url("/static/img/first-created@1_01.png") no-repeat center center
         >a
           margin-top 190px
           width 200px

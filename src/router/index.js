@@ -233,8 +233,8 @@ const routes = [
   { path:'/news/:id', meta:{title:'网站公告-辣鸡小说'}, component: commonNews },
   // 书籍排行榜
   { path:'/rank', meta:{title:'全网书籍排行-辣鸡小说'}, redirect:'/rank/golden/month/1' },
-  { path:'/rank/golden', redirect:'/rank/golden/month/1' },
-  { path:'/rank/latest', redirect:'/rank/latest/all/1' },
+  { path:'/rank/golden/', redirect:'/rank/golden/month/1' },
+  { path:'/rank/latest/', redirect:'/rank/latest/all/1' },
   { path:'/rank/:type', redirect:'/rank/:type/week/1' },
   { path: '/rank/:type', name: 'rank', component: Rank,
     children:[

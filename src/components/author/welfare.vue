@@ -1,15 +1,14 @@
 <template>
     <div class="welfare-wrapper clear" >
 
-      <div :style="{height:height+'px'}">
+      <div :style="{ height:height+'px' }">
         <div class="welfare-bg"></div>
-        <!--<img class="welfare-bg" src="../../../static/img/welfare-bg@_1.png" alt="">-->
         <div class="bg-color" :style="{ height:bgHeight+'px' }"></div>
-        <div ref="welfare" class="welfare-main">
-          <div v-for="(item,$index) in welfareList.data" class="welfare-item" ref="welfareItem">
-            <div class="welfare-title">
-              <h2 class="h-title fl">{{$index+1}}</h2>
-              <p >{{item.title}}</p>
+        <div ref="welfare" class="welfare-main"  v-if="authorWelfare">
+          <div v-for="(item,$index) in authorWelfare" :key="$index" class="welfare-item" :id="'welfare-item'+$index" ref="welfareItem">
+            <div class="welfare-title" >
+              <h2 class="h-title fl">{{ $index+1 }}</h2>
+              <p >{{ item.title }}</p>
             </div>
             <div class="welfare-content">
               <div v-html="item.values"></div>
@@ -19,13 +18,11 @@
         </div>
       </div>
       <div class="side-bar">
-        <ul>
-          <template v-for="(item,$index) in welfareList.data">
-            <li :class="{active:currentIndex==$index}" class="side-bar-item" @click="autoBack($index)">
-              {{$index!==0?item.title:'最高两千元全勤奖励'}}
-            </li>
-          </template>
-        </ul>
+        <template v-if="authorWelfare.length" v-for="(item,$index) in authorWelfare">
+          <a :href="'#welfare-item'+$index" class="side-bar-item" :class="{ active:activeIndex==$index }">
+            {{$index!==0?item.title:'最高两千元全勤奖励'}}
+          </a>
+        </template>
         <img src="../../assets/image/icon/creation-icon.png" alt="" class="bar-icon">
       </div>
     </div>
@@ -34,7 +31,6 @@
 <script type="text/ecmascript-6">
 import { mapState } from 'vuex'
     export default{
-
       data(){
           return {
               height:1024, //窗体可视区域高度
@@ -50,73 +46,65 @@ import { mapState } from 'vuex'
               ],
               position:[],
               top:0, //当前滚动高度
-              clientHeight:0
+              clientHeight:0,
+              bgHeight:1000
           }
       },
-      methods:{
-        autoBack(index){
-            let timer = setInterval(() => {
-              let steps = Math.abs(this.top-this.position[index]);
-                if(steps>50){
-                   if(this.top>this.position[index]){
-                       window.scrollBy(0,-50)
-                   }else {
-                       window.scrollBy(0,50)
-                   }
-                }else {
-                  clearInterval(timer);
-                }
-            },5);
-        },
+      title(){
+          return '作者福利—辣鸡小说'
       },
       asyncData({ store }){
           return store.dispatch("FETCH_AUTHOR_WELFARE")
       },
-      created(){
+      mounted(){
         if(!this.once){
           this.$store.dispatch("FETCH_AUTHOR_WELFARE");
         }
-      },
-      mounted(){
         this.$nextTick(()=>{
+          this.bgHeight = this.$refs.welfare.clientHeight-900;
           this.height = this.$refs.welfare.clientHeight;
           this.clientHeight = document.documentElement.clientHeight;
           window.addEventListener('scroll', () => {
-            let base1 = parseInt(this.clientHeight*0.3);
-            let base2 = parseInt(this.clientHeight*0.7);
             this.top = document.documentElement.scrollTop ||  document.body.scrollTop ;
+            let item = this.$refs.welfareItem;
+            if(item){
+              for(let k=0,len=item.length;k<len;k++){
+                let top = item[k].getBoundingClientRect().top;
+                if(top<0 && k===item.length-1){
+                    this.activeIndex = item.length-1;
+                    break;
+                }else if(top>0 && top<this.clientHeight){
+                    this.activeIndex = k;
+                    break;
+                }
+              }
+            }else {
+                this.activeIndex = 0
+            }
           })
         })
       },
       computed:{
-        currentIndex:function() {
-           let base1 = parseInt(this.clientHeight*0.3);
-           for(let i=0,len=this.position.length;i<len-1;i++){
-             let height1 = this.position[i];
-             let height2 = this.position[i+1];
-             if(this.top<this.position[1]){
-               return 0
-             }else if(this.top >=height1 && this.top < height2){
-                return i
-             }
-           }
-         return 0
-        },
-        ...mapState({
-          welfareList:'authorWelfare',
-          once:'once'
-        }),
-        bgHeight:function () {
-//            this.$nextTick(()=>{
-//              console.log(this.$refs.welfare.clientHeight);
-//              return this.$refs.welfare?this.$refs.welfare.clientHeight:1000
-//            })
-        }
+          ...mapState([
+              'authorWelfare',
+              'once'
+          ]),
       },
-      
+      watch:{
+        authorWelfare:{
+          handler:function () {
+              this.$nextTick(()=>{
+                this.height = this.$refs.welfare.clientHeight;
+                this.bgHeight = this.$refs.welfare.clientHeight-900
+              });
+          },
+          deep:true
+        }
+      }
     }
 </script>
 <style lang="stylus" scoped type="text/stylus" rel="stylesheet/stylus">
+
 .welfare-wrapper
   position relative
   max-width:1440px
@@ -124,38 +112,38 @@ import { mapState } from 'vuex'
   margin :0 auto
   height:100%
   .side-bar
-    position:fixed
-    bottom:20%
+    position fixed
+    bottom 20%
     right 50%
     margin-right -696px
     width 155px
-    padding:15px 0
-    background:#fff
-    color:#c76d08
-    border-radius :7px
+    padding 15px 0
+    background #fff
+    color #c76d08
+    border-radius 7px
     text-align center
     font-size 16px
     user-select none
     .bar-icon
       position absolute
-      top:-54px
-      left:50%
-      transform :translateX(-50%)
+      top -54px
+      left 50%
+      transform translateX(-50%)
     .side-bar-item
-      height :36px
+      display block
+      height 36px
       line-height 36px
       cursor pointer
     .side-bar-item:hover
       background:#fff0ac
       color:#ff6f00
     .side-bar-item.active
-      display list-item
       box-shadow none
       background:#fff0ac
       color:#ff6f00
   .welfare-bg
     height 900px
-    background url('../../../static/img/welfare-bg@_1.png') no-repeat center top
+    background url('/static/img/welfare-bg@_1.png') no-repeat center top
     background-size auto 100%
     margin 0 auto
   .bg-color
@@ -176,7 +164,7 @@ import { mapState } from 'vuex'
       font-size 16px
       .welfare-title
         height :71px
-        background :url(../../../static/img/welfare-title-bg.png) no-repeat -1px top
+        background :url(/static/img/welfare-title-bg.png) no-repeat -1px top
         background-size:101% auto
         text-align center
         h2.h-title

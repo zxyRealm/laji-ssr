@@ -254,6 +254,11 @@ export function FetchFreshenInfo() {
   return fetch("/person-info",'post',false)
 }
 
+// 用户消息通知
+export function FetchUserMessage() {
+  return fetch('/person-messageCount','post',false)
+}
+
 // 注册
 
 export function FetchUserRegister(data) {

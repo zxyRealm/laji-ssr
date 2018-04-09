@@ -205,7 +205,7 @@
                     this.$loading().close()
                   })
                   this.$message(JSON.parse(data).msg);
-                  this.$freshen();
+                  this.$store.dispatch("FETCH_FRESHEN_INFO");
                 }else {
                   callback(JSON.parse(data));
                 }

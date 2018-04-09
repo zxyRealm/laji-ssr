@@ -6,7 +6,7 @@
         <div class="banner pr20">
           <template>
             <el-carousel :interval="5000" arrow="hover" class="zdy-cover">
-              <template v-if="allData.maxBrandPicList">
+              <template v-if="allData && allData.maxBrandPicList">
                 <el-carousel-item v-for="(item,index) in allData.maxBrandPicList" :key="index" >
                   <router-link :to="'/book/'+item.bookId">
                     <img style="height:auto;width:100%" class="br5" :src="item.bookImage" alt="banner推荐位">
@@ -20,7 +20,7 @@
           </template>
         </div>
         <div class="bw-right">
-          <template v-if="allData.minBrandPicList">
+          <template v-if="allData && allData.minBrandPicList">
             <router-link class="zdy-cover" v-for="item in allData.minBrandPicList" :key="item.bookId" :title="item.bookName" :to="'/book/'+item.bookId">
               <img :src="item.bookImage" :alt="item.bookName">
               <div class="zdy-mask">
@@ -34,10 +34,10 @@
       <!--网站动态 start-->
       <!--网站公告 start-->
       <div class="tr-title">
-        <img src="../../../static/img/icon/web_trends.png" class="fl" alt="">
+        <img src="/static/img/icon/web_trends.png" class="fl" alt="">
         <div class="tr-txt circular-wrap" @mouseleave="go" @mouseenter="stop">
           <transition-group name="circular">
-            <div class="circular-item" v-for="(item,$index) in allData.gunDongDeng" :key="$index" v-show="current===$index">
+            <div class="circular-item" v-if="allData && allData.gunDongDeng" v-for="(item,$index) in allData.gunDongDeng" :key="$index" v-show="current===$index">
               <div class="item-left">
                 <router-link :to="'/reader/'+item.userId">{{item.userName}} </router-link>评论了
                 <router-link :to="'/book/'+item.bookId">《{{item.bookName}}》</router-link>
@@ -51,7 +51,7 @@
         </div>
       </div>
       <!--网站公告 end -->
-      <div class="trends" v-if="allData.activityRecommendedPositionList && allData.activityRecommendedPositionList[0] ">
+      <div class="trends" v-if="allData && allData.activityRecommendedPositionList && allData.activityRecommendedPositionList[0] ">
         <div class="trends-content br5">
           <a  target="_blank" :href="activeHref(0)">
             <img  :src="allData.activityRecommendedPositionList[0].activityImgURL" alt="网站动态公告">
@@ -64,14 +64,14 @@
       <div class="hot-book">
         <div class="main-left">
           <div class="heading hotIcon-bg">
-            <img src="../../../static/img/icon/hot_book.png" alt="">
+            <img src="/static/img/icon/hot_book.png" alt="">
             <div class="fl f-title ml10">
               热门推荐
             </div>
           </div>
           <div class="hb-left clear">
             <ul class="book-list clear">
-              <template v-if="allData.hotRecommendedList">
+              <template v-if="allData && allData.hotRecommendedList">
                 <li v-for="item in allData.hotRecommendedList">
                   <router-link class="cover" :to="'/book/'+item.bookId">
                     <img :src="item.bookImage" :alt="item.bookName">
@@ -277,7 +277,7 @@
         </div>
         <div class="main-right">
           <el-tabs type="card" activeName="first_four" class="home-tabs mb5">
-            <el-tab-pane label="畅销榜" name="second_four">
+            <el-tab-pane label="畅销榜" name="first_four">
               <ul class="rank-list">
                 <template v-if="allData.changXiaototal" v-for="(item,$index) in allData.changXiaototal">
                   <li v-if="$index===0">
@@ -310,13 +310,13 @@
                   </li>
                 </template>
                 <li class="more">
-                  <router-link to="/rank/reward">查看更多
+                  <router-link to="/rank/sell/">查看更多
                     　　<i class="el-icon-arrow-right"></i>
                   </router-link>
                 </li>
               </ul>
             </el-tab-pane>
-            <el-tab-pane label="点击榜" name="first_four">
+            <el-tab-pane label="点击榜" name="second_four">
               <ul class="rank-list">
                 <template v-if="allData.dianJiBang" v-for="(item,$index) in allData.dianJiBang">
                   <li v-if="$index===0">
@@ -356,9 +356,7 @@
               </ul>
 
             </el-tab-pane>
-           
           </el-tabs>
-
         </div>
       </div>
       <!--榜单推荐 end-->
@@ -775,13 +773,13 @@ export default{
       color :#333
    &.tabs1
       .el-tabs__item:first-child
-        background url('../../assets/image/icon/new_book.png') no-repeat left 5px
+        background url('/static/img/icon/new_book.png') no-repeat left 5px
         background-size 34px auto
         padding-left 46px
         margin-left:0
    &.tabs2
       .el-tabs__item:first-child
-        background url('../../assets/image/icon/sport_badges.png') no-repeat left 7px
+        background url('/static/img/icon/sport_badges.png') no-repeat left 7px
         background-size auto 31px
         padding-left 45px
         margin-left:0

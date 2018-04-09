@@ -160,7 +160,7 @@ export default{
     payBack(type){
        this.isWeiXin = false;
        if(type==='suc'){
-           this.$freshen();
+           this.$store.dispatch("FETCH_FRESHEN_INFO");
            this.$router.push({path:'/user/index'})
        }
     },
@@ -174,12 +174,9 @@ export default{
         }).then(() => {
           this.payBack('suc')
         }).catch(() => {
-          this.$freshen()
+          this.$store.dispatch("FETCH_FRESHEN_INFO")
         });
     }
-  },
-  mounted(){
-      console.log(this.userInfo.userId)
   },
   watch:{
     'isWeiXin':function () {

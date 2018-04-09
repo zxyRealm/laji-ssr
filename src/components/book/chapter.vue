@@ -265,7 +265,7 @@
               <el-checkbox class="font12" v-model="buyForm.autoState">自动购买下一章，不再提醒</el-checkbox>
             </div>
           </el-form>
-        <img src="../../../static/img/buy_vip_icon@1_01.png" class="buy-icon" alt="">
+        <img src="/static/img/buy_vip_icon@1_01.png" class="buy-icon" alt="">
       </el-dialog>
       <my-consume></my-consume>
     </div>
@@ -420,7 +420,6 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
                   this.dialogFormVisible = true;
                   this.isRead = false;
                 }
-                console.log(this.automaticTake)
               },500);
             }else {
               this.dialogFormVisible = false;
@@ -673,7 +672,7 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
               if(type!=='auto'){
                 this.$message("订阅成功！");
               }
-              this.$freshen()
+              this.$store.dispatch("FETCH_FRESHEN_INFO")
             }else if(json.returnCode===300){
               window.open('/charge');
             }
@@ -713,8 +712,7 @@ import { FetchUserGift,FetchReadChapter,FetchAutoSubscribe,FetchAddBookShelf,Fet
           this.reckonPreNext();
           this.chapterComment ={}
         },
-        chapterList:function (val) {
-//          console.log(val)
+        chapterList:function () {
           this.reckonPreNext()
         }
       },

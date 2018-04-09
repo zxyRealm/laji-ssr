@@ -6,13 +6,6 @@
           <div class="ft-title">
             友情链接
           </div>
-          <ul>
-            <!--<li v-for="(item,index) in link">-->
-              <!--<a :href="item.href" target="_blank">-->
-                <!--{{item.name}}-->
-              <!--</a>-->
-            <!--</li>-->
-          </ul>
         </div>
         <div class="contact">
           <div class="ft-title">
@@ -25,23 +18,9 @@
           </ul>
         </div>
       </div>
-      
-      <ul class="help">
-        <!--<li><a href="javascript:;">关于辣鸡</a>|</li>-->
-        <!--<li><a href="javascript:;">联系我们</a>|</li>-->
-        <!--<li><a href="javascript:;">用户须知</a>|</li>-->
-        <!--<li><a href="javascript:;">公司招聘</a>|</li>-->
-        <!--<li><a href="javascript:;">帮助中心</a></li>-->
-      </ul>
       <div class="copyright">
         <p>COPYRIGHT©辣鸡小说网 2017-2027，版权所有 杭州樱熊网络科技有限公司 </p>
         浙ICP备16023962号-2
-        <p>
-          <!--<a href="javascript:0;">-->
-            <!--<img src="/static/img/icon/beian1.png" alt="">浙公网安备-->
-          <!--</a>-->
-        </p>
-
       </div>
     </div>
   </footer>
@@ -81,7 +60,6 @@ export default {
       }
     }
 }
-
 </script>
 <style lang="stylus" type="text/stylus" rel="stylesheet/stylus">
   .ft-title
@@ -89,6 +67,8 @@ export default {
     line-height: 60px
     font-size: 16px
   footer
+    position absolute
+    bottom 0
     width: 100%
     height :400px
     background-color: #F1F9FC

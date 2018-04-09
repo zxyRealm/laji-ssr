@@ -40,11 +40,11 @@
             </form>
           </li>
           <li class="lr-area">
-            <template v-if="$store.state.userInfo.userName!=undefined">
+            <template v-if="userInfo.userName!=undefined">
               <div class="user-dropdown-wrap clear">
                 <div class="user-dropdown font0" >
                   <router-link to="/user/index" class="avatar-wrap">
-                    <img class="avatar" :src="$store.state.userInfo.userHeadPortraitURL" :alt="$store.state.userInfo.userName">
+                    <img class="avatar" :src="userInfo.userHeadPortraitURL" :alt="userInfo.userName">
                   </router-link>
                 </div>
                 <div class="user-dropdown">
@@ -53,7 +53,7 @@
                   </router-link>
                 </div>
                 <div class="user-dropdown">
-                  <el-badge :value="$store.state.message.total" class="message-item" style="vertical-align: top;">
+                  <el-badge :value="message.total" class="message-item" style="vertical-align: top;">
                     <span class="pr10">消息</span>
                   </el-badge>
 
@@ -63,10 +63,10 @@
                         <el-badge class="dot-item">通知</el-badge>
                       </router-link>
                       <router-link class="user-dropdown-item" to="/user/message/letter">
-                        <el-badge :is-dot="$store.state.message.userMessageCount>0" class="dot-item">私信</el-badge>
+                        <el-badge :is-dot="message.userMessageCount>0" class="dot-item">私信</el-badge>
                       </router-link>
                       <router-link class="user-dropdown-item" to="/user/message/comment">
-                        <el-badge :is-dot="$store.state.message.userCommentReplyCount>0" class="dot-item">评论</el-badge>
+                        <el-badge :is-dot="message.userCommentReplyCount>0" class="dot-item">评论</el-badge>
                       </router-link>
 
                     </div>
@@ -179,9 +179,10 @@
           });
           return state
         },
-        ...mapState({
-          userInfo:'userInfo'
-        })
+        ...mapState([
+         'userInfo',
+          'message'
+        ])
       }
     }
 </script>
@@ -213,9 +214,9 @@ font-color = #FB5E6F
     .search-form
       &.show
         button
-          background-image :url("../../../static/img/icon/search.png")!important
+          background-image :url("/static/img/icon/search.png")!important
       button
-        background-image :url("../../../static/img/icon/w-search.png")!important
+        background-image :url("/static/img/icon/w-search.png")!important
 
 .dHeader
   height :42px
@@ -288,7 +289,7 @@ font-color = #FB5E6F
           float: right
           width :38px
           height :28px
-          background :url("../../../static/img/icon/search.png") no-repeat center 0
+          background :url("/static/img/icon/search.png") no-repeat center 0
           background-size:contain
         >div
           overflow hidden

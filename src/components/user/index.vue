@@ -100,7 +100,7 @@
             this.dialogTableVisible=false;
             if(res.returnCode===200){
                this.$message('上传成功');
-               this.$freshen()
+               this.$store.dispatch("FETCH_FRESHEN_INFO")
             }else {
               this.$message(res.msg)
             }

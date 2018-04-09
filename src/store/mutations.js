@@ -79,7 +79,7 @@ export default {
     state.bookStackSell = data
   },
   SET_AUTHOR_WELFARE(state,data){
-    state.authorWelfare = data
+    state.authorWelfare = data.data?data.data:[]
   },
 
   // 用户信息
@@ -89,6 +89,9 @@ export default {
     }else {
       state.userInfo = {}
     }
+  },
+  SET_USER_MESSAGE(state,data){
+    state.message = data
   },
   SET_AUTHOR_CHAPTER_LIST(state,data){
     state.authorChapterList = data || [];
