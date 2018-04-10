@@ -43,9 +43,9 @@
         <el-form-item label="章节内容" class="contentBox" prop="chapterContent">
           <el-input v-show="ruleForm.whetherPublic==1" type="textarea" class="context" v-model="ruleForm.chapterContent"></el-input>
           <div v-show="ruleForm.whetherPublic!=1" class="iframe-wrap">
-            <div id="content_edit_sole" unselectable="on" @keydown.native="preventCopy" v-if="reLoad" :contenteditable="true" @input="editChange" >
+            <div id="content_edit_sole" unselectable="off" @keydown.native="preventCopy" v-if="reLoad" :contenteditable="true" @input="editChange" >
               <template v-for="(item,$index) in initial">
-                <p :uuid="item.uuid">
+                <p  :uuid="item.uuid">
                  {{item.content}}
                 </p>
               </template>
@@ -88,6 +88,7 @@
             @click="submitForm('create')">
             确认提交
           </el-button>
+          <el-button @click="collateText(oldList)">校对</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -102,11 +103,76 @@
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="addNewVolume('volumeForm')">确 定</el-button>
       </div>
+     
     </el-dialog>
   </div>
 </template>
 <script type="text/ecmascript-6">
   import { FetchCheckName,FetchGetBookInfo,FetchAuthorHandleBook,FetchNetTime } from '../../api'
+  
+//  距离算法实现文本相似度比较
+  var LevenshteinDistance = {
+    _str1:null,
+    _str3:null,
+    _matrix:null,
+    _isString:function(s){
+      return Object.prototype.toString.call(s) === '[object String]';
+    },
+    _isNumber:function(s){
+      return Object.prototype.toString.call(s) === '[object Number]';
+    },
+    init:function(str1,str2){
+      if(!this._isString(str1) || !this._isString(str2)) return;
+      this._str1 = str1;
+      this._str2 = str2;
+      str1.length &&  str2.length && this._createMatrix(str1.length+1,str2.length+1);
+      this._matrix && this._initMatrix();
+      return this;
+    },
+    get:function(){
+      return 1 - this._getDistance()/Math.max(this._str1.length,this._str2.length);
+    },
+    //计算编辑距离
+    _getDistance:function(){
+      var len1 = this._str1.length,
+        len2 = this._str2.length;
+      if(!len1 || !len2) return Math.max(len1,len2);
+      var str1 = this._str1.split(''),
+        str2 = this._str2.split('');
+      var i = 0,j = 0,temp = 0;
+      while(i++ < len1){
+        j = 0;
+        while(j++ < len2){
+          temp = str1[i-1] === str2[j-1] ? 0 : 1;
+          this._matrix[i][j] = Math.min(this._matrix[i-1][j]+1,this._matrix[i][j-1]+1,this._matrix[i-1][j-1]+temp);
+        }
+      }
+      return this._matrix[i-1][j-1];
+    },
+    /*
+     * 初始化矩阵
+     * 为第一行、第一列赋值
+     */
+    _initMatrix:function(){
+      var cols = this._matrix[0].length,
+        rows = this._matrix.length;
+      var l = Math.max(cols,rows);
+      while(l--){
+        cols-1 >= l && (this._matrix[0][l] = l);
+        rows-1 >= l && (this._matrix[l][0] = l);
+      }
+    },
+    /*
+     * 创建矩阵
+     * n:行
+     * m:列
+     */
+    _createMatrix:function(n,m){
+      if(!this._isNumber(n) || !this._isNumber(m) || n<1 || m<1) return;
+      this._matrix = new Array(n);var i = 0;
+      while(i<n) this._matrix[i++] = new Array(m);
+    }
+  };
   export default {
     data() {
       let validateContent = (rule,value,callback) =>{
@@ -191,8 +257,8 @@
         },
         reLoad:true,
         iframeShow:'hidden',
-        dialogSize:'tiny',
         original:{}, //原始数据
+        oldList:[], //原始章节内容
         volumeList:[], //书籍卷列表
         isAutoPublish:false,
         labelWidth:'136px',
@@ -369,6 +435,8 @@
                        content:this.$trim(txtList[index])
                      })
                    });
+                   this.oldList = JSON.parse(JSON.stringify(this.initial))
+                   
                  }
                  this.ruleForm = json.data;
                  this.getVolume();
@@ -408,7 +476,7 @@
           for(let i=0,len=pList.length;i<len;i++){
 //            重置样式,防止粘贴复制带来过来的内联样式
             pList[i].style = null;
-            pList[i].innerText = this.$trim(pList[i].innerText)
+//            pList[i].innerText = this.$trim(pList[i].innerText);
             if(this.$trim(pList[i].innerText).length){
                 if(!pList[i].getAttribute("uuid")){
                     pList[i].setAttribute("uuid","<X><XG>")
@@ -463,15 +531,53 @@
           e.returnValue = false;
           return false
         }
+      },
+//      编辑章节后文本校对
+      collateText(old,fresh){
+//          old、fersh 均为数组 原数组包含uuid
+        fresh = this.ruleForm.chapterContent.replace(/\s*$/,'').split(/\n+\s*/);
+        let contentStr = '';
+        console.log(old)
+        for(let k=0,len=old.length;k<len;k++){
+            if(old[k].content){
+                let perList = [];
+                for(let j=0,len=fresh.length;j<len;j++){
+                    const percent = parseFloat(LevenshteinDistance.init(old[k].content,fresh[j]).get().toFixed(3));
+                    if(percent===1){
+                        contentStr += fresh[j] + old[k].uuid;
+                        fresh.splice(j,1);
+                        break;
+                    }else{
+                        perList.push(percent);
+                        if(j===fresh.length-1){
+                            let max = Math.max.apply(null,perList);
+                            console.log('最大----',max);
+                            if(max>0.2){
+                                for(let n=0,len=perList.length;n<len;n++){
+                                    if(perList[n]===max){
+                                      contentStr += fresh[n] + old[k].uuid;
+                                      fresh.splice(n,1);
+                                      break;
+                                    }else{
+                                      console.log(n,fresh[n]);
+                                      contentStr += fresh[n] + '<X><XG>';
+    //                                  fresh.splice(n,1);
+    //                                  break;
+                                    }
+                                  console.log('新增元素',n,perList.length)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        console.log(contentStr)
       }
+    
     },
     mounted (){
       let windowWidth = document.body.clientWidth;
-      if(windowWidth<1024){
-        this.dialogSize = 'small'
-      }else{
-        this.dialogSize = 'tiny'
-      }
       this.getChapterInfo();
     },
     watch:{
