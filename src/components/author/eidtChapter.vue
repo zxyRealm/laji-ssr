@@ -88,7 +88,7 @@
             @click="submitForm('create')">
             确认提交
           </el-button>
-          <el-button @click="collateText(oldList)">校对</el-button>
+          <!-- <el-button @click="collateText(oldList)">校对</el-button> -->
         </el-form-item>
       </el-form>
     </div>

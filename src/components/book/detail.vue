@@ -39,7 +39,7 @@
                 <div class="bi-center">
                   <p >
                     <span>点击：{{bookDetail.bookdate?bookDetail.bookdate.bookClickCount:0 | number}}</span>
-                    <span>书评：{{bookCommentList.total?bookCommentList.total:0}}</span>
+                    <span>书评：{{bookCommentList.total === undefined ? bookCommentList.total : 0}}</span>
                     <span>吐槽：{{bookDetail.bookdate?bookDetail.bookdate.tucaoIndex:0}}</span>
                   </p>
                   <p >
@@ -110,16 +110,16 @@
                     </div>
                   </el-tab-pane>
                   <el-tab-pane label="全部目录" name="second">
-                    <el-collapse v-model="activeName" class="b_chapter_list">
-                      <template v-for="(item,$index) in chapterList">
-                        <el-collapse-item :title="item.volumeName" :name="item.volumeId" :icon="'el-icon-caret-right'">
-                          <div v-for="(item2,$index2) in item.resultList" class="collapse-item-link txt-overflow">
-                            <router-link :to="'/chapter/'+item2.id" target="_blank" @click='visible=false' :title="item2.chapterTitle" :alt="item2.chapterTitle" class="txt-overflow" >{{item2.chapterTitle}}</router-link>
-                            <i v-if="item2.chapterIsvip" class="zdy-icon__vip"></i>
-                          </div>
-                        </el-collapse-item>
-                      </template>
-                    </el-collapse>
+                          <el-collapse v-if="chapterList[0]" v-model="chapterList[0].activeList" class="b_chapter_list" >
+                            <template v-for="(item,$index) in chapterList">
+                              <el-collapse-item :title="item.volumeName" :name="item.volumeId" :icon="'el-icon-caret-right'">
+                                <div v-for="(item2,$index2) in item.resultList" class="collapse-item-link txt-overflow">
+                                  <router-link :to="'/chapter/'+item2.id" target="_blank" @click='visible=false' :title="item2.chapterTitle" :alt="item2.chapterTitle" class="txt-overflow" >{{item2.chapterTitle}}</router-link>
+                                  <i v-if="item2.chapterIsvip" class="zdy-icon__vip"></i>
+                                </div>
+                              </el-collapse-item>
+                            </template>
+                          </el-collapse>
                   </el-tab-pane>
                 </el-tabs>
               </template>
@@ -333,6 +333,7 @@
               <zdy-hint v-else :size="0" type="fans"></zdy-hint>
             </ul>
           </div>
+
         </div>
       </template>
       <zdy-hint v-else-if="bookDetail && bookDetail.bookListInfo===''" type="book-not"></zdy-hint>
@@ -362,6 +363,7 @@
           commentText:'', //书评内容
           activeName1:'first',
           pageChange:false,
+
           page: 1, //书评列表页码
           page2:1, //书评回复列表页码
           maxPage: 5,
@@ -402,13 +404,20 @@
 //        书籍章节列表
         handleClick1(tab) {
             if(tab.name==='second'&& !this.firstOne){
-                this.$store.dispatch("FETCH_CHAPTER_LIST",{bid:this.$route.params.bid}).then(()=>{
-                  this.firstOne = true
+                this.$store.dispatch("FETCH_CHAPTER_LIST",{ bid:this.$route.params.bid }).then(()=>{
+                  this.firstOne = true;
+                  setTimeout(()=>{
+//                      console.log(this.)
+                  })
                 })
             }
         },
 //        打赏、推荐票、金票
         myConsume:function (type) {
+          if(!this.$cookie('user_id')){
+            this.$router.push({path:'/login',query:{ redirect:this.$route.path }});
+            return false
+          }
           this.$store.dispatch('init',{ type:type });
         },
 //        点击回复
@@ -551,7 +560,7 @@
         return store.dispatch('FETCH_BOOK_DETAIL',{ bid:[bid] })
       },
       mounted(){
-        this.onceShow = true;
+        this.onceShow = true
         if(!this.once){
           this.$store.dispatch('FETCH_BOOK_DETAIL',{ bid:this.$route.params.bid })
         }
@@ -566,7 +575,6 @@
           'bookDetail',
           'chapterList',
           'bookCommentList',
-          'activeName',
           'once'
         ]),
         initShare:function () {

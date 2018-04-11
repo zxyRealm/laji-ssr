@@ -129,8 +129,8 @@ export default {
           list.forEach((item)=>{
             if(item.resultList.length>0){
               let counts = 0;
-              active.push(item.volumeId);
-              item.length = item.resultList.length;
+              active.push(item.volumeId)
+              item.length = item.resultList.length
               item.resultList.forEach((item2)=>{
                 counts += item2.chapterLength
               });

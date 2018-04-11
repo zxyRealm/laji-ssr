@@ -89,7 +89,7 @@
                   <el-radio-button name="radio" :label="588">588辣椒</el-radio-button>
                   <el-radio-button name="radio" :label="888">888辣椒</el-radio-button>
                   <el-radio-button name="radio" :label="1888">1888辣椒</el-radio-button>
-                  <el-radio-button name="radio" :label="8888">8888辣椒</el-radio-button>
+                  <el-radio-button name="radio" :label="8888">8888 <span style="font-size:12px; color:red;">(送1金椒)</span></el-radio-button>
                 </el-radio-group>
               </div>
               <div class="zdy-consume-box_btns">
@@ -273,6 +273,7 @@
     }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
+
 .zdy-consume-wrap:after
   content: "";
   display: inline-block;
@@ -465,7 +466,7 @@
         width :100%
         border-radius :5px
         border :2px solid #efefef
-        padding-top :80px
+        padding :80px 0 0 0
         box-shadow :none
         background:#fbf3f3  url("/static/img/coin-188.png") no-repeat center
         /*background-size:cover*/

@@ -42,12 +42,12 @@ export default {
 
   // 书评列表
   SET_BOOK_COMMENT_LIST(state,{data}){
-    Vue.set(state,'bookCommentList',data)
+    Vue.set(state,'bookCommentList',data?data:{})
   },
 
   // 热评
   SET_BOOK_COMMENT_HOT(state,{data}){
-    Vue.set(state,'bookCommentList',data)
+    Vue.set(state,'bookCommentList',data?data:{})
   },
 
   // 书评回复
